@@ -1,0 +1,46 @@
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import Button from "../UI/Button";
+
+const HeaderContainer = styled.header`
+  height: 60px;
+  width: 100%;
+  display: flex;
+  background-color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08); /* subtle shadow */
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const NavBar = styled.nav`
+  width: 80%;
+  display: flex;
+  justify-content: right ;
+  gap: 30px;
+  padding-right: 30px;
+`;
+
+const HomeBar = styled.div`
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+function Header() {
+  const navigate = useNavigate();
+
+  return (
+    <HeaderContainer>
+      <HomeBar>
+        <Button label="Home" onClick={() => navigate("/")} />
+      </HomeBar>
+      <NavBar>
+        <Button label="Page1" onClick={() => navigate("/page1")} />
+        <Button label="Page2" onClick={() => navigate("/page2")} />
+      </NavBar>
+    </HeaderContainer>
+  );
+}
+
+export default Header;
