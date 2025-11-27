@@ -45,7 +45,6 @@ function Header() {
       <NavBar>
         <Button label="Page1" onClick={() => navigate('/page1')} />
         <Button label="Page2" onClick={() => navigate('/page2')} />
-        {/* Logout button */}
         <Button label="Logout" onClick={handleLogout} />
       </NavBar>
     </HeaderContainer>
