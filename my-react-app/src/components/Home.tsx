@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useClicker } from "../contexts/ClickerContext";
+import { useClicker } from "../hooks/useClicker";
 import { UnitsView } from "./UnitsView";
 
 const HomeContainer = styled.div`

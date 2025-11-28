@@ -1,6 +1,6 @@
 //import { useState } from "react"
 import styled from "styled-components";
-import { useClicker } from "../contexts/ClickerContext";
+import { useClicker } from "../hooks/useClicker";
 
 const ClickerContainer = styled.div`
   height: 100%;

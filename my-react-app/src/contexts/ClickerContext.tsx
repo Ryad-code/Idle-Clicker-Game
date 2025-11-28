@@ -1,18 +1,19 @@
-/* eslint-disable react-refresh/only-export-components */ //so we can have 2 exports
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+/* eslint-disable react-refresh/only-export-components */ // so we can have 2 exports
 
-type ClickerContextType = {
+import React, { createContext, useState, useCallback } from "react";
+
+export type ClickerContextType = {
   points: number;
   clickValue: number;
   pointsPerSecond: number;
   clicks: number;
   handleClick: () => void;
-  addPoints: (value: number) => void
-  addPoints: (value: number) => void
+  addPoints: (value: number) => void;
+  removePoints: (value: number) => void;
 };
 
-const ClickerContext = createContext<ClickerContextType | undefined>(undefined);
+export const ClickerContext = createContext<ClickerContextType | undefined>(undefined);
 
 export function ClickerProvider({ children }: { children: React.ReactNode }) {
   const [points, setPoints] = useState<number>(0);
@@ -26,11 +27,17 @@ export function ClickerProvider({ children }: { children: React.ReactNode }) {
   }, [clickValue]);
 
   const addPoints = (value: number) => {
-    setPoints(points + value);
-  }
+    setPoints(prev => prev + value);
+  };
+
   const removePoints = (value: number) => {
-    setPoints(points - value)
-  }
+    if (points < value) {
+      throw new Error("Not enough points to remove");
+    }
+    setPoints(prev => {
+      return prev - value;
+    });
+  };
 
   const value: ClickerContextType = {
     points,
@@ -42,11 +49,9 @@ export function ClickerProvider({ children }: { children: React.ReactNode }) {
     removePoints
   };
 
-  return <ClickerContext.Provider value={value}>{children}</ClickerContext.Provider>;
-}
-
-export function useClicker() {
-  const ctx = useContext(ClickerContext);
-  if (!ctx) throw new Error("useClicker must be used inside ClickerProvider");
-  return ctx;
+  return (
+    <ClickerContext.Provider value={value}>
+      {children}
+    </ClickerContext.Provider>
+  );
 }

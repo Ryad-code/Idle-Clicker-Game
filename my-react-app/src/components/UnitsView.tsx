@@ -1,4 +1,4 @@
-import { useUnits } from "../contexts/UnitsContext";
+import { useUnits } from "../hooks/useUnits";
 
 export const UnitsView = () => {
   const { unitCounts} = useUnits();
@@ -10,9 +10,9 @@ export const UnitsView = () => {
       <div style={{ marginBottom: 20 }}>
         <h3>Unit Counts</h3>
         <ul>
-          <li>Archers: {unitCounts.archer}</li>
-          <li>Knights: {unitCounts.knight}</li>
-          <li>Mages: {unitCounts.mage}</li>
+          <li>Unit1: {unitCounts.unit1}</li>
+          <li>Unit2: {unitCounts.unit2}</li>
+          <li>Unit3: {unitCounts.unit3}</li>
         </ul>
       </div>
       </div>
