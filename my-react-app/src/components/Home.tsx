@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { useClicker } from "../hooks/useClicker";
-import { UnitsView } from "./UnitsView";
+import { useAtom } from "jotai";
+import { points } from "../gameLogic";
 
 const HomeContainer = styled.div`
   height: 100%;
@@ -13,13 +13,12 @@ const HomeContainer = styled.div`
 
 function Home() {
 
- const { points } = useClicker();
-
+ const [ pointsValue ] = useAtom(points);
+  
   return (
         <HomeContainer>
             <h2>HOME</h2>
-            <div>pts = {points}</div>
-            <UnitsView/>
+            <div>pts = {pointsValue}</div>
         </HomeContainer>
   )
 }

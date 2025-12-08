@@ -1,6 +1,6 @@
-//import { useState } from "react"
 import styled from "styled-components";
-import { useClicker } from "../hooks/useClicker";
+import { useAtom } from "jotai";
+import { points } from "../gameLogic";
 
 const ClickerContainer = styled.div`
   height: 100%;
@@ -12,14 +12,13 @@ const ClickerContainer = styled.div`
 `;
 
 function Clicker() {
-  const { points, pointsPerSecond, handleClick } = useClicker();
+  const [ pointed, setPointed ] = useAtom(points);
   
   return (
         <ClickerContainer>
             <h2>POINTS</h2>
-            <h1>{points}</h1>
-            <h2>{pointsPerSecond}/s</h2>
-            <button onClick={() => handleClick()}>CLICK HERE MTFCK</button>
+            <h1>{pointed}</h1>
+            <button onClick={() => setPointed(pointed + 1)}>CLICK</button>
         </ClickerContainer>
   )
 }
