@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { useAtom } from "jotai";
-import { points } from "../gameLogic";
+import { playerAtom } from "../game/gameLogic";
+import { Player } from "../game/types";
 
 const ClickerContainer = styled.div`
   height: 100%;
@@ -12,13 +13,22 @@ const ClickerContainer = styled.div`
 `;
 
 function Clicker() {
-  const [ pointed, setPointed ] = useAtom(points);
-  
+  const [ player, setPlayer ] = useAtom(playerAtom);
+
+  const handleClick = () => {
+    setPlayer((prev) => {
+      const newPlayer = Object.assign(new Player(), prev);
+      newPlayer.click();
+      return newPlayer;
+    });
+  };
+
   return (
         <ClickerContainer>
             <h2>POINTS</h2>
-            <h1>{pointed}</h1>
-            <button onClick={() => setPointed(pointed + 1)}>CLICK</button>
+            <h1>{player.points}</h1>
+            <h2>P/s: {player.pointsPerSecond}</h2>
+            <button onClick={handleClick}>CLICK</button>
         </ClickerContainer>
   )
 }
