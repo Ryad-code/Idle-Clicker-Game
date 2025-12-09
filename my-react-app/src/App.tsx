@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useAtom } from 'jotai';
 import Layout from './components/Layout/Layout';
 import HomePage from './pages/HomePage';
 import Page1 from './pages/Page1';
@@ -6,9 +8,31 @@ import Page2 from './pages/Page2';
 import AuthPage from './pages/AuthPage';
 import Footer from './components/Layout/Footer';
 import { useAuth } from './hooks/useAuth';
+import { playerAtom } from './game/gameLogic';
+import { Player } from './game/types';
 
 function App() {
   const user = useAuth();
+  const [player, setPlayer] = useAtom(playerAtom);
+
+  console.log("player: ", player)
+
+  // Production system - runs every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPlayer((prev) => {
+        const production = prev.calculatePointsPerSecond();
+        if (production > 0) {
+          const newPlayer = Object.assign(new Player(), prev);
+          newPlayer.addPoints(production);
+          return newPlayer;
+        }
+        return prev;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [setPlayer]);
 
   // While checking the session, show nothing (or you can add a spinner)
   if (user === undefined) return null;

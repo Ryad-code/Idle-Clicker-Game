@@ -65,6 +65,10 @@ export class Player {
     return true;
   }
 
+  calculatePointsPerSecond(): number {
+    return this.units.reduce((total, unit) => total + unit.value, 0);
+  }
+
   // Setters
   setPoints(value: number): void { this.points = value; }
   setClickValue(value: number): void { this.clickValue = value; }
