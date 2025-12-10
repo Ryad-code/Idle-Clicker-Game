@@ -28,6 +28,7 @@ function Clicker() {
             <h2>POINTS</h2>
             <h1>{player.points}</h1>
             <h2>P/s: {player.calculatePointsPerSecond()}</h2>
+            <h2>click value: {player.clickValue}</h2>
             <button onClick={handleClick}>CLICK</button>
         </ClickerContainer>
   )

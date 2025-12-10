@@ -18,21 +18,22 @@ function App() {
   console.log("player: ", player)
 
   // Production system - runs every second
+  // Do we keep it here or move it to a separate hook/file?
   useEffect(() => {
     const interval = setInterval(() => {
       setPlayer((prev) => {
-        const production = prev.calculatePointsPerSecond();
-        if (production > 0) {
-          const newPlayer = Object.assign(new Player(), prev);
-          newPlayer.addPoints(production);
-          return newPlayer;
+        const newPlayer = Object.assign(new Player(), prev);
+        newPlayer.refreshDerivedStats();
+        if (newPlayer.pointsPerSecond > 0) {
+          newPlayer.addPoints(newPlayer.pointsPerSecond);
         }
-        return prev;
+        return newPlayer;
       });
     }, 1000);
 
     return () => clearInterval(interval);
   }, [setPlayer]);
+  //........................................................
 
   // While checking the session, show nothing (or you can add a spinner)
   if (user === undefined) return null;

@@ -68,7 +68,6 @@ function Home() {
   return (
     <HomeContainer>
       <h2>HOME</h2>
-      <div>Points: {player.points}</div>
       <h3>Units ({player.units.length})</h3>
       <UnitStats>
         <StatBox>

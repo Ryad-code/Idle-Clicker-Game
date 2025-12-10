@@ -28,12 +28,11 @@ function Dashboard() {
   return (
     <DashboardContainer>
       <h2>DASHBOARD</h2>
-      <h3>{player.points} pts</h3>
       <ShopContainer>
         <div>BUY</div>
-        <button onClick={() => setPlayer(buyUnit(player, "unit1"))}>Unit1 - {UNIT_CONFIG.unit1.cost}pts</button>
-        <button onClick={() => setPlayer(buyUnit(player, "unit2"))}>Unit2 - {UNIT_CONFIG.unit2.cost}pts</button>
-        <button onClick={() => setPlayer(buyUnit(player, "unit3"))}>Unit3 - {UNIT_CONFIG.unit3.cost}pts</button>
+        <button onClick={() => setPlayer(buyUnit(player, "unit1"))}>Unit1 - {player.calculateUnitCost("unit1", UNIT_CONFIG.unit1.cost)}pts</button>
+        <button onClick={() => setPlayer(buyUnit(player, "unit2"))}>Unit2 - {player.calculateUnitCost("unit2", UNIT_CONFIG.unit2.cost)}pts</button>
+        <button onClick={() => setPlayer(buyUnit(player, "unit3"))}>Unit3 - {player.calculateUnitCost("unit3", UNIT_CONFIG.unit3.cost)}pts</button>
         <div>....................</div>
         <div>SELL</div>
         <button onClick={() => setPlayer(sellUnit(player, "unit1"))}>Sell Unit1 - {UNIT_CONFIG.unit1.refund}pts</button>

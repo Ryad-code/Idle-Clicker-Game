@@ -56,17 +56,35 @@ export class Player {
     this.removePoints(cost);
     const unit = new Unit(crypto.randomUUID(), type, 0, 0, value);
     this.addUnit(unit);
+    this.refreshDerivedStats();
     return true;
   }
 
   sellUnit(unitId: string, refund: number): boolean {
     if (!this.removeUnit(unitId)) return false;
     this.addPoints(refund);
+    this.refreshDerivedStats();
     return true;
   }
 
   calculatePointsPerSecond(): number {
     return this.units.reduce((total, unit) => total + unit.value, 0);
+  }
+
+  getUnitCount(type: UnitType): number {
+    return this.units.filter(u => u.type === type).length;
+  }
+
+  calculateUnitCost(type: UnitType, baseCost: number): number {
+    const count = this.getUnitCount(type);
+    const growthRate = 1.03 + (count * 0.02);
+    return Math.round(baseCost * Math.pow(growthRate, count));
+  }
+
+  refreshDerivedStats(): void {
+    const production = this.calculatePointsPerSecond();
+    this.pointsPerSecond = production;
+    this.clickValue = Math.max(1, 1 + Math.floor(production * 0.05));
   }
 
   // Setters
