@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useAtom } from "jotai";
 import { playerAtom, buyUnit, sellUnit, UNIT_CONFIG } from "../game/gameLogic";
+import { savePlayerToDB } from "../game/playerService";
+import { useAuth } from "../hooks/useAuth";
 
 const DashboardContainer = styled.div`
   height: 100%;
@@ -24,10 +26,33 @@ const ShopContainer = styled.div`
 
 function Dashboard() {
   const [player, setPlayer] = useAtom(playerAtom);
+  const user = useAuth();
+
+  const handleManualSave = async () => {
+    if (!user) return;
+    try {
+      await savePlayerToDB(user.id, player);
+      console.log('✅ Progress saved successfully');
+    } catch (err) {
+      console.error('❌ Manual save failed:', err);
+    }
+  };
 
   return (
     <DashboardContainer>
       <h2>DASHBOARD</h2>
+      <button onClick={handleManualSave} style={{ 
+        padding: '8px 16px', 
+        marginBottom: '12px',
+        background: '#4ba3f5',
+        color: 'white',
+        border: 'none',
+        borderRadius: '6px',
+        cursor: 'pointer',
+        fontWeight: 'bold'
+      }}>
+        💾 Save Progress
+      </button>
       <ShopContainer>
         <div>BUY</div>
         <button onClick={() => setPlayer(buyUnit(player, "unit1"))}>Unit1 - {player.calculateUnitCost("unit1", UNIT_CONFIG.unit1.cost)}pts</button>

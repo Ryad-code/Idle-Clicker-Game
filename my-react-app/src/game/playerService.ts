@@ -37,8 +37,8 @@ export async function loadPlayerFromDB(userId: string): Promise<Player> {
       new Unit(
         row.id,
         row.type as UnitType,
-        row.pos_x ?? 0,
-        row.pos_y ?? 0,
+        row.position_x ?? 0,
+        row.position_y ?? 0,
         row.value ?? 0
       )
     );
@@ -72,14 +72,27 @@ export async function savePlayerToDB(userId: string, player: Player): Promise<vo
 
     if (error) throw error;
 
-    // Replace all unit rows for this user (simple sync strategy)
-    const { error: deleteError } = await supabase
+    // Sync units: delete sold units, upsert current ones
+    const { data: existingUnits } = await supabase
       .from('units')
-      .delete()
+      .select('id')
       .eq('player_id', userId);
 
-    if (deleteError) throw deleteError;
+    const existingIds = new Set((existingUnits || []).map(u => u.id));
+    const currentIds = new Set(player.units.map(u => u.id));
 
+    // Delete units that exist in DB but not in player.units (sold units)
+    const toDelete = [...existingIds].filter(id => !currentIds.has(id));
+    if (toDelete.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('units')
+        .delete()
+        .in('id', toDelete);
+
+      if (deleteError) throw deleteError;
+    }
+
+    // Upsert current units (creates new, updates existing)
     if (player.units.length > 0) {
       const payload = player.units.map(u => ({
         id: u.id,
@@ -90,11 +103,11 @@ export async function savePlayerToDB(userId: string, player: Player): Promise<vo
         position_y: u.position.y,
       }));
 
-      const { error: insertError } = await supabase
+      const { error: upsertError } = await supabase
         .from('units')
         .upsert(payload);
 
-      if (insertError) throw insertError;
+      if (upsertError) throw upsertError;
     }
   } catch (error) {
     console.error('Failed to save player to DB:', error);

@@ -63,7 +63,7 @@ function App() {
     const interval = setInterval(() => {
       const snapshot = playerRef.current;
       savePlayerToDB(user.id, snapshot).catch(err => console.error('Save failed', err));
-    }, 1000);
+    }, 30000);
     console.log("Started periodic save interval");
 
     return () => clearInterval(interval);
