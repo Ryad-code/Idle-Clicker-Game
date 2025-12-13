@@ -1,12 +1,6 @@
 import { Player } from './types';
 import type { UnitType } from './types';
-
-//Move this to a game settings file
-export const UNIT_CONFIG: Record<UnitType, { cost: number; value: number; refund: number }> = {
-  unit1: { cost: 15, value: 1, refund: 7 },     // 15s to earn back—forces clicking longer
-  unit2: { cost: 100, value: 3, refund: 50 },   // 33s ROI, only 3x stronger—requires grind
-  unit3: { cost: 500, value: 12, refund: 250 }, // 41s ROI, 4x stronger—long-term goal
-};
+import { UNIT_CONFIG } from './gameConfig';
 
 export function buyUnit(player: Player, unitType: UnitType): Player {
   const config = UNIT_CONFIG[unitType];

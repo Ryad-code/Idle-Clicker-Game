@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { useGame } from "../contexts";
+import { UNIT_CONFIG, UNIT_TYPES } from "../game/gameConfig";
+import type { UnitType } from "../game/types";
 
 const HomeContainer = styled.div`
   height: 100%;
@@ -20,7 +22,7 @@ const UnitsGrid = styled.div`
   max-width: 400px;
 `;
 
-const UnitCard = styled.div<{ $type: string }>`
+const UnitCard = styled.div<{ $color: string }>`
   width: 80px;
   height: 80px;
   border-radius: 8px;
@@ -29,28 +31,31 @@ const UnitCard = styled.div<{ $type: string }>`
   justify-content: center;
   font-size: 32px;
   font-weight: bold;
-  background-color: ${props => {
-    switch(props.$type) {
-      case "unit1": return "#4CAF50";
-      case "unit2": return "#2196F3";
-      case "unit3": return "#FF9800";
-      default: return "#999";
-    }
-  }};
+  background-color: ${props => props.$color};
   color: white;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
 `;
 
 const UnitStats = styled.div`
   display: flex;
   gap: 30px;
   font-size: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
 `;
 
 const StatBox = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
+  background: rgba(255, 255, 255, 0.5);
+  padding: 8px 12px;
+  border-radius: 8px;
 `;
 
 const StatEmoji = styled.span`
@@ -60,35 +65,37 @@ const StatEmoji = styled.span`
 function Home() {
   const { player } = useGame();
   
-  const unit1Count = player.units.filter(u => u.type === "unit1").length;
-  const unit2Count = player.units.filter(u => u.type === "unit2").length;
-  const unit3Count = player.units.filter(u => u.type === "unit3").length;
-  
   return (
     <HomeContainer>
       <h2>HOME</h2>
       <h3>Units ({player.units.length})</h3>
       <UnitStats>
-        <StatBox>
-          <StatEmoji>🟢</StatEmoji>
-          <span>Unit1: {unit1Count}</span>
-        </StatBox>
-        <StatBox>
-          <StatEmoji>🔵</StatEmoji>
-          <span>Unit2: {unit2Count}</span>
-        </StatBox>
-        <StatBox>
-          <StatEmoji>🟠</StatEmoji>
-          <span>Unit3: {unit3Count}</span>
-        </StatBox>
+        {UNIT_TYPES.map((unitType: UnitType) => {
+          const meta = UNIT_CONFIG[unitType];
+          const count = player.getUnitCount(unitType);
+          
+          return (
+            <StatBox key={unitType}>
+              <StatEmoji>{meta.emoji}</StatEmoji>
+              <span>{meta.name}: {count}</span>
+            </StatBox>
+          );
+        })}
       </UnitStats>
       {player.units.length > 0 ? (
         <UnitsGrid>
-          {player.units.map(unit => (
-            <UnitCard key={unit.id} $type={unit.type}>
-              {unit.type === "unit1" ? "🟢" : unit.type === "unit2" ? "🔵" : "🟠"}
-            </UnitCard>
-          ))}
+          {player.units.map(unit => {
+            const meta = UNIT_CONFIG[unit.type];
+            return (
+              <UnitCard 
+                key={unit.id} 
+                $color={meta.color}
+                title={`${meta.name} - ${meta.value} pts/s`}
+              >
+                {meta.emoji}
+              </UnitCard>
+            );
+          })}
         </UnitsGrid>
       ) : (
         <div>No units yet. Buy some in Dashboard!</div>
