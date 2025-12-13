@@ -1,8 +1,6 @@
 import styled from "styled-components";
-import { useAtom } from "jotai";
-import { playerAtom, buyUnit, sellUnit, UNIT_CONFIG } from "../game/gameLogic";
-import { savePlayerToDB } from "../game/playerService";
-import { useAuth } from "../hooks/useAuth";
+import { UNIT_CONFIG } from "../game/gameLogic";
+import { useGame } from "../contexts";
 
 const DashboardContainer = styled.div`
   height: 100%;
@@ -25,17 +23,10 @@ const ShopContainer = styled.div`
 `;
 
 function Dashboard() {
-  const [player, setPlayer] = useAtom(playerAtom);
-  const user = useAuth();
+  const { player, buyUnit, sellUnit, save } = useGame();
 
   const handleManualSave = async () => {
-    if (!user) return;
-    try {
-      await savePlayerToDB(user.id, player);
-      console.log('✅ Progress saved successfully');
-    } catch (err) {
-      console.error('❌ Manual save failed:', err);
-    }
+    await save();
   };
 
   return (
@@ -55,14 +46,14 @@ function Dashboard() {
       </button>
       <ShopContainer>
         <div>BUY</div>
-        <button onClick={() => setPlayer(buyUnit(player, "unit1"))}>Unit1 - {player.calculateUnitCost("unit1", UNIT_CONFIG.unit1.cost)}pts</button>
-        <button onClick={() => setPlayer(buyUnit(player, "unit2"))}>Unit2 - {player.calculateUnitCost("unit2", UNIT_CONFIG.unit2.cost)}pts</button>
-        <button onClick={() => setPlayer(buyUnit(player, "unit3"))}>Unit3 - {player.calculateUnitCost("unit3", UNIT_CONFIG.unit3.cost)}pts</button>
+        <button onClick={() => buyUnit("unit1")}>Unit1 - {player.calculateUnitCost("unit1", UNIT_CONFIG.unit1.cost)}pts</button>
+        <button onClick={() => buyUnit("unit2")}>Unit2 - {player.calculateUnitCost("unit2", UNIT_CONFIG.unit2.cost)}pts</button>
+        <button onClick={() => buyUnit("unit3")}>Unit3 - {player.calculateUnitCost("unit3", UNIT_CONFIG.unit3.cost)}pts</button>
         <div>....................</div>
         <div>SELL</div>
-        <button onClick={() => setPlayer(sellUnit(player, "unit1"))}>Sell Unit1 - {UNIT_CONFIG.unit1.refund}pts</button>
-        <button onClick={() => setPlayer(sellUnit(player, "unit2"))}>Sell Unit2 - {UNIT_CONFIG.unit2.refund}pts</button>
-        <button onClick={() => setPlayer(sellUnit(player, "unit3"))}>Sell Unit3 - {UNIT_CONFIG.unit3.refund}pts</button>
+        <button onClick={() => sellUnit("unit1")}>Sell Unit1 - {UNIT_CONFIG.unit1.refund}pts</button>
+        <button onClick={() => sellUnit("unit2")}>Sell Unit2 - {UNIT_CONFIG.unit2.refund}pts</button>
+        <button onClick={() => sellUnit("unit3")}>Sell Unit3 - {UNIT_CONFIG.unit3.refund}pts</button>
       </ShopContainer>
     </DashboardContainer>
   );

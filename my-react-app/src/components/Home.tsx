@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { useAtom } from "jotai";
-import { playerAtom } from "../game/gameLogic";
+import { useGame } from "../contexts";
 
 const HomeContainer = styled.div`
   height: 100%;
@@ -59,7 +58,7 @@ const StatEmoji = styled.span`
 `;
 
 function Home() {
-  const [player] = useAtom(playerAtom);
+  const { player } = useGame();
   
   const unit1Count = player.units.filter(u => u.type === "unit1").length;
   const unit2Count = player.units.filter(u => u.type === "unit2").length;
