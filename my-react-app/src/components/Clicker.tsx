@@ -1,29 +1,45 @@
-import styled from "styled-components";
 import { useGame } from "../contexts";
-
-const ClickerContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: blue;
-`;
+import { 
+  ClickerContainer, 
+  PointsDisplay, 
+  PointsTitle, 
+  PointsValue,
+  StatsContainer,
+  StatRow,
+  StatLabel,
+  StatValue,
+  ClickButton
+} from "../styles/components/clicker.styles";
 
 function Clicker() {
   const { player, click } = useGame();
 
   return (
-        <ClickerContainer>
-            <h2>POINTS</h2>
-            <h1>{player.points}</h1>
-            <div>
-              <div>P/s: {player.calculatePointsPerSecond()}</div>
-              <div>click value: {player.clickValue}</div>
-              <div> total clicks: {player.totalClicks}</div>
-              <button onClick={click}>CLICK</button>
-            </div>
-        </ClickerContainer>
+    <ClickerContainer>
+      <PointsDisplay>
+        <PointsTitle>Points</PointsTitle>
+        <PointsValue>{Math.floor(player.points).toLocaleString()}</PointsValue>
+      </PointsDisplay>
+      
+      <StatsContainer>
+        <StatRow>
+          <StatLabel>Per Second:</StatLabel>
+          <StatValue>{player.calculatePointsPerSecond()}</StatValue>
+        </StatRow>
+        <StatRow>
+          <StatLabel>Click Value:</StatLabel>
+          <StatValue>{player.clickValue}</StatValue>
+        </StatRow>
+        <StatRow>
+          <StatLabel>Total Clicks:</StatLabel>
+          <StatValue>{player.totalClicks.toLocaleString()}</StatValue>
+        </StatRow>
+      </StatsContainer>
+
+      <ClickButton onClick={click}>
+        CLICK
+      </ClickButton>
+    </ClickerContainer>
   )
 }
 

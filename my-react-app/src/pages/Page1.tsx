@@ -1,6 +1,5 @@
 import Body from "../components/Layout/Body";
 
-
 function Page1() {
 
   return (
