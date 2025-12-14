@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
-import Clicker from '../components/Clicker';
-import Home from '../components/Home';
-import Dashboard from '../components/Dashboard'
+import ClickerPanel from '../components/ClickerPanel';
+import UnitPanel from '../components/UnitPanel';
+import ShopPanel from '../components/ShopPanel'
 
 const MainContainer = styled.main`
   width: 100%;
@@ -22,9 +22,9 @@ function HomePage() {
 
   return (
         <MainContainer>
-            <Clicker/>
-            <Home/>
-            <Dashboard/>
+            <ClickerPanel/>
+            <UnitPanel/>
+            <ShopPanel/>
         </MainContainer>
   )
 }

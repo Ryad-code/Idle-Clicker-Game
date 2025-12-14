@@ -1,6 +1,6 @@
 import { Player } from './types';
 import type { UnitType } from './types';
-import { UNIT_CONFIG } from './gameConfig';
+import { UNIT_CONFIG } from './unitConfig';
 
 export function buyUnit(player: Player, unitType: UnitType): Player {
   const config = UNIT_CONFIG[unitType];

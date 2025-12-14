@@ -1,5 +1,5 @@
 import { useGame } from "../contexts";
-import { UNIT_CONFIG, UNIT_TYPES } from "../game/gameConfig";
+import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import type { UnitType } from "../game/types";
 import {
   HomeContainer,
@@ -11,9 +11,9 @@ import {
   EmptyState,
   Title,
   Subtitle
-} from "../styles/components/home.styles";
+} from "../styles/components/unitPanel.styles";
 
-function Home() {
+function UnitPanel() {
   const { player } = useGame();
   
   // Only show stats for units the player owns
@@ -62,4 +62,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default UnitPanel;

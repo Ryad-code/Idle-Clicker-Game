@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { Player, type UnitType } from '../game/types';
-import { loadPlayerFromDB, savePlayerToDB } from '../game/playerService';
+import { loadPlayerFromDB, savePlayerToDB } from '../game/gameServices';
 import { buyUnit as buyUnitLogic, sellUnit as sellUnitLogic } from '../game/gameLogic';
 
 interface GameContextValue {

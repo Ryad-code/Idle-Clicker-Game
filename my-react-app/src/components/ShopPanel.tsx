@@ -1,4 +1,4 @@
-import { UNIT_CONFIG, UNIT_TYPES } from "../game/gameConfig";
+import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import { useGame } from "../contexts";
 import type { UnitType } from "../game/types";
 import {
@@ -12,9 +12,9 @@ import {
   UnitRow,
   BuyButton,
   SmallSellButton
-} from "../styles/components/dashboard.styles";
+} from "../styles/components/shopPanel.styles";
 
-function Dashboard() {
+function ShopPanel() {
   const { player, buyUnit, sellUnit, save } = useGame();
 
   const handleManualSave = async () => {
@@ -76,4 +76,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard
+export default ShopPanel;

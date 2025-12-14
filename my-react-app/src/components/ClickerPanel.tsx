@@ -9,9 +9,9 @@ import {
   StatLabel,
   StatValue,
   ClickButton
-} from "../styles/components/clicker.styles";
+} from "../styles/components/clickerPanel.styles";
 
-function Clicker() {
+function ClickerPanel() {
   const { player, click, setPoints } = useGame();
 
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,4 +63,4 @@ function Clicker() {
   )
 }
 
-export default Clicker
+export default ClickerPanel
