@@ -62,10 +62,10 @@ export async function savePlayerToDB(userId: string, player: Player): Promise<vo
     const { error } = await supabase
       .from('players')
       .update({
-        points: player.points,
-        clickvalue: player.clickValue,
-        pointspersecond: player.pointsPerSecond,
-        totalclicks: player.totalClicks,
+        points: Math.floor(player.points),
+        clickvalue: Math.floor(player.clickValue),
+        pointspersecond: Math.floor(player.pointsPerSecond),
+        totalclicks: Math.floor(player.totalClicks),
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', userId);

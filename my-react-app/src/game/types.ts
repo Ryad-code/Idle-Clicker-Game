@@ -1,4 +1,4 @@
-export type UnitType = "unit1" | "unit2" | "unit3";
+export type UnitType = "unit1" | "unit2" | "unit3" | "unit4" | "unit5" | "unit6" | "unit7" | "unit8" | "unit9" | "unit10" | "unit11" | "unit12" | "unit13" | "unit14" | "unit15" | "unit16" | "unit17" | "unit18";
 
 export class Player {
   points: number;
@@ -77,8 +77,7 @@ export class Player {
 
   calculateUnitCost(type: UnitType, baseCost: number): number {
     const count = this.getUnitCount(type);
-    const growthRate = 1.03 + (count * 0.02);
-    return Math.round(baseCost * Math.pow(growthRate, count));
+    return Math.round(baseCost * Math.pow(1.15, count));
   }
 
   refreshDerivedStats(): void {

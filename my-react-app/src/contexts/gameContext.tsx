@@ -10,6 +10,7 @@ interface GameContextValue {
   buyUnit: (type: UnitType) => void;
   sellUnit: (type: UnitType) => void;
   save: () => Promise<void>;
+  setPoints: (points: number) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -56,6 +57,16 @@ export function GameProvider({ userId, children }: Props) {
     if (!userIdRef.current) return;
     await savePlayerToDB(userIdRef.current, player);
   }, [player]);
+
+  // Action: Set points (for testing)
+  const setPoints = useCallback((points: number) => {
+    setPlayer((prev) => {
+      const updated = Object.assign(new Player(), prev);
+      updated.units = [...prev.units];
+      updated.setPoints(points);
+      return updated;
+    });
+  }, []);
 
   // Load player data and start loops
   useEffect(() => {
@@ -129,6 +140,7 @@ export function GameProvider({ userId, children }: Props) {
     buyUnit,
     sellUnit,
     save,
+    setPoints,
   };
 
   return (

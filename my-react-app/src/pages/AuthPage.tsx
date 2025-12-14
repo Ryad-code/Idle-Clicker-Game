@@ -17,20 +17,18 @@ export default function AuthPage() {
   const [message, setMessage] = useState('');
 
   async function handleSignup() {
-    const { data, error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({ email, password });
     if (error) setMessage(error.message);
     else{
       setMessage('Signup successful! Check your email.');
-      console.log("Signup data: ", data)
     }
   }
 
   async function handleLogin() {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setMessage(error.message);
     else {
       setMessage('Login successful!');
-      console.log("login data: ", data)
     }
   }
 

@@ -16,22 +16,27 @@ import {
 function Home() {
   const { player } = useGame();
   
+  // Only show stats for units the player owns
+  const ownedUnitTypes = UNIT_TYPES.filter(type => player.getUnitCount(type) > 0);
+  
   return (
     <HomeContainer>
       <Title>My Units</Title>
-      <UnitStats>
-        {UNIT_TYPES.map((unitType: UnitType) => {
-          const meta = UNIT_CONFIG[unitType];
-          const count = player.getUnitCount(unitType);
-          
-          return (
-            <StatBox key={unitType}>
-              <StatEmoji>{meta.emoji}</StatEmoji>
-              <span>{meta.name}: {count}</span>
-            </StatBox>
-          );
-        })}
-      </UnitStats>
+      {ownedUnitTypes.length > 0 && (
+        <UnitStats>
+          {ownedUnitTypes.map((unitType: UnitType) => {
+            const meta = UNIT_CONFIG[unitType];
+            const count = player.getUnitCount(unitType);
+            
+            return (
+              <StatBox key={unitType}>
+                <StatEmoji>{meta.emoji}</StatEmoji>
+                <span>{meta.name}: {count}</span>
+              </StatBox>
+            );
+          })}
+        </UnitStats>
+      )}
       {player.units.length > 0 ? (
         <>
           <Subtitle>Total: {player.units.length} units</Subtitle>

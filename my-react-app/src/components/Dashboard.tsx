@@ -4,13 +4,14 @@ import type { UnitType } from "../game/types";
 import {
   DashboardContainer,
   ShopContainer,
-  ActionButton,
-  SellButton,
   ButtonLabel,
   ButtonPrice,
   ButtonInfo,
   SectionTitle,
-  SaveButton
+  SaveButton,
+  UnitRow,
+  BuyButton,
+  SmallSellButton
 } from "../styles/components/dashboard.styles";
 
 function Dashboard() {
@@ -20,54 +21,54 @@ function Dashboard() {
     await save();
   };
 
+  // Show unit if player owns it, can almost afford it, or it's one of the first two units
+  const isUnlocked = (unitType: UnitType) => {
+    if (unitType === 'unit1' || unitType === 'unit2') return true;
+    
+    const meta = UNIT_CONFIG[unitType];
+    const cost = player.calculateUnitCost(unitType, meta.cost);
+    const owned = player.getUnitCount(unitType);
+    return owned > 0 || player.points >= cost * 0.9;
+  };
+
+  const availableUnits = UNIT_TYPES.filter(isUnlocked);
+
   return (
     <DashboardContainer>
       <SaveButton onClick={handleManualSave}>
         💾 Save Progress
       </SaveButton>
       <ShopContainer>
-        <SectionTitle>BUY UNITS</SectionTitle>
-        {UNIT_TYPES.map((unitType: UnitType) => {
+        <SectionTitle>SHOP</SectionTitle>
+        {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
           const cost = player.calculateUnitCost(unitType, meta.cost);
           const canAfford = player.canAfford(cost);
           const owned = player.getUnitCount(unitType);
-          
-          return (
-            <ActionButton 
-              key={`buy-${unitType}`}
-              onClick={() => buyUnit(unitType)}
-              $disabled={!canAfford}
-              title={meta.description}
-            >
-              <ButtonLabel>
-                <span>{meta.emoji}</span>
-                <span>{meta.name}</span>
-                <ButtonInfo>({owned} owned)</ButtonInfo>
-              </ButtonLabel>
-              <ButtonPrice>{cost} pts</ButtonPrice>
-            </ActionButton>
-          );
-        })}
-        
-        <SectionTitle>SELL UNITS</SectionTitle>
-        {UNIT_TYPES.map((unitType: UnitType) => {
-          const meta = UNIT_CONFIG[unitType];
-          const owned = player.getUnitCount(unitType);
           const canSell = owned > 0;
           
           return (
-            <SellButton 
-              key={`sell-${unitType}`}
-              onClick={() => sellUnit(unitType)}
-              $disabled={!canSell}
-            >
-              <ButtonLabel>
-                <span>{meta.emoji}</span>
-                <span>Sell {meta.name}</span>
-              </ButtonLabel>
-              <ButtonPrice>+{meta.refund} pts</ButtonPrice>
-            </SellButton>
+            <UnitRow key={unitType}>
+              <BuyButton 
+                onClick={() => buyUnit(unitType)}
+                $disabled={!canAfford}
+                title={meta.description}
+              >
+                <ButtonLabel>
+                  <span>{meta.emoji}</span>
+                  <span>{meta.name}</span>
+                  <ButtonInfo>({owned})</ButtonInfo>
+                </ButtonLabel>
+                <ButtonPrice>{cost}</ButtonPrice>
+              </BuyButton>
+              <SmallSellButton 
+                onClick={() => sellUnit(unitType)}
+                $disabled={!canSell}
+                title={`Sell for ${meta.refund} pts`}
+              >
+                Sell ({meta.refund})
+              </SmallSellButton>
+            </UnitRow>
           );
         })}
       </ShopContainer>
