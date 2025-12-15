@@ -3,7 +3,6 @@ import { theme } from "../theme";
 
 export const DashboardContainer = styled.div`
   width: 100%;
-  max-width: 480px;
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing.lg};

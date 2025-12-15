@@ -10,7 +10,6 @@ import {
   StatBox,
   StatEmoji,
   EmptyState,
-  Title,
   Subtitle
 } from "../styles/components/unitPanel.styles";
 
@@ -23,7 +22,6 @@ function UnitPanel() {
   return (
     <HomeContainer>
       {error && <ErrorMessage message={error} />}
-      <Title>My Units</Title>
       {ownedUnitTypes.length > 0 && (
         <UnitStats>
           {ownedUnitTypes.map((unitType: UnitType) => {

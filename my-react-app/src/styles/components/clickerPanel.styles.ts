@@ -3,7 +3,6 @@ import { theme } from "../theme";
 
 export const ClickerContainer = styled.div`
   width: 100%;
-  max-width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;

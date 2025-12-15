@@ -3,7 +3,6 @@ import { theme } from "../theme";
 
 export const HomeContainer = styled.div`
   width: 100%;
-  max-width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;

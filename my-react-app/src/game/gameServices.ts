@@ -22,7 +22,8 @@ export async function loadPlayerFromDB(userId: string): Promise<Player> {
     const player = new Player(
       data.points || 0,
       data.clickvalue || 1,
-      data.pointspersecond || 0
+      data.pointspersecond || 0,
+      data.created_at ? new Date(data.created_at) : new Date()
     );
     player.totalClicks = data.totalclicks || 0;
 

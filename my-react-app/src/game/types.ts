@@ -5,18 +5,21 @@ export class Player {
   pointsPerSecond: number;
   clickValue: number;
   totalClicks: number;
-  units: Unit[]
+  units: Unit[];
+  createdAt: Date;
 
   constructor(
     initialPoints: number = 0,
     clickValue: number = 1,
-    pointsPerSecond: number = 0
+    pointsPerSecond: number = 0,
+    createdAt: Date = new Date()
   ) {
     this.points = initialPoints;
     this.clickValue = clickValue;
     this.totalClicks = 0;
     this.pointsPerSecond = pointsPerSecond;
     this.units = [];
+    this.createdAt = createdAt;
   }
 
   click(): void {

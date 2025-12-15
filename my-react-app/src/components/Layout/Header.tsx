@@ -18,7 +18,7 @@ function Header() {
         <Button label="Home" onClick={() => navigate('/')} />
       </HomeBar>
       <NavBar>
-        <Button label="Page1" onClick={() => navigate('/page1')} />
+        <Button label="Stats" onClick={() => navigate('/stats')} />
         <Button label="Page2" onClick={() => navigate('/page2')} />
         <Button label="Logout" onClick={handleLogout} />
       </NavBar>

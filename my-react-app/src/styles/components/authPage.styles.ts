@@ -1,18 +1,20 @@
 import styled from 'styled-components';
 
 export const AuthContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: radial-gradient(circle at 20% 20%, #222 0, #111 50%, #0b0b0b 100%);
   color: #f5f5f5;
+  padding: 16px;
 `;
 
 export const FormCard = styled.div`
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   padding: 24px;
   border-radius: 16px;
   background: #151515;
@@ -21,6 +23,11 @@ export const FormCard = styled.div`
   flex-direction: column;
   gap: 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+
+  @media (max-width: 768px) {
+    padding: 20px;
+    gap: 12px;
+  }
 `;
 
 export const Title = styled.h2`
