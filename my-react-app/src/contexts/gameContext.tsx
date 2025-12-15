@@ -1,8 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { Player, type UnitType } from '../game/types';
 import { loadPlayerFromDB, savePlayerToDB } from '../game/gameServices';
 import { buyUnit as buyUnitLogic, sellUnit as sellUnitLogic } from '../game/gameLogic';
+import { logError, getErrorMessage } from '../utils/errorUtils';
 
 interface GameContextValue {
   player: Player;
@@ -11,6 +12,8 @@ interface GameContextValue {
   sellUnit: (type: UnitType) => void;
   save: () => Promise<void>;
   setPoints: (points: number) => void;
+  error: string | null;
+  triggerError: (message: string) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -22,51 +25,39 @@ interface Props {
 
 export function GameProvider({ userId, children }: Props) {
   const [player, setPlayer] = useState<Player>(new Player());
+  const [error, setError] = useState<string | null>(null);
   const userIdRef = useRef<string | null>(null);
   const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Action: Handle click
-  const click = useCallback(() => {
-    setPlayer((prev) => {
-      const updated = Object.assign(new Player(), prev);
-      updated.units = [...prev.units];
-      updated.click();
-      return updated;
-    });
-  }, []);
+  const click = () => setPlayer((prev) => {
+    const updated = Object.assign(new Player(), prev);
+    updated.units = [...prev.units];
+    updated.click();
+    return updated;
+  });
 
-  // Action: Buy unit
-  const buyUnit = useCallback((type: UnitType) => {
-    setPlayer((prev) => {
-      const updated = buyUnitLogic(prev, type);
-      return updated;
-    });
-  }, []);
+  const buyUnit = (type: UnitType) => setPlayer((prev) => buyUnitLogic(prev, type));
 
-  // Action: Sell unit
-  const sellUnit = useCallback((type: UnitType) => {
-    setPlayer((prev) => {
-      const updated = sellUnitLogic(prev, type);
-      return updated;
-    });
-  }, []);
+  const sellUnit = (type: UnitType) => setPlayer((prev) => sellUnitLogic(prev, type));
 
-  // Action: Manual save
-  const save = useCallback(async () => {
-    if (!userIdRef.current) return;
-    await savePlayerToDB(userIdRef.current, player);
-  }, [player]);
+  const save = async () => {
+    try {
+      if (!userIdRef.current) return;
+      await savePlayerToDB(userIdRef.current, player);
+      setError(null);
+    } catch (err) {
+      logError('save', err);
+      setError(getErrorMessage(err));
+    }
+  };
 
-  // Action: Set points (for testing)
-  const setPoints = useCallback((points: number) => {
-    setPlayer((prev) => {
-      const updated = Object.assign(new Player(), prev);
-      updated.units = [...prev.units];
-      updated.setPoints(points);
-      return updated;
-    });
-  }, []);
+  const setPoints = (points: number) => setPlayer((prev) => {
+    const updated = Object.assign(new Player(), prev);
+    updated.units = [...prev.units];
+    updated.setPoints(points);
+    return updated;
+  });
 
   // Load player data and start loops
   useEffect(() => {
@@ -141,6 +132,8 @@ export function GameProvider({ userId, children }: Props) {
     sellUnit,
     save,
     setPoints,
+    error,
+    triggerError: (message: string) => setError(message),
   };
 
   return (

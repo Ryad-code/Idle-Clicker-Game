@@ -10,9 +10,10 @@ import {
   StatValue,
   ClickButton
 } from "../styles/components/clickerPanel.styles";
+import ErrorMessage from "./UI/ErrorMessage";
 
 function ClickerPanel() {
-  const { player, click, setPoints } = useGame();
+  const { player, click, setPoints, error } = useGame();
 
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -23,6 +24,7 @@ function ClickerPanel() {
 
   return (
     <ClickerContainer>
+      {error && <ErrorMessage message={error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
         <PointsValue>{Math.floor(player.points).toLocaleString()}</PointsValue>

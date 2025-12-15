@@ -1,6 +1,7 @@
 import { useGame } from "../contexts";
 import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import type { UnitType } from "../game/types";
+import ErrorMessage from "./UI/ErrorMessage";
 import {
   HomeContainer,
   UnitsGrid,
@@ -14,13 +15,14 @@ import {
 } from "../styles/components/unitPanel.styles";
 
 function UnitPanel() {
-  const { player } = useGame();
+  const { player, error } = useGame();
   
   // Only show stats for units the player owns
   const ownedUnitTypes = UNIT_TYPES.filter(type => player.getUnitCount(type) > 0);
   
   return (
     <HomeContainer>
+      {error && <ErrorMessage message={error} />}
       <Title>My Units</Title>
       {ownedUnitTypes.length > 0 && (
         <UnitStats>

@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient';
 import { Player, Unit, type UnitType } from './types';
+import { logError } from '../utils/errorUtils';
 
 /**
  * Fetch player data from Supabase and convert to Player instance
@@ -47,7 +48,7 @@ export async function loadPlayerFromDB(userId: string): Promise<Player> {
 
     return player;
   } catch (error) {
-    console.error('Failed to load player from DB:', error);
+    logError('loadPlayerFromDB', error);
     return new Player(); // Return default on error
   }
 }
@@ -110,7 +111,7 @@ export async function savePlayerToDB(userId: string, player: Player): Promise<vo
       if (upsertError) throw upsertError;
     }
   } catch (error) {
-    console.error('Failed to save player to DB:', error);
-    // Silently fail for now; could add user feedback later
+    logError('savePlayerToDB', error);
+    // Silently fail; user feedback handled in context
   }
 }

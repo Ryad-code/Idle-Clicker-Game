@@ -1,6 +1,7 @@
 import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import { useGame } from "../contexts";
 import type { UnitType } from "../game/types";
+import ErrorMessage from "./UI/ErrorMessage";
 import {
   DashboardContainer,
   ShopContainer,
@@ -15,7 +16,7 @@ import {
 } from "../styles/components/shopPanel.styles";
 
 function ShopPanel() {
-  const { player, buyUnit, sellUnit, save } = useGame();
+  const { player, buyUnit, sellUnit, save, error } = useGame();
 
   const handleManualSave = async () => {
     await save();
@@ -35,6 +36,7 @@ function ShopPanel() {
 
   return (
     <DashboardContainer>
+      {error && <ErrorMessage message={error} />}
       <SaveButton onClick={handleManualSave}>
         💾 Save Progress
       </SaveButton>
