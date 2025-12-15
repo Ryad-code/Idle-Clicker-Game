@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { Player, type UnitType } from '../game/types';
 import { UPGRADES } from '../game/upgradeConfig';
 import { loadPlayerFromDB, savePlayerToDB } from '../game/gameServices';
-import { buyUnit as buyUnitLogic, sellUnit as sellUnitLogic } from '../game/gameLogic';
+import { buyUnit as buyUnitLogic, sellUnit as sellUnitLogic, buyUpgrade as buyUpgradeLogic } from '../game/gameLogic';
 import { logError, getErrorMessage } from '../utils/errorUtils';
 
 interface GameContextValue {
@@ -30,7 +30,6 @@ export function GameProvider({ userId, children }: Props) {
   const [error, setError] = useState<string | null>(null);
   const userIdRef = useRef<string | null>(null);
   const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const saveIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const click = () => setPlayer((prev) => {
     const updated = Object.assign(new Player(), prev);
@@ -40,24 +39,35 @@ export function GameProvider({ userId, children }: Props) {
     return updated;
   });
 
-  const buyUnit = (type: UnitType) => setPlayer((prev) => buyUnitLogic(prev, type));
+  const buyUnit = (type: UnitType) => {
+    setPlayer((prev) => {
+      const updated = buyUnitLogic(prev, type);
+      if (updated !== prev && userIdRef.current) {
+        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
+      }
+      return updated;
+    });
+  };
 
-  const sellUnit = (type: UnitType) => setPlayer((prev) => sellUnitLogic(prev, type));
+  const sellUnit = (type: UnitType) => {
+    setPlayer((prev) => {
+      const updated = sellUnitLogic(prev, type);
+      if (updated !== prev && userIdRef.current) {
+        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
+      }
+      return updated;
+    });
+  };
 
-  const buyUpgrade = (upgradeId: string) => setPlayer((prev) => {
-    const upgrade = UPGRADES.find(u => u.id === upgradeId);
-    if (!upgrade) return prev;
-    if (!prev.canAfford(upgrade.cost)) return prev;
-
-    const updated = Object.assign(new Player(), prev);
-    updated.units = [...prev.units];
-    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
-
-    updated.removePoints(upgrade.cost);
-    updated.activeUpgrades.push({ upgradeId, purchasedAt: new Date() });
-    updated.refreshDerivedStats();
-    return updated;
-  });
+  const buyUpgrade = (upgradeId: string) => {
+    setPlayer((prev) => {
+      const updated = buyUpgradeLogic(prev, upgradeId);
+      if (updated !== prev && userIdRef.current) {
+        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
+      }
+      return updated;
+    });
+  };
 
   const save = async () => {
     try {
@@ -85,10 +95,6 @@ export function GameProvider({ userId, children }: Props) {
       if (tickIntervalRef.current) {
         clearInterval(tickIntervalRef.current);
         tickIntervalRef.current = null;
-      }
-      if (saveIntervalRef.current) {
-        clearInterval(saveIntervalRef.current);
-        saveIntervalRef.current = null;
       }
       return;
     }
@@ -127,30 +133,20 @@ export function GameProvider({ userId, children }: Props) {
       }, 1000);
     }
 
-    // Start auto-save loop (30s)
-    if (!saveIntervalRef.current) {
-      saveIntervalRef.current = setInterval(() => {
-        setPlayer((prevPlayer) => {
-          if (userIdRef.current) {
-            void savePlayerToDB(userIdRef.current, prevPlayer);
-          }
-          return prevPlayer;
-        });
-      }, 30000);
-    }
-
     return () => {
       cancelled = true;
       if (tickIntervalRef.current) {
         clearInterval(tickIntervalRef.current);
         tickIntervalRef.current = null;
       }
-      if (saveIntervalRef.current) {
-        clearInterval(saveIntervalRef.current);
-        saveIntervalRef.current = null;
+      // Save on unmount to ensure DB is up to date
+      if (userIdRef.current) {
+        savePlayerToDB(userIdRef.current, player).catch(err => 
+          logError('unmount-save', err)
+        );
       }
     };
-  }, [userId]);
+  }, [userId, player]);
 
   const value: GameContextValue = {
     player,

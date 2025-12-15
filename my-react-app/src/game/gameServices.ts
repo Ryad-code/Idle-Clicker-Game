@@ -1,6 +1,7 @@
 import { supabase } from '../supabaseClient';
 import { Player, Unit, type UnitType } from './types';
 import { logError } from '../utils/errorUtils';
+import { UPGRADES } from './upgradeConfig';
 
 /**
  * Fetch player data from Supabase and convert to Player instance
@@ -44,6 +45,30 @@ export async function loadPlayerFromDB(userId: string): Promise<Player> {
         row.value ?? 0
       )
     );
+
+    // Load active upgrades for this user
+    const { data: activeUpgrades, error: upgradesError } = await supabase
+      .from('active_upgrades')
+      .select('*')
+      .eq('player_id', userId);
+
+    if (upgradesError) throw upgradesError;
+
+    // Filter out expired upgrades and convert to player format
+    const now = Date.now();
+    const upgradesById = new Map(UPGRADES.map(u => [u.id, u]));
+    
+    player.activeUpgrades = (activeUpgrades || [])
+      .map(row => ({
+        upgradeId: row.upgrade_id,
+        purchasedAt: new Date(row.purchased_at)
+      }))
+      .filter(entry => {
+        const upgrade = upgradesById.get(entry.upgradeId);
+        if (!upgrade) return false;
+        const expiresAt = entry.purchasedAt.getTime() + upgrade.durationSeconds * 1000;
+        return expiresAt > now;
+      });
 
     player.refreshDerivedStats();
 
@@ -110,6 +135,28 @@ export async function savePlayerToDB(userId: string, player: Player): Promise<vo
         .upsert(payload);
 
       if (upsertError) throw upsertError;
+    }
+
+    // Sync active upgrades: delete all and insert current ones
+    const { error: deleteUpgradesError } = await supabase
+      .from('active_upgrades')
+      .delete()
+      .eq('player_id', userId);
+
+    if (deleteUpgradesError) throw deleteUpgradesError;
+
+    if (player.activeUpgrades && player.activeUpgrades.length > 0) {
+      const upgradesPayload = player.activeUpgrades.map(u => ({
+        player_id: userId,
+        upgrade_id: u.upgradeId,
+        purchased_at: u.purchasedAt.toISOString(),
+      }));
+
+      const { error: insertUpgradesError } = await supabase
+        .from('active_upgrades')
+        .insert(upgradesPayload);
+
+      if (insertUpgradesError) throw insertUpgradesError;
     }
   } catch (error) {
     logError('savePlayerToDB', error);

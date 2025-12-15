@@ -1,6 +1,7 @@
 import { Player } from './types';
 import type { UnitType } from './types';
 import { UNIT_CONFIG } from './unitConfig';
+import { UPGRADES } from './upgradeConfig';
 
 export function buyUnit(player: Player, unitType: UnitType): Player {
   const config = UNIT_CONFIG[unitType];
@@ -24,6 +25,21 @@ export function sellUnit(player: Player, unitType: UnitType): Player {
     return newPlayer;
   }
   return player;
+}
+
+export function buyUpgrade(player: Player, upgradeId: string): Player {
+  const upgrade = UPGRADES.find(u => u.id === upgradeId);
+  if (!upgrade) return player;
+  if (!player.canAfford(upgrade.cost)) return player;
+
+  const newPlayer = Object.assign(new Player(), player);
+  newPlayer.units = [...player.units];
+  newPlayer.activeUpgrades = [...(player.activeUpgrades || [])];
+
+  newPlayer.removePoints(upgrade.cost);
+  newPlayer.activeUpgrades.push({ upgradeId, purchasedAt: new Date() });
+  newPlayer.refreshDerivedStats();
+  return newPlayer;
 }
 
 
