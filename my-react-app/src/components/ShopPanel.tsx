@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import { useGame } from "../contexts";
 import type { UnitType } from "../game/types";
@@ -26,23 +26,13 @@ import {
 } from "../styles/components/shopPanel.styles";
 
 function ShopPanel() {
-  const { player, buyUnit, sellUnit, error } = useGame();
-  const [reloadKey, setReloadKey] = useState(0);
-
-  // Select 3 random upgrades using seeded random based on reloadKey
-  const selectedUpgrades = useMemo(() => {
-    const seed = reloadKey * 12345 + 6789;
-    const random = (index: number) => {
-      const x = Math.sin(seed + index) * 10000;
-      return x - Math.floor(x);
-    };
-
-    const shuffled = [...UPGRADES].sort(() => random(0) - 0.5);
-    return shuffled.slice(0, 3);
-  }, [reloadKey]);
+  const { player, buyUnit, sellUnit, buyUpgrade, error } = useGame();
+  const [selectedUpgrades, setSelectedUpgrades] = useState(() => 
+    [...UPGRADES].sort(() => Math.random() - 0.5).slice(0, 3)
+  );
 
   const handleReloadUpgrades = () => {
-    setReloadKey(prev => prev + 1);
+    setSelectedUpgrades([...UPGRADES].sort(() => Math.random() - 0.5).slice(0, 3));
   };
 
   // Show unit if player owns it, can almost afford it, or it's one of the first two units
@@ -69,17 +59,28 @@ function ShopPanel() {
             </ReloadButton>
           </div>
           <UpgradeGrid>
-            {selectedUpgrades.map((upgrade: Upgrade) => (
-              <UpgradeCard key={upgrade.id}>
-                <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
-                <UpgradeName>{upgrade.name}</UpgradeName>
-                <UpgradeInfo>
-                  <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
-                  <UpgradeCost>{upgrade.cost} pts</UpgradeCost>
-                  <span>{upgrade.durationSeconds}s</span>
-                </UpgradeInfo>
-              </UpgradeCard>
-            ))}
+            {selectedUpgrades.map((upgrade: Upgrade) => {
+              const canAfford = player.canAfford(upgrade.cost);
+              return (
+                <UpgradeCard
+                  key={upgrade.id}
+                  onClick={() => canAfford && buyUpgrade(upgrade.id)}
+                  style={{
+                    cursor: canAfford ? 'pointer' : 'not-allowed',
+                    opacity: canAfford ? 1 : 0.5,
+                  }}
+                  title={canAfford ? 'Click to buy' : 'Not enough points'}
+                >
+                  <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
+                  <UpgradeName>{upgrade.name}</UpgradeName>
+                  <UpgradeInfo>
+                    <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
+                    <UpgradeCost>{upgrade.cost} pts</UpgradeCost>
+                    <span>{upgrade.durationSeconds}s</span>
+                  </UpgradeInfo>
+                </UpgradeCard>
+              );
+            })}
           </UpgradeGrid>
         </UpgradeSection>
         <SectionTitle>SHOP</SectionTitle>

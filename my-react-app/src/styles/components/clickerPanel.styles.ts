@@ -92,3 +92,56 @@ export const ClickButton = styled.button`
     box-shadow: ${theme.shadows.md};
   }
 `;
+
+export const ActiveUpgradesContainer = styled.div`
+  width: 100%;
+  background-color: ${theme.colors.surface};
+  padding: ${theme.spacing.md};
+  border-radius: ${theme.radius.lg};
+  box-shadow: ${theme.shadows.sm};
+  border: 1px solid ${theme.colors.border};
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.sm};
+`;
+
+export const ActiveUpgradesTitle = styled.div`
+  font-size: ${theme.typography.fontSize.sm};
+  font-weight: ${theme.typography.fontWeight.semibold};
+  color: ${theme.colors.textSecondary};
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+export const ActiveUpgradeBadge = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: ${theme.spacing.sm};
+  background: ${theme.colors.muted};
+  color: ${theme.colors.textPrimary};
+  padding: ${theme.spacing.sm};
+  border-radius: ${theme.radius.md};
+  font-size: ${theme.typography.fontSize.sm};
+`;
+
+export const BadgeLeft = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+  font-weight: ${theme.typography.fontWeight.semibold};
+`;
+
+export const BadgeType = styled.span`
+  font-size: ${theme.typography.fontSize.xs};
+  text-transform: uppercase;
+  color: ${theme.colors.textSecondary};
+`;
+
+export const BadgeRight = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${theme.spacing.sm};
+  font-variant-numeric: tabular-nums;
+  color: ${theme.colors.textSecondary};
+`;

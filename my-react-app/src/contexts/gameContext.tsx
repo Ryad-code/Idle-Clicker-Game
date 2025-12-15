@@ -1,6 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { Player, type UnitType } from '../game/types';
+import { UPGRADES } from '../game/upgradeConfig';
 import { loadPlayerFromDB, savePlayerToDB } from '../game/gameServices';
 import { buyUnit as buyUnitLogic, sellUnit as sellUnitLogic } from '../game/gameLogic';
 import { logError, getErrorMessage } from '../utils/errorUtils';
@@ -10,6 +11,7 @@ interface GameContextValue {
   click: () => void;
   buyUnit: (type: UnitType) => void;
   sellUnit: (type: UnitType) => void;
+  buyUpgrade: (upgradeId: string) => void;
   save: () => Promise<void>;
   setPoints: (points: number) => void;
   error: string | null;
@@ -33,6 +35,7 @@ export function GameProvider({ userId, children }: Props) {
   const click = () => setPlayer((prev) => {
     const updated = Object.assign(new Player(), prev);
     updated.units = [...prev.units];
+    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
     updated.click();
     return updated;
   });
@@ -40,6 +43,21 @@ export function GameProvider({ userId, children }: Props) {
   const buyUnit = (type: UnitType) => setPlayer((prev) => buyUnitLogic(prev, type));
 
   const sellUnit = (type: UnitType) => setPlayer((prev) => sellUnitLogic(prev, type));
+
+  const buyUpgrade = (upgradeId: string) => setPlayer((prev) => {
+    const upgrade = UPGRADES.find(u => u.id === upgradeId);
+    if (!upgrade) return prev;
+    if (!prev.canAfford(upgrade.cost)) return prev;
+
+    const updated = Object.assign(new Player(), prev);
+    updated.units = [...prev.units];
+    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
+
+    updated.removePoints(upgrade.cost);
+    updated.activeUpgrades.push({ upgradeId, purchasedAt: new Date() });
+    updated.refreshDerivedStats();
+    return updated;
+  });
 
   const save = async () => {
     try {
@@ -55,6 +73,7 @@ export function GameProvider({ userId, children }: Props) {
   const setPoints = (points: number) => setPlayer((prev) => {
     const updated = Object.assign(new Player(), prev);
     updated.units = [...prev.units];
+    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
     updated.setPoints(points);
     return updated;
   });
@@ -91,6 +110,14 @@ export function GameProvider({ userId, children }: Props) {
         setPlayer((prev) => {
           const updated = Object.assign(new Player(), prev);
           updated.units = [...prev.units];
+          const now = Date.now();
+          const byId = new Map(UPGRADES.map(u => [u.id, u]));
+          updated.activeUpgrades = (prev.activeUpgrades || []).filter(entry => {
+            const u = byId.get(entry.upgradeId);
+            if (!u) return false;
+            const expiresAt = entry.purchasedAt.getTime() + u.durationSeconds * 1000;
+            return expiresAt > now;
+          });
           updated.refreshDerivedStats();
           if (updated.pointsPerSecond > 0) {
             updated.addPoints(updated.pointsPerSecond);
@@ -130,6 +157,7 @@ export function GameProvider({ userId, children }: Props) {
     click,
     buyUnit,
     sellUnit,
+    buyUpgrade,
     save,
     setPoints,
     error,

@@ -7,6 +7,10 @@ export interface Upgrade {
   durationSeconds: number;
 }
 
+export function getUpgradeKind(upgradeId: string): 'production' | 'click' {
+  return upgradeId.toLowerCase().startsWith('click') ? 'click' : 'production';
+}
+
 export const UPGRADES: Upgrade[] = [
   {
     id: 'upgrade1',
@@ -88,55 +92,86 @@ export const UPGRADES: Upgrade[] = [
     cost: 300,
     durationSeconds: 30,
   },
+  // Click upgrades mirroring production scaling
+  {
+    id: 'click1',
+    name: 'Spark (Click)',
+    icon: '⚡',
+    multiplier: 1.1,
+    cost: 10,
+    durationSeconds: 120,
+  },
+  {
+    id: 'click2',
+    name: 'Flame (Click)',
+    icon: '🔥',
+    multiplier: 1.2,
+    cost: 20,
+    durationSeconds: 120,
+  },
+  {
+    id: 'click3',
+    name: 'Inferno (Click)',
+    icon: '🌋',
+    multiplier: 1.3,
+    cost: 30,
+    durationSeconds: 120,
+  },
+  {
+    id: 'click4',
+    name: 'Surge (Click)',
+    icon: '💥',
+    multiplier: 1.5,
+    cost: 50,
+    durationSeconds: 90,
+  },
+  {
+    id: 'click5',
+    name: 'Turbo (Click)',
+    icon: '🚀',
+    multiplier: 1.75,
+    cost: 75,
+    durationSeconds: 90,
+  },
+  {
+    id: 'click6',
+    name: 'Overdrive (Click)',
+    icon: '⚙️',
+    multiplier: 2.0,
+    cost: 100,
+    durationSeconds: 60,
+  },
+  {
+    id: 'click7',
+    name: 'Blaze (Click)',
+    icon: '🔆',
+    multiplier: 2.5,
+    cost: 150,
+    durationSeconds: 60,
+  },
+  {
+    id: 'click8',
+    name: 'Supernova (Click)',
+    icon: '✨',
+    multiplier: 3.0,
+    cost: 200,
+    durationSeconds: 45,
+  },
+  {
+    id: 'click9',
+    name: 'Hyperdrive (Click)',
+    icon: '🌟',
+    multiplier: 3.5,
+    cost: 250,
+    durationSeconds: 45,
+  },
+  {
+    id: 'click10',
+    name: 'Apocalypse (Click)',
+    icon: '💫',
+    multiplier: 4.0,
+    cost: 300,
+    durationSeconds: 30,
+  },
 ];
 
-export interface ActiveUpgrade {
-  id: string;
-  purchasedAt: Date;
-  expiresAt: Date;
-  multiplier: number;
-}
-
-export function getCurrentWindowStart(): Date {
-  const now = new Date();
-  const start = new Date(now);
-  start.setMinutes(0);
-  start.setSeconds(0);
-  start.setMilliseconds(0);
-  return start;
-}
-
-export function isInUpgradeWindow(): boolean {
-  const now = new Date();
-  const windowStart = getCurrentWindowStart();
-  const windowEnd = new Date(windowStart.getTime() + 10 * 60 * 1000);
-  return now >= windowStart && now < windowEnd;
-}
-
-export function getTimeUntilNextWindow(): number {
-  const now = new Date();
-  const nextWindowStart = new Date(now);
-  nextWindowStart.setHours(nextWindowStart.getHours() + 1);
-  nextWindowStart.setMinutes(0);
-  nextWindowStart.setSeconds(0);
-  nextWindowStart.setMilliseconds(0);
-  return Math.max(0, nextWindowStart.getTime() - now.getTime());
-}
-
-export function selectUpgradesForWindow(windowStart: Date): string[] {
-  const seed = Math.floor(windowStart.getTime() / 1000);
-  const indices: number[] = [];
-  
-  // Seeded selection of 3 unique random upgrades
-  for (let i = 0; i < 3; i++) {
-    let randomIndex: number;
-    do {
-      const x = Math.sin(seed + i) * 10000;
-      const rand = x - Math.floor(x);
-      randomIndex = Math.floor(rand * UPGRADES.length);
-    } while (indices.includes(randomIndex));
-    indices.push(randomIndex);
-  }
-
-  return indices.map(i => UPGRADES[i].id);
-}
