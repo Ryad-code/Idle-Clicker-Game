@@ -180,3 +180,93 @@ export const SaveButton = styled.button`
     transform: translateY(0);
   }
 `;
+
+export const UpgradeSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.md};
+`;
+
+export const UpgradeGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: ${theme.spacing.md};
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const UpgradeCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: ${theme.spacing.xs};
+  padding: ${theme.spacing.sm};
+  background: ${theme.colors.background};
+  border: 1px solid ${theme.colors.border};
+  border-radius: ${theme.radius.md};
+  text-align: center;
+  transition: all ${theme.transition.fast};
+
+  &:hover {
+    border-color: ${theme.colors.primary};
+    box-shadow: ${theme.shadows.md};
+    transform: translateY(-2px);
+  }
+`;
+
+export const UpgradeIcon = styled.div`
+  font-size: 2rem;
+  line-height: 1;
+`;
+
+export const UpgradeName = styled.h4`
+  font-size: ${theme.typography.fontSize.sm};
+  font-weight: ${theme.typography.fontWeight.semibold};
+  margin: 0;
+  color: ${theme.colors.textPrimary};
+`;
+
+export const UpgradeInfo = styled.div`
+  font-size: ${theme.typography.fontSize.xs};
+  color: ${theme.colors.textSecondary};
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+`;
+
+export const UpgradeMultiplier = styled.span`
+  color: ${theme.colors.success};
+  font-weight: ${theme.typography.fontWeight.semibold};
+`;
+
+export const UpgradeCost = styled.span`
+  color: ${theme.colors.warning};
+  font-weight: ${theme.typography.fontWeight.semibold};
+`;
+
+export const ReloadButton = styled.button`
+  padding: ${theme.spacing.sm} ${theme.spacing.md};
+  background: ${theme.colors.primary};
+  color: ${theme.colors.white};
+  border: none;
+  border-radius: ${theme.radius.md};
+  cursor: pointer;
+  font-weight: ${theme.typography.fontWeight.medium};
+  font-size: ${theme.typography.fontSize.sm};
+  font-family: ${theme.typography.fontFamily};
+  transition: all ${theme.transition.fast};
+  align-self: flex-start;
+
+  &:hover {
+    background: ${theme.colors.primaryHover};
+    transform: translateY(-1px);
+    box-shadow: ${theme.shadows.md};
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+

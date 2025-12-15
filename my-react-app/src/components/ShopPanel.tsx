@@ -1,6 +1,8 @@
+import { useState, useMemo } from "react";
 import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
 import { useGame } from "../contexts";
 import type { UnitType } from "../game/types";
+import { UPGRADES, type Upgrade } from "../game/upgradeConfig";
 import ErrorMessage from "./UI/ErrorMessage";
 import {
   DashboardContainer,
@@ -9,17 +11,38 @@ import {
   ButtonPrice,
   ButtonInfo,
   SectionTitle,
-  SaveButton,
   UnitRow,
   BuyButton,
-  SmallSellButton
+  SmallSellButton,
+  UpgradeSection,
+  UpgradeGrid,
+  UpgradeCard,
+  UpgradeIcon,
+  UpgradeName,
+  UpgradeInfo,
+  UpgradeMultiplier,
+  UpgradeCost,
+  ReloadButton
 } from "../styles/components/shopPanel.styles";
 
 function ShopPanel() {
-  const { player, buyUnit, sellUnit, save, error } = useGame();
+  const { player, buyUnit, sellUnit, error } = useGame();
+  const [reloadKey, setReloadKey] = useState(0);
 
-  const handleManualSave = async () => {
-    await save();
+  // Select 3 random upgrades using seeded random based on reloadKey
+  const selectedUpgrades = useMemo(() => {
+    const seed = reloadKey * 12345 + 6789;
+    const random = (index: number) => {
+      const x = Math.sin(seed + index) * 10000;
+      return x - Math.floor(x);
+    };
+
+    const shuffled = [...UPGRADES].sort(() => random(0) - 0.5);
+    return shuffled.slice(0, 3);
+  }, [reloadKey]);
+
+  const handleReloadUpgrades = () => {
+    setReloadKey(prev => prev + 1);
   };
 
   // Show unit if player owns it, can almost afford it, or it's one of the first two units
@@ -37,10 +60,28 @@ function ShopPanel() {
   return (
     <DashboardContainer>
       {error && <ErrorMessage message={error} />}
-      <SaveButton onClick={handleManualSave}>
-        💾 Save Progress
-      </SaveButton>
       <ShopContainer>
+        <UpgradeSection>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <SectionTitle>UPGRADES</SectionTitle>
+            <ReloadButton onClick={handleReloadUpgrades}>
+              🔄 Reload
+            </ReloadButton>
+          </div>
+          <UpgradeGrid>
+            {selectedUpgrades.map((upgrade: Upgrade) => (
+              <UpgradeCard key={upgrade.id}>
+                <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
+                <UpgradeName>{upgrade.name}</UpgradeName>
+                <UpgradeInfo>
+                  <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
+                  <UpgradeCost>{upgrade.cost} pts</UpgradeCost>
+                  <span>{upgrade.durationSeconds}s</span>
+                </UpgradeInfo>
+              </UpgradeCard>
+            ))}
+          </UpgradeGrid>
+        </UpgradeSection>
         <SectionTitle>SHOP</SectionTitle>
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
