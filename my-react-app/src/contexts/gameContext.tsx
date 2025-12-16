@@ -15,7 +15,6 @@ interface GameContextValue {
   save: () => Promise<void>;
   setPoints: (points: number) => void;
   error: string | null;
-  triggerError: (message: string) => void;
 }
 
 const GameContext = createContext<GameContextValue | null>(null);
@@ -29,22 +28,40 @@ export function GameProvider({ userId, children }: Props) {
   const [player, setPlayer] = useState<Player>(new Player());
   const [error, setError] = useState<string | null>(null);
   const userIdRef = useRef<string | null>(null);
+  const playerRef = useRef<Player>(new Player());
   const tickIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const click = () => setPlayer((prev) => {
-    const updated = Object.assign(new Player(), prev);
-    updated.units = [...prev.units];
-    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
-    updated.click();
-    return updated;
-  });
+  // Helper: Schedule debounced save
+  const scheduleSave = () => {
+    if (!userIdRef.current) return;
+    
+    if (saveTimeoutRef.current) {
+      clearTimeout(saveTimeoutRef.current);
+    }
+    
+    saveTimeoutRef.current = setTimeout(() => {
+      if (userIdRef.current) {
+        savePlayerToDB(userIdRef.current, playerRef.current)
+          .catch(err => logError('debounced-save', err));
+      }
+    }, 1000);
+  };
+
+  const click = () => {
+    setPlayer((prev) => {
+      const updated = Object.assign(new Player(), prev);
+      updated.units = [...prev.units];
+      updated.activeUpgrades = [...(prev.activeUpgrades || [])];
+      updated.click();
+      return updated;
+    });
+  };
 
   const buyUnit = (type: UnitType) => {
     setPlayer((prev) => {
       const updated = buyUnitLogic(prev, type);
-      if (updated !== prev && userIdRef.current) {
-        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
-      }
+      if (updated !== prev) scheduleSave();
       return updated;
     });
   };
@@ -52,9 +69,7 @@ export function GameProvider({ userId, children }: Props) {
   const sellUnit = (type: UnitType) => {
     setPlayer((prev) => {
       const updated = sellUnitLogic(prev, type);
-      if (updated !== prev && userIdRef.current) {
-        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
-      }
+      if (updated !== prev) scheduleSave();
       return updated;
     });
   };
@@ -62,9 +77,7 @@ export function GameProvider({ userId, children }: Props) {
   const buyUpgrade = (upgradeId: string) => {
     setPlayer((prev) => {
       const updated = buyUpgradeLogic(prev, upgradeId);
-      if (updated !== prev && userIdRef.current) {
-        queueMicrotask(() => savePlayerToDB(userIdRef.current!, updated));
-      }
+      if (updated !== prev) scheduleSave();
       return updated;
     });
   };
@@ -72,7 +85,7 @@ export function GameProvider({ userId, children }: Props) {
   const save = async () => {
     try {
       if (!userIdRef.current) return;
-      await savePlayerToDB(userIdRef.current, player);
+      await savePlayerToDB(userIdRef.current, playerRef.current);
       setError(null);
     } catch (err) {
       logError('save', err);
@@ -80,13 +93,20 @@ export function GameProvider({ userId, children }: Props) {
     }
   };
 
-  const setPoints = (points: number) => setPlayer((prev) => {
-    const updated = Object.assign(new Player(), prev);
-    updated.units = [...prev.units];
-    updated.activeUpgrades = [...(prev.activeUpgrades || [])];
-    updated.setPoints(points);
-    return updated;
-  });
+  const setPoints = (points: number) => {
+    setPlayer((prev) => {
+      const updated = Object.assign(new Player(), prev);
+      updated.units = [...prev.units];
+      updated.activeUpgrades = [...(prev.activeUpgrades || [])];
+      updated.setPoints(points);
+      return updated;
+    });
+  };
+
+  // Keep playerRef in sync and log debug info
+  useEffect(() => {
+    playerRef.current = player;
+  }, [player]);
 
   // Load player data and start loops
   useEffect(() => {
@@ -135,18 +155,25 @@ export function GameProvider({ userId, children }: Props) {
 
     return () => {
       cancelled = true;
+      
+      // Clear intervals and timeouts
       if (tickIntervalRef.current) {
         clearInterval(tickIntervalRef.current);
         tickIntervalRef.current = null;
       }
-      // Save on unmount to ensure DB is up to date
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+        saveTimeoutRef.current = null;
+      }
+      
+      // Final save on unmount
       if (userIdRef.current) {
-        savePlayerToDB(userIdRef.current, player).catch(err => 
+        savePlayerToDB(userIdRef.current, playerRef.current).catch(err => 
           logError('unmount-save', err)
         );
       }
     };
-  }, [userId, player]);
+  }, [userId]);
 
   const value: GameContextValue = {
     player,
@@ -157,7 +184,6 @@ export function GameProvider({ userId, children }: Props) {
     save,
     setPoints,
     error,
-    triggerError: (message: string) => setError(message),
   };
 
   return (

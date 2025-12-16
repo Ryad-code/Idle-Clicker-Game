@@ -118,8 +118,6 @@ export class Player {
 
   // Setters
   setPoints(value: number): void { this.points = value; }
-  setClickValue(value: number): void { this.clickValue = value; }
-  setPointsPerSecond(value: number): void { this.pointsPerSecond = value; }
 }
 
 export class Unit {
@@ -141,13 +139,6 @@ export class Unit {
     this.value = value;
   }
 
-  moveTo(x: number, y: number): void {
-    this.position = { x, y };
-  }
-
-  // Setters
-  setType(type: UnitType): void { this.type = type; }
-  setValue(value: number): void { this.value = value; }
 }
 
 
