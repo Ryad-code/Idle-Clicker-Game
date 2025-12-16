@@ -72,11 +72,11 @@ function ClickerPanel() {
       <StatsContainer>
         <StatRow>
           <StatLabel>Per Second:</StatLabel>
-          <StatValue>{player.calculatePointsPerSecond()}</StatValue>
+          <StatValue>{Math.floor(player.calculatePointsPerSecond())}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Click Value:</StatLabel>
-          <StatValue>{player.clickValue}</StatValue>
+          <StatValue>{Math.floor(player.clickValue)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Total Clicks:</StatLabel>

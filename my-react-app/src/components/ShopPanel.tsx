@@ -60,16 +60,23 @@ function ShopPanel() {
           </div>
           <UpgradeGrid>
             {selectedUpgrades.map((upgrade: Upgrade) => {
+              const isActive = player.activeUpgrades?.some(au => au.upgradeId === upgrade.id);
               const canAfford = player.canAfford(upgrade.cost);
+              const canBuy = canAfford && !isActive;
+              
               return (
                 <UpgradeCard
                   key={upgrade.id}
-                  onClick={() => canAfford && buyUpgrade(upgrade.id)}
+                  onClick={() => canBuy && buyUpgrade(upgrade.id)}
                   style={{
-                    cursor: canAfford ? 'pointer' : 'not-allowed',
-                    opacity: canAfford ? 1 : 0.5,
+                    cursor: canBuy ? 'pointer' : 'not-allowed',
+                    opacity: canBuy ? 1 : 0.5,
                   }}
-                  title={canAfford ? 'Click to buy' : 'Not enough points'}
+                  title={
+                    isActive ? 'Already active' : 
+                    canAfford ? 'Click to buy' : 
+                    'Not enough points'
+                  }
                 >
                   <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
                   <UpgradeName>{upgrade.name}</UpgradeName>

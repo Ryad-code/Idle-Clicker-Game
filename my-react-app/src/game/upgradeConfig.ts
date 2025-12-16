@@ -95,7 +95,7 @@ export const UPGRADES: Upgrade[] = [
   // Click upgrades mirroring production scaling
   {
     id: 'click1',
-    name: 'Spark (Click)',
+    name: 'Spark',
     icon: '⚡',
     multiplier: 1.1,
     cost: 10,
@@ -103,7 +103,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click2',
-    name: 'Flame (Click)',
+    name: 'Flame',
     icon: '🔥',
     multiplier: 1.2,
     cost: 20,
@@ -111,7 +111,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click3',
-    name: 'Inferno (Click)',
+    name: 'Inferno',
     icon: '🌋',
     multiplier: 1.3,
     cost: 30,
@@ -119,7 +119,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click4',
-    name: 'Surge (Click)',
+    name: 'Surge',
     icon: '💥',
     multiplier: 1.5,
     cost: 50,
@@ -127,7 +127,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click5',
-    name: 'Turbo (Click)',
+    name: 'Turbo',
     icon: '🚀',
     multiplier: 1.75,
     cost: 75,
@@ -135,7 +135,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click6',
-    name: 'Overdrive (Click)',
+    name: 'Overdrive',
     icon: '⚙️',
     multiplier: 2.0,
     cost: 100,
@@ -143,7 +143,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click7',
-    name: 'Blaze (Click)',
+    name: 'Blaze',
     icon: '🔆',
     multiplier: 2.5,
     cost: 150,
@@ -151,7 +151,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click8',
-    name: 'Supernova (Click)',
+    name: 'Supernova',
     icon: '✨',
     multiplier: 3.0,
     cost: 200,
@@ -159,7 +159,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click9',
-    name: 'Hyperdrive (Click)',
+    name: 'Hyperdrive',
     icon: '🌟',
     multiplier: 3.5,
     cost: 250,
@@ -167,7 +167,7 @@ export const UPGRADES: Upgrade[] = [
   },
   {
     id: 'click10',
-    name: 'Apocalypse (Click)',
+    name: 'Apocalypse',
     icon: '💫',
     multiplier: 4.0,
     cost: 300,
