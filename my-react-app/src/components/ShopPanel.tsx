@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
-import { useGame } from "../contexts";
-import type { UnitType } from "../game/types";
-import { UPGRADES, type Upgrade } from "../game/upgradeConfig";
+import { UNIT_CONFIG, UNIT_TYPES } from "../game/config/units";
+import { useGameState, useGameActions } from "../contexts";
+import type { UnitType } from "../game/core/types";
+import { calculateUnitCost } from "../game/core/calculations";
+import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import ErrorMessage from "./UI/ErrorMessage";
 import {
   DashboardContainer,
@@ -26,7 +27,8 @@ import {
 } from "../styles/components/shopPanel.styles";
 
 function ShopPanel() {
-  const { player, buyUnit, sellUnit, buyUpgrade, error } = useGame();
+  const { currency, inventory, upgrades, ui } = useGameState();
+  const { buyUnit, sellUnit, buyUpgrade } = useGameActions();
   const [selectedUpgrades, setSelectedUpgrades] = useState(() => 
     [...UPGRADES].sort(() => Math.random() - 0.5).slice(0, 3)
   );
@@ -40,16 +42,16 @@ function ShopPanel() {
     if (unitType === 'unit1' || unitType === 'unit2') return true;
     
     const meta = UNIT_CONFIG[unitType];
-    const cost = player.calculateUnitCost(unitType, meta.cost);
-    const owned = player.getUnitCount(unitType);
-    return owned > 0 || player.points >= cost * 0.9;
+    const cost = calculateUnitCost(inventory.units, unitType, meta.cost);
+    const owned = inventory.units.filter(u => u.type === unitType).length;
+    return owned > 0 || currency.points >= cost * 0.9;
   };
 
   const availableUnits = UNIT_TYPES.filter(isUnlocked);
 
   return (
     <DashboardContainer>
-      {error && <ErrorMessage message={error} />}
+      {ui.error && <ErrorMessage message={ui.error} />}
       <ShopContainer>
         <UpgradeSection>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -60,8 +62,8 @@ function ShopPanel() {
           </div>
           <UpgradeGrid>
             {selectedUpgrades.map((upgrade: Upgrade) => {
-              const isActive = player.activeUpgrades?.some(au => au.upgradeId === upgrade.id);
-              const canAfford = player.canAfford(upgrade.cost);
+              const isActive = upgrades.active.some(au => au.upgradeId === upgrade.id);
+              const canAfford = currency.points >= upgrade.cost;
               const canBuy = canAfford && !isActive;
               
               return (
@@ -93,9 +95,9 @@ function ShopPanel() {
         <SectionTitle>SHOP</SectionTitle>
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
-          const cost = player.calculateUnitCost(unitType, meta.cost);
-          const canAfford = player.canAfford(cost);
-          const owned = player.getUnitCount(unitType);
+          const cost = calculateUnitCost(inventory.units, unitType, meta.cost);
+          const canAfford = currency.points >= cost;
+          const owned = inventory.units.filter(u => u.type === unitType).length;
           const canSell = owned > 0;
           
           return (

@@ -1,6 +1,6 @@
-import { useGame } from "../contexts";
-import { UNIT_CONFIG, UNIT_TYPES } from "../game/unitConfig";
-import type { UnitType } from "../game/types";
+import { useGameState } from "../contexts";
+import { UNIT_CONFIG, UNIT_TYPES } from "../game/config/units";
+import type { UnitType } from "../game/core/types";
 import ErrorMessage from "./UI/ErrorMessage";
 import {
   HomeContainer,
@@ -14,19 +14,21 @@ import {
 } from "../styles/components/unitPanel.styles";
 
 function UnitPanel() {
-  const { player, error } = useGame();
+  const { inventory, ui } = useGameState();
   
   // Only show stats for units the player owns
-  const ownedUnitTypes = UNIT_TYPES.filter(type => player.getUnitCount(type) > 0);
+  const ownedUnitTypes = UNIT_TYPES.filter(type => 
+    inventory.units.filter(u => u.type === type).length > 0
+  );
   
   return (
     <HomeContainer>
-      {error && <ErrorMessage message={error} />}
+      {ui.error && <ErrorMessage message={ui.error} />}
       {ownedUnitTypes.length > 0 && (
         <UnitStats>
           {ownedUnitTypes.map((unitType: UnitType) => {
             const meta = UNIT_CONFIG[unitType];
-            const count = player.getUnitCount(unitType);
+            const count = inventory.units.filter(u => u.type === unitType).length;
             
             return (
               <StatBox key={unitType}>
@@ -37,11 +39,11 @@ function UnitPanel() {
           })}
         </UnitStats>
       )}
-      {player.units.length > 0 ? (
+      {inventory.units.length > 0 ? (
         <>
-          <Subtitle>Total: {player.units.length} units</Subtitle>
+          <Subtitle>Total: {inventory.units.length} units</Subtitle>
           <UnitsGrid>
-            {player.units.map(unit => {
+            {inventory.units.map(unit => {
               const meta = UNIT_CONFIG[unit.type];
               return (
                 <UnitCard 

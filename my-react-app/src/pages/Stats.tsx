@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
-import { useGame } from '../contexts';
+import { useGameState } from '../contexts';
 import { useEffect, useState } from 'react';
 
 const Container = styled.div`
@@ -71,12 +71,12 @@ const StatValue = styled.div`
 `;
 
 function Stats() {
-  const { player } = useGame();
+  const { currency, production, inventory, metadata } = useGameState();
   const [duration, setDuration] = useState('');
 
   useEffect(() => {
     const updateDuration = () => {
-      const elapsed = Date.now() - player.createdAt.getTime();
+      const elapsed = Date.now() - metadata.createdAt.getTime();
       const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
       const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
@@ -96,7 +96,7 @@ function Stats() {
     updateDuration();
     const interval = setInterval(updateDuration, 1000);
     return () => clearInterval(interval);
-  }, [player.createdAt]);
+  }, [metadata.createdAt]);
 
   return (
     <Container>
@@ -110,27 +110,27 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Total Points Earned</StatLabel>
-            <StatValue>{Math.floor(player.points).toLocaleString()}</StatValue>
+            <StatValue>{Math.floor(currency.points).toLocaleString()}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Total Clicks</StatLabel>
-            <StatValue>{player.totalClicks.toLocaleString()}</StatValue>
+            <StatValue>{currency.totalClicks.toLocaleString()}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Points Per Second</StatLabel>
-            <StatValue>{Math.floor(player.pointsPerSecond).toLocaleString()}</StatValue>
+            <StatValue>{Math.floor(production.pointsPerSecond).toLocaleString()}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Click Value</StatLabel>
-            <StatValue>{player.clickValue.toLocaleString()}</StatValue>
+            <StatValue>{production.clickValue.toLocaleString()}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Total Units Owned</StatLabel>
-            <StatValue>{player.units.length.toLocaleString()}</StatValue>
+            <StatValue>{inventory.units.length.toLocaleString()}</StatValue>
           </StatCard>
         </StatsGrid>
       </StatsContainer>

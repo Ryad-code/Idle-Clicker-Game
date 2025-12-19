@@ -1,5 +1,5 @@
-import { useGame } from "../contexts";
-import { UPGRADES, getUpgradeKind } from "../game/upgradeConfig";
+import { useGameState, useGameActions } from "../contexts";
+import { getUpgradeKind, UPGRADES } from "../game/config/upgrades";
 import { 
   ClickerContainer, 
   PointsDisplay, 
@@ -21,25 +21,29 @@ import {
 import ErrorMessage from "./UI/ErrorMessage";
 
 function ClickerPanel() {
-  const { player, click, setPoints, error } = useGame();
-  const activeUpgrades = (() => {
-    const now = Date.now();
-    const byId = new Map(UPGRADES.map(u => [u.id, u]));
-    return (player.activeUpgrades || [])
-      .map(pu => {
-        const upgrade = byId.get(pu.upgradeId);
-        if (!upgrade) return null;
-        const expiresAt = pu.purchasedAt.getTime() + upgrade.durationSeconds * 1000;
-        const remainingMs = expiresAt - now;
-        if (remainingMs <= 0) return null;
-        return {
-          ...upgrade,
-          kind: getUpgradeKind(upgrade.id),
-          remainingSeconds: Math.ceil(remainingMs / 1000),
-        };
-      })
-      .filter(Boolean) as Array<ReturnType<typeof Object.assign> & { kind: 'production' | 'click'; remainingSeconds: number }>;
-  })();
+  const { currency, production, upgrades, ui } = useGameState();
+  const { click, setPoints } = useGameActions();
+  
+  // Format active upgrades for display with remaining time
+  const now = Date.now();
+  const upgradeMap = new Map(UPGRADES.map(u => [u.id, u]));
+  
+  const activeUpgrades = upgrades.active
+    .map(pu => {
+      const upgrade = upgradeMap.get(pu.upgradeId);
+      if (!upgrade) return null;
+      
+      const expiresAt = pu.purchasedAt.getTime() + upgrade.durationSeconds * 1000;
+      const remainingMs = expiresAt - now;
+      if (remainingMs <= 0) return null;
+      
+      return {
+        ...upgrade,
+        kind: getUpgradeKind(upgrade.id),
+        remainingSeconds: Math.ceil(remainingMs / 1000),
+      };
+    })
+    .filter((item): item is NonNullable<typeof item> => item !== null);
 
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
@@ -50,10 +54,10 @@ function ClickerPanel() {
 
   return (
     <ClickerContainer>
-      {error && <ErrorMessage message={error} />}
+      {ui.error && <ErrorMessage message={ui.error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
-        <PointsValue>{Math.floor(player.points).toLocaleString()}</PointsValue>
+        <PointsValue>{Math.floor(currency.points).toLocaleString()}</PointsValue>
         <input 
           type="number" 
           placeholder="Set points (test)" 
@@ -72,15 +76,15 @@ function ClickerPanel() {
       <StatsContainer>
         <StatRow>
           <StatLabel>Per Second:</StatLabel>
-          <StatValue>{Math.floor(player.calculatePointsPerSecond())}</StatValue>
+          <StatValue>{Math.floor(production.pointsPerSecond)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Click Value:</StatLabel>
-          <StatValue>{Math.floor(player.clickValue)}</StatValue>
+          <StatValue>{Math.floor(production.clickValue)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Total Clicks:</StatLabel>
-          <StatValue>{player.totalClicks.toLocaleString()}</StatValue>
+          <StatValue>{currency.totalClicks.toLocaleString()}</StatValue>
         </StatRow>
       </StatsContainer>
 

@@ -1,4 +1,4 @@
-import type { UnitType } from './types';
+import type { UnitType } from '../core/types';
 
 /**
  * Complete metadata for each unit type in the game

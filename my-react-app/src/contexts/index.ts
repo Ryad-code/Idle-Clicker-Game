@@ -1,1 +1,1 @@
-export { GameProvider, useGame } from './gameContext';
+export { GameProvider, useGame, useGameState, useGameActions } from './GameProvider';
