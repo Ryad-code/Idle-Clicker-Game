@@ -8,12 +8,9 @@ import {
 } from '../game/core/calculations';
 import { UNIT_CONFIG } from '../game/config/units';
 import { UPGRADES } from '../game/config/upgrades';
-import { logError, getErrorMessage } from '../utils/errorUtils';
-import { savePlayerToDB } from '../game/services/database';
 
 /**
  * Action functions for game state updates
- * Called directly by GameProvider
  */
 
 export function clickAction(setState: Dispatch<SetStateAction<GameState>>) {
@@ -29,7 +26,6 @@ export function clickAction(setState: Dispatch<SetStateAction<GameState>>) {
 
 export function buyUnitAction(
   setState: Dispatch<SetStateAction<GameState>>,
-  scheduleSave: () => void,
   type: UnitType
 ) {
   setState(prev => {
@@ -42,8 +38,6 @@ export function buyUnitAction(
     const newUnits = [...prev.inventory.units, newUnit];
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
-    
-    scheduleSave();
     
     return {
       ...prev,
@@ -64,7 +58,6 @@ export function buyUnitAction(
 
 export function sellUnitAction(
   setState: Dispatch<SetStateAction<GameState>>,
-  scheduleSave: () => void,
   type: UnitType
 ) {
   setState(prev => {
@@ -75,8 +68,6 @@ export function sellUnitAction(
     const newUnits = prev.inventory.units.filter(u => u.id !== lastUnit.id);
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
-    
-    scheduleSave();
     
     return {
       ...prev,
@@ -97,7 +88,6 @@ export function sellUnitAction(
 
 export function buyUpgradeAction(
   setState: Dispatch<SetStateAction<GameState>>,
-  scheduleSave: () => void,
   upgradeId: string
 ) {
   setState(prev => {
@@ -108,8 +98,6 @@ export function buyUpgradeAction(
     const newUpgrades = [...prev.upgrades.active, { upgradeId, purchasedAt: new Date() }];
     const newProduction = calculateProduction(prev.inventory.units, newUpgrades);
     const newClickValue = calculateClickValue(newProduction, newUpgrades);
-    
-    scheduleSave();
     
     return {
       ...prev,
@@ -126,31 +114,6 @@ export function buyUpgradeAction(
       },
     };
   });
-}
-
-export async function saveAction(
-  setState: Dispatch<SetStateAction<GameState>>,
-  userIdRef: React.RefObject<string | null>,
-  stateRef: React.RefObject<GameState>
-) {
-  try {
-    if (!userIdRef.current) return;
-    
-    setState(prev => ({ ...prev, ui: { ...prev.ui, isSaving: true } }));
-    
-    await savePlayerToDB(userIdRef.current, stateRef.current!);
-    
-    setState(prev => ({ 
-      ...prev, 
-      ui: { ...prev.ui, isSaving: false, error: null } 
-    }));
-  } catch (err) {
-    logError('save', err);
-    setState(prev => ({ 
-      ...prev, 
-      ui: { ...prev.ui, isSaving: false, error: getErrorMessage(err) } 
-    }));
-  }
 }
 
 export function setPointsAction(

@@ -9,7 +9,6 @@ import {
   buyUnitAction,
   sellUnitAction,
   buyUpgradeAction,
-  saveAction,
   setPointsAction,
 } from './gameActions';
 
@@ -40,8 +39,8 @@ interface Props {
 export function GameProvider({ userId, children }: Props) {
   const [state, setState] = useState<GameState>(createDefaultState());
 
-  // Manage persistence (load/save/auto-save)
-  const { userIdRef, stateRef, scheduleSave } = useGamePersistence(userId, state, setState);
+  // Manage persistence (load/auto-save)
+  const { save } = useGamePersistence(userId, state, setState);
 
   // Manage game tick (points per second, upgrade expiration)
   useGameTick(userId, setState);
@@ -49,12 +48,12 @@ export function GameProvider({ userId, children }: Props) {
   // Create stable action references
   const actions = useMemo<GameActions>(() => ({
     click: () => clickAction(setState),
-    buyUnit: (type) => buyUnitAction(setState, scheduleSave, type),
-    sellUnit: (type) => sellUnitAction(setState, scheduleSave, type),
-    buyUpgrade: (upgradeId) => buyUpgradeAction(setState, scheduleSave, upgradeId),
-    save: () => saveAction(setState, userIdRef, stateRef),
+    buyUnit: (type) => buyUnitAction(setState, type),
+    sellUnit: (type) => sellUnitAction(setState, type),
+    buyUpgrade: (upgradeId) => buyUpgradeAction(setState, upgradeId),
+    save,
     setPoints: (points) => setPointsAction(setState, points),
-  }), [scheduleSave, userIdRef, stateRef]);
+  }), [save]);
 
   return (
     <GameStateContext.Provider value={state}>
