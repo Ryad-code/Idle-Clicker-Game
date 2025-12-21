@@ -79,7 +79,7 @@ export function useGamePersistence(
   }, [userId]);
 
   // ----------------------------
-  // No save on unmount
+  // No more save on unmount
   // ----------------------------
 
   // Expose a manual save function

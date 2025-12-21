@@ -21,11 +21,6 @@ export const CLICK_VALUE_RATIO = 0.05;
 export const MIN_CLICK_VALUE = 1;
 
 /**
- * Auto-save debounce delay in milliseconds
- */
-export const AUTO_SAVE_DELAY_MS = 1000;
-
-/**
  * Game tick interval in milliseconds
  * How often the game updates production and checks upgrade expiration
  */
