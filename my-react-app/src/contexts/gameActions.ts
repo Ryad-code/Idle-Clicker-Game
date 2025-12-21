@@ -34,7 +34,21 @@ export function buyUnitAction(
     
     if (prev.currency.points < cost) return prev;
     
-    const newUnit = new Unit(crypto.randomUUID(), type, 0, 0, config.value);
+    // Find next available grid position
+    const GRID_ROWS = 10;
+    const GRID_COLS = 10;
+    const occupied = new Set(prev.inventory.units.map(u => `${u.position.x},${u.position.y}`));
+    let pos = { x: 0, y: 0 };
+    let found = false;
+    for (let y = 0; y < GRID_ROWS && !found; y++) {
+      for (let x = 0; x < GRID_COLS && !found; x++) {
+        if (!occupied.has(`${x},${y}`)) {
+          pos = { x, y };
+          found = true;
+        }
+      }
+    }
+    const newUnit = new Unit(crypto.randomUUID(), type, pos.x, pos.y, config.value);
     const newUnits = [...prev.inventory.units, newUnit];
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
