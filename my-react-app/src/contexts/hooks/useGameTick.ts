@@ -26,6 +26,7 @@ export function useGameTick(
     // Start game tick if not already running
     if (!tickIntervalRef.current) {
       tickIntervalRef.current = setInterval(() => {
+        console.log("tick")
         setState(prev => {
           // Filter expired upgrades
           const filteredUpgrades = filterExpiredUpgrades(prev.upgrades.active);

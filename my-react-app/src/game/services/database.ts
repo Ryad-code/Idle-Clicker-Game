@@ -100,6 +100,7 @@ export async function savePlayerToDB(userId: string, state: GameState): Promise<
 
       if (insertUpgradesError) throw insertUpgradesError;
     }
+    console.log("savePlayerToDB: ", { player, units, upgrades });
   } catch (error) {
     logError('savePlayerToDB', error);
     throw error;

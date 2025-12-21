@@ -81,7 +81,7 @@ function ShopPanel() {
                   }
                 >
                   <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
-                  <UpgradeName>{upgrade.name}</UpgradeName>
+                  <UpgradeName>{upgrade.id}</UpgradeName>
                   <UpgradeInfo>
                     <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
                     <UpgradeCost>{upgrade.cost} pts</UpgradeCost>
@@ -92,7 +92,7 @@ function ShopPanel() {
             })}
           </UpgradeGrid>
         </UpgradeSection>
-        <SectionTitle>SHOP</SectionTitle>
+        <SectionTitle>UNITS</SectionTitle>
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
           const cost = calculateUnitCost(inventory.units, unitType, meta.cost);
@@ -105,7 +105,7 @@ function ShopPanel() {
               <BuyButton 
                 onClick={() => buyUnit(unitType)}
                 $disabled={!canAfford}
-                title={meta.description}
+                title={meta.description + meta.value}
               >
                 <ButtonLabel>
                   <span>{meta.emoji}</span>
