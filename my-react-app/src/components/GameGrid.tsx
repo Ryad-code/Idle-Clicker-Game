@@ -2,8 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 
-export const GRID_ROWS = 10;
-export const GRID_COLS = 10;
+import { GRID_ROWS, GRID_COLS } from "../game/config/grid";
 
 const GridContainer = styled.div`
   display: grid;
