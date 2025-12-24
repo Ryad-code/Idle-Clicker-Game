@@ -26,7 +26,3 @@ export const MIN_CLICK_VALUE = 1;
  */
 export const GAME_TICK_INTERVAL_MS = 1000;
 
-/**
- * Unit refund percentage (0.5 = 50% refund)
- */
-export const UNIT_REFUND_PERCENTAGE = 0.5;

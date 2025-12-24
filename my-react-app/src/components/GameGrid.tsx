@@ -1,49 +1,81 @@
-import React from "react";
-import styled from "styled-components";
-
-
-import { GRID_ROWS, GRID_COLS } from "../game/config/grid";
-
-const GridContainer = styled.div`
-  display: grid;
-  grid-template-rows: repeat(${GRID_ROWS}, 32px);
-  grid-template-columns: repeat(${GRID_COLS}, 32px);
-  gap: 4px;
-  background: #f5f5f5;
-  padding: 12px;
-  border-radius: 8px;
-  width: max-content;
-`;
-
-const GridCell = styled.div`
-  width: 32px;
-  height: 32px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-`;
-
-
+import { useState } from "react";
+import { useGameState } from "../contexts";
 import { UNIT_CONFIG } from "../game/config/units";
 import type { Unit } from "../game/core/types";
-import { GridUnitCard } from "../styles/components/unitPanel.styles";
 
-interface GameGridProps {
-  grid: (Unit | null)[][];
+// Dynamic buildGrid for any size
+function buildGridDynamic(units: Unit[], size: number): (Unit | null)[][] {
+  const grid: (Unit | null)[][] = Array.from({ length: size }, () =>
+    Array.from({ length: size }, () => null)
+  );
+  for (const unit of units) {
+    const { x, y } = unit.position;
+    if (
+      typeof x === "number" &&
+      typeof y === "number" &&
+      x >= 0 && x < size &&
+      y >= 0 && y < size
+    ) {
+      grid[y][x] = unit;
+    }
+  }
+  return grid;
 }
 
-const GameGrid: React.FC<GameGridProps> = ({ grid }) => (
-  <GridContainer>
-    {grid.flat().map((unit, i) =>
-      unit ? (
-        <GridUnitCard key={unit.id} $color={UNIT_CONFIG[unit.type].color} title={UNIT_CONFIG[unit.type].name}>
-          {UNIT_CONFIG[unit.type].emoji}
-        </GridUnitCard>
-      ) : (
-        <GridCell key={i} />
-      )
-    )}
-  </GridContainer>
-);
+export default function GameGrid() {
+  const [size, setSize] = useState(5);
+  const { inventory } = useGameState();
+  const grid = buildGridDynamic(inventory.units, size);
 
-export default GameGrid;
+  return (
+    <div>
+      <select value={size} onChange={e => setSize(Number(e.target.value))}>
+        {[3, 5, 7, 10].map(n => (
+          <option key={n} value={n}>{n} x {n}</option>
+        ))}
+      </select>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `repeat(${size}, 1fr)`,
+          gap: 4,
+          marginTop: 16
+        }}
+      >
+        {grid.flat().map((unit, i) =>
+          unit ? (
+            <div
+              key={unit.id}
+              title={UNIT_CONFIG[unit.type].name}
+              style={{
+                width: 40,
+                height: 40,
+                background: UNIT_CONFIG[unit.type].color,
+                color: "#fff",
+                border: "1px solid #ccc",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                borderRadius: 4,
+                fontSize: 22
+              }}
+            >
+              {UNIT_CONFIG[unit.type].emoji}
+            </div>
+          ) : (
+            <div
+              key={i}
+              style={{
+                width: 40,
+                height: 40,
+                background: "#eee",
+                border: "1px solid #ccc",
+                borderRadius: 4
+              }}
+            />
+          )
+        )}
+      </div>
+    </div>
+  );
+}
