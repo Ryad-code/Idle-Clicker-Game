@@ -69,12 +69,6 @@ export const EmptyState = styled.div`
   border: 1px solid ${theme.colors.border};
 `;
 
-export const Title = styled.h2`
-  font-size: ${theme.typography.fontSize.lg};
-  font-weight: ${theme.typography.fontWeight.semibold};
-  color: ${theme.colors.textPrimary};
-  margin: 0;
-`;
 
 export const Subtitle = styled.h3`
   font-size: ${theme.typography.fontSize.sm};

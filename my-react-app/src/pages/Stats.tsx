@@ -71,7 +71,7 @@ const StatValue = styled.div`
 `;
 
 function Stats() {
-  const { currency, production, inventory, metadata } = useGameState();
+  const { currency, production, metadata, grid } = useGameState();
   const [duration, setDuration] = useState('');
 
   useEffect(() => {
@@ -130,7 +130,7 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Total Units Owned</StatLabel>
-            <StatValue>{inventory.units.length.toLocaleString()}</StatValue>
+            <StatValue>{grid.flat().filter(u => u !== null).length.toLocaleString()}</StatValue>
           </StatCard>
         </StatsGrid>
       </StatsContainer>

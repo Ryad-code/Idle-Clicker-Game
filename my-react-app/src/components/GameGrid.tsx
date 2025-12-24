@@ -1,31 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useGameState } from "../contexts";
 import { UNIT_CONFIG } from "../game/config/units";
-import type { Unit } from "../game/core/types";
-
-// Dynamic buildGrid for any size
-function buildGridDynamic(units: Unit[], size: number): (Unit | null)[][] {
-  const grid: (Unit | null)[][] = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => null)
-  );
-  for (const unit of units) {
-    const { x, y } = unit.position;
-    if (
-      typeof x === "number" &&
-      typeof y === "number" &&
-      x >= 0 && x < size &&
-      y >= 0 && y < size
-    ) {
-      grid[y][x] = unit;
-    }
-  }
-  return grid;
-}
 
 export default function GameGrid() {
   const [size, setSize] = useState(5);
-  const { inventory } = useGameState();
-  const grid = buildGridDynamic(inventory.units, size);
+  const { grid } = useGameState();
+  // Optionally, you can slice or reshape grid for dynamic size
+  const displayGrid = grid.slice(0, size).map(row => row.slice(0, size));
+
+  useEffect(() => {
+    // Log the grid to the console, showing unit types or null
+    const typeGrid = displayGrid.map(row =>
+      row.map(cell => (cell ? cell.type : null))
+    );
+    // Pretty print as rows
+    console.log("Grid (unit types):");
+    typeGrid.forEach(row => console.log(row));
+  }, [displayGrid]);
 
   return (
     <div>
@@ -42,7 +33,7 @@ export default function GameGrid() {
           marginTop: 16
         }}
       >
-        {grid.flat().map((unit, i) =>
+          {displayGrid.flat().map((unit, i) =>
           unit ? (
             <div
               key={unit.id}

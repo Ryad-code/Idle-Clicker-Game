@@ -1,3 +1,24 @@
+
+/**
+ * Places a new unit of the given type into the first available cell in the grid.
+ * Returns a new grid with the unit placed, or the original grid if no space is available.
+ */
+export function placeUnitInGrid(
+  grid: (Unit | null)[][],
+  type: UnitType,
+  value: number
+): (Unit | null)[][] {
+  let placed = false;
+  return grid.map((row, y) =>
+    row.map((cell, x) => {
+      if (!placed && cell === null) {
+        placed = true;
+        return new Unit(crypto.randomUUID(), type, x, y, value);
+      }
+      return cell;
+    })
+  );
+}
 import type { Dispatch, SetStateAction } from 'react';
 import type { GameState, UnitType } from '../game/core/types';
 import { Unit } from '../game/core/types';
@@ -8,7 +29,6 @@ import {
 } from '../game/core/calculations';
 import { UNIT_CONFIG } from '../game/config/units';
 import { UPGRADES } from '../game/config/upgrades';
-import { GRID_ROWS, GRID_COLS } from '../game/config/grid';
 
 /**
  * Action functions for game state updates
@@ -26,40 +46,38 @@ export function clickAction(setState: Dispatch<SetStateAction<GameState>>) {
 }
 
 
-function findNextAvailableGridPosition(units: Unit[]): { x: number; y: number } {
-  const occupied = new Set(units.map(u => `${u.position.x},${u.position.y}`));
-  for (let y = 0; y < GRID_ROWS; y++) {
-    for (let x = 0; x < GRID_COLS; x++) {
-      if (!occupied.has(`${x},${y}`)) {
-        return { x, y };
-      }
-    }
-  }
-  return { x: 0, y: 0 }; // fallback, should not happen if grid has space
-}
+
 
 export function buyUnitAction(
   setState: Dispatch<SetStateAction<GameState>>,
   type: UnitType
 ) {
   setState(prev => {
+    // Get unit config for cost/value
     const config = UNIT_CONFIG[type];
-    const cost = calculateUnitCost(prev.inventory.units, type, config.cost);
+    const grid = prev.grid;
+    // Flatten grid to count all placed units
+    const flatUnits = grid.flat().filter((u): u is Unit => u !== null);
+    // Prevent adding more units than grid cells
+    if (flatUnits.length >= grid.length * grid[0].length) return prev;
+    // Calculate cost for this unit type
+    const cost = calculateUnitCost(flatUnits, type, config.cost);
+    // Prevent purchase if not enough points
     if (prev.currency.points < cost) return prev;
-    const pos = findNextAvailableGridPosition(prev.inventory.units);
-    const newUnit = new Unit(crypto.randomUUID(), type, pos.x, pos.y, config.value);
-    const newUnits = [...prev.inventory.units, newUnit];
+    // Place the new unit in the first available cell
+    const newGrid = placeUnitInGrid(grid, type, config.value);
+    // Recalculate production/click values with new units
+    const newUnits = newGrid.flat().filter((u): u is Unit => u !== null);
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
+    // Return updated state
     return {
       ...prev,
       currency: {
         ...prev.currency,
         points: prev.currency.points - cost,
       },
-      inventory: {
-        units: newUnits,
-      },
+      grid: newGrid,
       production: {
         pointsPerSecond: newProduction,
         clickValue: newClickValue,
@@ -73,23 +91,34 @@ export function sellUnitAction(
   type: UnitType
 ) {
   setState(prev => {
-    const lastUnit = [...prev.inventory.units].reverse().find(u => u.type === type);
-    if (!lastUnit) return prev;
-    
+    // Find last unit of type
+    let lastPos: { x: number; y: number } | null = null;
+    for (let y = prev.grid.length - 1; y >= 0; y--) {
+      for (let x = prev.grid[y].length - 1; x >= 0; x--) {
+        const unit = prev.grid[y][x];
+        if (unit && unit.type === type) {
+          lastPos = { x, y };
+          break;
+        }
+      }
+      if (lastPos) break;
+    }
+    if (!lastPos) return prev;
     const config = UNIT_CONFIG[type];
-    const newUnits = prev.inventory.units.filter(u => u.id !== lastUnit.id);
+    // Remove unit from grid
+    const newGrid = prev.grid.map((row, y) =>
+      row.map((cell, x) => (x === lastPos!.x && y === lastPos!.y ? null : cell))
+    );
+    const newUnits = newGrid.flat().filter(u => u !== null);
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
-    
     return {
       ...prev,
       currency: {
         ...prev.currency,
         points: prev.currency.points + config.refund,
       },
-      inventory: {
-        units: newUnits,
-      },
+      grid: newGrid,
       production: {
         pointsPerSecond: newProduction,
         clickValue: newClickValue,
@@ -108,7 +137,8 @@ export function buyUpgradeAction(
     if (prev.currency.points < upgrade.cost) return prev;
     
     const newUpgrades = [...prev.upgrades.active, { upgradeId, purchasedAt: new Date() }];
-    const newProduction = calculateProduction(prev.inventory.units, newUpgrades);
+    const newUnits = prev.grid.flat().filter(u => u !== null);
+    const newProduction = calculateProduction(newUnits, newUpgrades);
     const newClickValue = calculateClickValue(newProduction, newUpgrades);
     
     return {

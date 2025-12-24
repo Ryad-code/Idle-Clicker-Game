@@ -50,14 +50,23 @@ export function stateToDBFormat(state: GameState, userId: string) {
       created_at: state.metadata.createdAt.toISOString(),
       updated_at: new Date().toISOString(),
     },
-    units: state.inventory.units.map(u => ({
-      id: u.id,
-      player_id: userId,
-      type: u.type,
-      value: u.value,
-      position_x: u.position.x,
-      position_y: u.position.y,
-    })),
+    units: state.grid
+      .map((row, y) =>
+        row.map((u, x) =>
+          u !== null
+            ? {
+                id: u.id,
+                player_id: userId,
+                type: u.type,
+                value: u.value,
+                position_x: x,
+                position_y: y,
+              }
+            : null
+        )
+      )
+      .flat()
+      .filter(u => u !== null),
     upgrades: state.upgrades.active.map(u => ({
       player_id: userId,
       upgrade_id: u.upgradeId,
@@ -74,16 +83,21 @@ export function dbToStateFormat(
   unitsRows: UnitDBRow[],
   upgradesRows: UpgradeDBRow[]
 ): GameState {
-  // Convert units
-  const units = unitsRows.map(row =>
-    new Unit(
-      row.id,
-      row.type as UnitType,
-      row.position_x ?? 0,
-      row.position_y ?? 0,
-      row.value ?? 0
-    )
-  );
+  // Convert units and build grid
+  const gridRows = 11; // Or load from config
+  const gridCols = 11;
+  const grid: (Unit | null)[][] = Array.from({ length: gridRows }, () => Array(gridCols).fill(null));
+  for (const row of unitsRows) {
+    if (
+      typeof row.position_x === 'number' &&
+      typeof row.position_y === 'number' &&
+      row.position_x >= 0 && row.position_x < gridCols &&
+      row.position_y >= 0 && row.position_y < gridRows
+    ) {
+      const unit = new Unit(row.id, row.type as UnitType, row.position_x, row.position_y, row.value ?? 0);
+      grid[row.position_y][row.position_x] = unit;
+    }
+  }
 
   // Convert upgrades and filter expired ones
   const activeUpgrades = upgradesRows.map(row => ({
@@ -102,9 +116,7 @@ export function dbToStateFormat(
       pointsPerSecond: playerRow.pointspersecond || 0,
       clickValue: playerRow.clickvalue || 1,
     },
-    inventory: {
-      units,
-    },
+    grid,
     upgrades: {
       active: filteredUpgrades,
     },
@@ -132,9 +144,7 @@ export function createDefaultState(): GameState {
       pointsPerSecond: 0,
       clickValue: 1,
     },
-    inventory: {
-      units: [],
-    },
+    grid: Array.from({ length: 11 }, () => Array(11).fill(null)),
     upgrades: {
       active: [],
     },

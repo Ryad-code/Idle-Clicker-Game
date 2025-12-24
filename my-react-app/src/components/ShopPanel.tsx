@@ -27,7 +27,8 @@ import {
 } from "../styles/components/shopPanel.styles";
 
 function ShopPanel() {
-  const { currency, inventory, upgrades, ui } = useGameState();
+  const { currency, grid, upgrades, ui } = useGameState();
+  const allUnits = grid.flat().filter(u => u !== null);
   const { buyUnit, sellUnit, buyUpgrade } = useGameActions();
   const [selectedUpgrades, setSelectedUpgrades] = useState(() => 
     [...UPGRADES].sort(() => Math.random() - 0.5).slice(0, 3)
@@ -40,10 +41,9 @@ function ShopPanel() {
   // Show unit if player owns it, can almost afford it, or it's one of the first two units
   const isUnlocked = (unitType: UnitType) => {
     if (unitType === 'unit1' || unitType === 'unit2') return true;
-    
     const meta = UNIT_CONFIG[unitType];
-    const cost = calculateUnitCost(inventory.units, unitType, meta.cost);
-    const owned = inventory.units.filter(u => u.type === unitType).length;
+    const cost = calculateUnitCost(allUnits, unitType, meta.cost);
+    const owned = allUnits.filter(u => u.type === unitType).length;
     return owned > 0 || currency.points >= cost * 0.9;
   };
 
@@ -95,11 +95,10 @@ function ShopPanel() {
         <SectionTitle>UNITS</SectionTitle>
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
-          const cost = calculateUnitCost(inventory.units, unitType, meta.cost);
+          const cost = calculateUnitCost(allUnits, unitType, meta.cost);
           const canAfford = currency.points >= cost;
-          const owned = inventory.units.filter(u => u.type === unitType).length;
+          const owned = allUnits.filter(u => u.type === unitType).length;
           const canSell = owned > 0;
-          
           return (
             <UnitRow key={unitType}>
               <BuyButton 
