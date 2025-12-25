@@ -28,7 +28,7 @@ export function unit2Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   const unit = grid[y][x];
   if (!unit || unit.type !== 'unit2') return 0;
   // Corner: in corner with adjacent Grandma
-  const isCorner = (x === 0 || x === 4) && (y === 0 || y === 4);
+  const isCorner = (x === 0 || x === 10) && (y === 0 || y === 10);
   if (isCorner) {
     const neighbors = [
       [x-1, y], [x+1, y], [x, y-1], [x, y+1]

@@ -17,6 +17,7 @@ function UnitPanel() {
   const grid = state.grid;
 
   useEffect(() => {
+    console.log("grid:", grid);
       // Debug logging removed for production
     }, [grid]);
   
@@ -56,9 +57,13 @@ function UnitPanel() {
   const renderUnitInfos = () => {
     // Count units by type
     const unitCounts: Record<string, number> = {};
+    const bonusCounts: Record<string, number> = {};
     grid.flat().forEach(cell => {
       if (cell) {
         unitCounts[cell.type] = (unitCounts[cell.type] || 0) + 1;
+        if (cell.bonusActive) {
+          bonusCounts[cell.type] = (bonusCounts[cell.type] || 0) + 1;
+        }
       }
     });
     // Only show types that are present
@@ -70,6 +75,8 @@ function UnitPanel() {
       <UnitRows>
         {ownedTypes.map(type => {
           const meta = UNIT_CONFIG[type as keyof typeof UNIT_CONFIG];
+          const count = unitCounts[type];
+          const bonusCount = bonusCounts[type] || 0;
           return (
             <StatBox key={type} style={{ width: 320, maxWidth: '100%' }}>
               <StatEmoji>{meta.emoji}</StatEmoji>
@@ -78,7 +85,7 @@ function UnitPanel() {
                 <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div>
                 <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
                 <div style={{ fontSize: 13, marginTop: 4 }}>
-                  <b>Owned:</b> {unitCounts[type]} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s
+                  <b>Owned:</b> {count} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
                 </div>
               </div>
             </StatBox>

@@ -34,7 +34,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#4CAF50",
     bonusColor: "#2a00e6ff",
     description: "Autoclicks once every 10 seconds (Cursor)",
-    bonusDescription: "+10% value when adjacent to a Grandma"
+    bonusDescription: "+10% value if 3 Cursors in a row or column"
   },
   unit2: { 
     cost: 100, 
@@ -46,7 +46,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#8B7355",
     bonusColor: "#FFD600",
     description: "A nice grandma to bake more cookies (Grandma)",
-    bonusDescription: "+20% value when 3 Grandmas are in a row or column"
+    bonusDescription: "+15% value if in a corner position with another Grandma adjacent"
   },
   unit3: { 
     cost: 1100, 
