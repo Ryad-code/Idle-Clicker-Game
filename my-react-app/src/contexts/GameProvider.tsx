@@ -48,8 +48,7 @@ export function GameProvider({ userId, children }: Props) {
 
   // Recalculate production when units or upgrades change
   useEffect(() => {
-    const flatUnits = state.grid.flat().filter(u => u !== null);
-    const newProduction = calculateProduction(flatUnits, state.upgrades.active);
+    const newProduction = calculateProduction(state.grid, state.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, state.upgrades.active);
     setState(prev => ({
       ...prev,

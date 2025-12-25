@@ -33,7 +33,7 @@ function UnitPanel() {
               <GridUnitCard
                 key={idx}
                 $color={cell.bonusActive ? meta.bonusColor : meta.color}
-                title={`${meta.value * (cell.bonusActive ? meta.bonus : 1)}`}
+                title={meta.description}
               >
                 {meta.emoji}
               </GridUnitCard>

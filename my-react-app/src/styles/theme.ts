@@ -11,6 +11,7 @@ export const theme = {
     background: '#FAFAFA',
     surface: '#FFFFFF',
     border: '#E5E5E5',
+    muted: '#F5F5F5',
     
     // Text
     textPrimary: '#1A1A1A',

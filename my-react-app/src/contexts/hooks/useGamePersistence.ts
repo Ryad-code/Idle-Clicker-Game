@@ -2,6 +2,7 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import type { GameState } from '../../game/core/types';
 import { loadPlayerFromDB, savePlayerToDB } from '../../game/services/database';
 import { logError, getErrorMessage } from '../../utils/errorUtils';
+import { updateUnitsBonusState } from '../../game/core/bonuses';
 
 const AUTO_SAVE_INTERVAL_MS = 30000; // 30 seconds
 
@@ -39,6 +40,8 @@ export function useGamePersistence(
       .then(loaded => {
         if (cancelled) return; // Abort if unmounted or user changed
 
+        // Update units' bonus states
+        loaded.grid = updateUnitsBonusState(loaded.grid);
         // Update state with loaded data and stop loading
         setState({ ...loaded, ui: { ...loaded.ui, isLoading: false } });
       })

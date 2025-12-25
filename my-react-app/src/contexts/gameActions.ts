@@ -82,11 +82,8 @@ export function buyUnitAction(
     // Update each unit's bonusActive property based on the new grid
     const newGrid = updateUnitsBonusState(placedGrid);
     // Recalculate production/click values with new units
-    const newUnits = newGrid.flat().filter((u): u is Unit => u !== null);
-    const newProduction = calculateProduction(newUnits, prev.upgrades.active);
+    const newProduction = calculateProduction(newGrid, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
-    console.log("grid: ", newGrid)
-    console.log("units: ", newUnits)
     // Return updated state
     return {
       ...prev,
@@ -129,8 +126,7 @@ export function sellUnitAction(
     );
     // Update each unit's bonusActive property based on the new grid
     const newGrid = updateUnitsBonusState(removedGrid);
-    const newUnits = newGrid.flat().filter(u => u !== null);
-    const newProduction = calculateProduction(newUnits, prev.upgrades.active);
+    const newProduction = calculateProduction(newGrid, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
     return {
       ...prev,
@@ -157,8 +153,7 @@ export function buyUpgradeAction(
     if (prev.currency.points < upgrade.cost) return prev;
     
     const newUpgrades = [...prev.upgrades.active, { upgradeId, purchasedAt: new Date() }];
-    const newUnits = prev.grid.flat().filter(u => u !== null);
-    const newProduction = calculateProduction(newUnits, newUpgrades);
+    const newProduction = calculateProduction(prev.grid, newUpgrades);
     const newClickValue = calculateClickValue(newProduction, newUpgrades);
     
     return {

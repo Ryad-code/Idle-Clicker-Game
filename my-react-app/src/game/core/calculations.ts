@@ -1,14 +1,26 @@
 import type { Unit, ActiveUpgrade, UnitType } from './types';
 import { UPGRADES, getUpgradeKind } from '../config/upgrades';
 import { UNIT_COST_MULTIPLIER, CLICK_VALUE_RATIO, MIN_CLICK_VALUE } from '../config/constants';
+import { getUnitBonusMultiplier } from './bonuses';
 
 /**
- * Calculate total production from units with active upgrade multipliers
+ * Calculate total production from units with grid bonuses and active upgrade multipliers
  */
-export function calculateProduction(units: Unit[], activeUpgrades: ActiveUpgrade[]): number {
-  const baseProduction = units.reduce((total, unit) => total + unit.value, 0);
-  const multiplier = getActiveMultiplier(activeUpgrades, 'production');
-  return baseProduction * multiplier;
+export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): number {
+  let totalProduction = 0;
+  const upgradeMultiplier = getActiveMultiplier(activeUpgrades, 'production');
+  
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      const unit = grid[y][x];
+      if (unit) {
+        const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
+        totalProduction += unit.value * bonusMultiplier;
+      }
+    }
+  }
+  
+  return totalProduction * upgradeMultiplier;
 }
 
 /**
