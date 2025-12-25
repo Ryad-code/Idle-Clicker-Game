@@ -70,7 +70,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#78909C",
     bonusColor: "#00B8D4",
     description: "Mines out cookie dough and chocolate chips (Mine)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+15% value if diagonally adjacent to another Mine"
   },
   unit5: { 
     cost: 130000, 
@@ -82,7 +82,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#607D8B",
     bonusColor: "#FF1744",
     description: "Produces large quantities of cookies (Factory)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+25% value if placed in the center of the grid"
   },
   unit6: { 
     cost: 1400000, 
@@ -94,7 +94,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#5C6BC0",
     bonusColor: "#00BFAE",
     description: "Generates cookies from interest (Bank)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+30% value if symmetrically placed with another Bank"
   },
   unit7: { 
     cost: 20000000, 
@@ -106,7 +106,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#8E24AA",
     bonusColor: "#D500F9",
     description: "Full of precious, ancient chocolate (Temple)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+20% value if at the center of a cross pattern"
   },
   unit8: { 
     cost: 330000000, 
@@ -118,7 +118,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#5E35B1",
     bonusColor: "#651FFF",
     description: "Summons cookies with magic spells (Wizard Tower)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+25% value if stacked vertically with another Tower"
   },
   unit9: { 
     cost: 5100000000, 
@@ -130,7 +130,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#1976D2",
     bonusColor: "#00B0FF",
     description: "Brings cookies from the past (Shipment)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+35% value if in a horizontal line with at least 2 other Shipments"
   },
   unit10: { 
     cost: 75000000000, 
@@ -142,7 +142,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#00897B",
     bonusColor: "#00E5FF",
     description: "Turns gold into cookies (Alchemy Lab)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+25% value if adjacent to a Shipment"
   },
   unit11: { 
     cost: 1000000000000, 
@@ -154,7 +154,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#0288D1",
     bonusColor: "#76FF03",
     description: "Opens portals to the cookieverse (Portal)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+35% value if 3 Portals in a row or column"
   },
   unit12: { 
     cost: 14000000000000, 
@@ -166,7 +166,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#F57C00",
     bonusColor: "#FFEA00",
     description: "Brings cookies from the past (Time Machine)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+45% value if surrounded by Portals or Alchemy Labs (all 8 neighbors)"
   },
   unit13: { 
     cost: 170000000000000, 
@@ -178,7 +178,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#512DA8",
     bonusColor: "#C51162",
     description: "Generates antimatter cookies (Antimatter Condenser)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+30% value if adjacent to a Time Machine"
   },
   unit14: { 
     cost: 2100000000000000, 
@@ -190,7 +190,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#303F9F",
     bonusColor: "#AA00FF",
     description: "Converts prisms to cookies (Prism)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+40% value if 3 Prisms in a row or column"
   },
   unit15: { 
     cost: 26000000000000000, 
@@ -202,7 +202,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#000000",
     bonusColor: "#FF3D00",
     description: "Turns matter into cookies (Chancemaker)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+50% value if surrounded by Prisms or Antimatter Condensers (all 8 neighbors)"
   },
   unit16: { 
     cost: 310000000000000000, 
@@ -214,7 +214,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#1565C0",
     bonusColor: "#00C853",
     description: "Manipulates the very fabric of cookies (Fractal Engine)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+35% value if adjacent to a Chancemaker"
   },
   unit17: { 
     cost: 71000000000000000000, 
@@ -226,7 +226,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#4A148C",
     bonusColor: "#FF6D00",
     description: "Generates cookies from the javascript (Javascript Console)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+45% value if 3 Javascript Consoles in a row or column"
   },
   unit18: { 
     cost: 12000000000000000000000, 
@@ -238,7 +238,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     color: "#00BCD4",
     bonusColor: "#FFD600",
     description: "A timeless recipe (Idleverse)",
-    bonusDescription: "Bonus not yet implemented"
+    bonusDescription: "+55% value if surrounded by Javascript Consoles or Fractal Engines (all 8 neighbors)"
   }
 };
 
