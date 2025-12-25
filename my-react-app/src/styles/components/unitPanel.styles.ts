@@ -1,3 +1,18 @@
+export const UnitRows = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  align-items: center;
+`;
+
+export const GridContainer = styled.div<{ size: number }>`
+  display: grid;
+  grid-template-columns: repeat(${props => props.size}, 32px);
+  grid-template-rows: repeat(${props => props.size}, 32px);
+  gap: 2px;
+  margin: 16px 0;
+`;
 
 import styled from "styled-components";
 import { theme } from "../theme";
@@ -30,19 +45,6 @@ export const HomeContainer = styled.div`
 `;
 
 
-export const UnitStats = styled.div`
-  display: flex;
-  gap: ${theme.spacing.md};
-  font-size: ${theme.typography.fontSize.sm};
-  flex-wrap: wrap;
-  justify-content: center;
-  width: 100%;
-  background-color: ${theme.colors.surface};
-  padding: ${theme.spacing.md};
-  border-radius: ${theme.radius.lg};
-  box-shadow: ${theme.shadows.sm};
-  border: 1px solid ${theme.colors.border};
-`;
 
 export const StatBox = styled.div`
   display: flex;
@@ -70,9 +72,3 @@ export const EmptyState = styled.div`
 `;
 
 
-export const Subtitle = styled.h3`
-  font-size: ${theme.typography.fontSize.sm};
-  font-weight: ${theme.typography.fontWeight.medium};
-  color: ${theme.colors.textSecondary};
-  margin: 0;
-`;

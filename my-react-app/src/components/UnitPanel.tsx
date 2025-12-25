@@ -5,18 +5,10 @@ import {
   GridUnitCard,
   StatBox,
   StatEmoji,
-  EmptyState
+  EmptyState,
+  UnitRows,
+  GridContainer
 } from "../styles/components/unitPanel.styles";
-import styled from "styled-components";
-
-
-const UnitRows = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  align-items: center;
-`;
 
 
 function UnitPanel() {
@@ -28,15 +20,7 @@ function UnitPanel() {
   const renderGrid = () => {
     const size = grid.length;
     return (
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${size}, 32px)`,
-          gridTemplateRows: `repeat(${size}, 32px)`,
-          gap: 2,
-          margin: "16px 0"
-        }}
-      >
+      <GridContainer size={size}>
         {grid.flat().map((cell, idx) => {
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
@@ -59,7 +43,7 @@ function UnitPanel() {
             );
           }
         })}
-      </div>
+      </GridContainer>
     );
   };
 

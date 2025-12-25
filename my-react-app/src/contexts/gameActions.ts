@@ -8,11 +8,23 @@ export function placeUnitInGrid(
   type: UnitType,
   value: number
 ): (Unit | null)[][] {
-  let placed = false;
-  return grid.map((row, y) =>
-    row.map((cell, x) => {
-      if (!placed && cell === null) {
-        placed = true;
+  // Collect all available cells
+  const available: { x: number; y: number }[] = [];
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      if (grid[y][x] === null) {
+        available.push({ x, y });
+      }
+    }
+  }
+  if (available.length === 0) return grid;
+  // Pick a random available cell
+  const idx = Math.floor(Math.random() * available.length);
+  const { x, y } = available[idx];
+  // Place the unit in the selected cell
+  return grid.map((row, rowIdx) =>
+    row.map((cell, colIdx) => {
+      if (rowIdx === y && colIdx === x) {
         return new Unit(crypto.randomUUID(), type, x, y, value);
       }
       return cell;
