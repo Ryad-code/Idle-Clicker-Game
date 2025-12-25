@@ -44,6 +44,19 @@ export const HomeContainer = styled.div`
   gap: ${theme.spacing.lg};
 `;
 
+export const UnitContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.md};
+  background-color: ${theme.colors.surface};
+  padding: ${theme.spacing.lg};
+  border-radius: ${theme.radius.lg};
+  box-shadow: ${theme.shadows.md};
+  border: 1px solid ${theme.colors.border};
+  width: 100%;
+  align-items: center;
+`;
+
 
 
 export const StatBox = styled.div`

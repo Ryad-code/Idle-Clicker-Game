@@ -8,7 +8,8 @@ import {
   StatEmoji,
   EmptyState,
   UnitRows,
-  GridContainer
+  GridContainer,
+  UnitContainer
 } from "../styles/components/unitPanel.styles";
 
 
@@ -98,8 +99,10 @@ function UnitPanel() {
   // Only display the current grid and its dimensions
   return (
     <HomeContainer>
-      {renderGrid()}
-      {renderUnitInfos()}
+      <UnitContainer>
+        {renderGrid()}
+        {renderUnitInfos()}
+      </UnitContainer>
     </HomeContainer>
   );
 }
