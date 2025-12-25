@@ -17,7 +17,7 @@ function UnitPanel() {
   const grid = state.grid;
 
   useEffect(() => {
-      console.log('Current grid state:', grid);
+      // Debug logging removed for production
     }, [grid]);
   
 
@@ -33,7 +33,7 @@ function UnitPanel() {
               <GridUnitCard
                 key={idx}
                 $color={cell.bonusActive ? meta.bonusColor : meta.color}
-                title={meta.description}
+                title={`${meta.value * (cell.bonusActive ? meta.bonus : 1)}`}
               >
                 {meta.emoji}
               </GridUnitCard>

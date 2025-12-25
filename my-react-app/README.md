@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# Project Documentation: Idle Clicker Game
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, and persistent state via Supabase.
 
-Currently, two official plugins are available:
+## Architecture
+- **Frontend**: React with TypeScript, using Context API for state management.
+- **Backend**: Supabase for database persistence.
+- **Build Tool**: Vite for development and building.
+- **Styling**: Styled-components with a custom theme.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Project Structure
+```
+src/
+├── components/          # UI components (UnitPanel, ClickerPanel, etc.)
+├── contexts/            # State management (GameProvider, hooks)
+├── game/
+│   ├── config/          # Game data (units, upgrades)
+│   ├── core/            # Game logic (calculations, bonuses, types)
+│   └── services/        # Database interactions
+├── styles/              # Theme and global styles
+└── main.tsx             # App entry point
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Key Features
+- **Grid-Based Gameplay**: Place units on a 5x5 grid to earn production points.
+- **Unit Bonuses**: Each unit has unique grid-based bonuses (e.g., adjacency, clusters).
+- **Upgrades**: Temporary multipliers for production or click value.
+- **Persistence**: Auto-save/load game state to/from Supabase.
+- **Real-Time Updates**: Production updates every second; bonuses apply immediately.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## How to Run
+1. Install dependencies: `npm install`
+2. Set up Supabase (add your URL and anon key to [`.env`](.env ))
+3. Start dev server: `npm run dev`
+4. Build for production: `npm run build`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Core Mechanics
+- **Production**: Calculated from unit values, grid bonuses, and active upgrades.
+- **Clicking**: Earns points based on production with upgrade multipliers.
+- **Bonuses**: Triggered by unit positions (e.g., chains, clusters, synergies).
+- **Upgrades**: Purchased with points; expire after time.
+
+## API Reference
+- **calculateProduction(grid, activeUpgrades)**: Computes total production.
+- **getUnitBonusMultiplier(grid, x, y)**: Gets bonus multiplier for a unit position.
+- **updateUnitsBonusState(grid)**: Updates grid with active bonuses.
+
+## Dependencies
+- React, TypeScript, Supabase, Styled-components, Vite.
+
+For more details, refer to inline code comments or contact the maintainer.
