@@ -1,9 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useMemo, useEffect } from 'react';
 import type { GameState, UnitType } from '../game/core/types';
 import { createDefaultState } from '../game/core/state';
 import { useGamePersistence } from './hooks/useGamePersistence';
 import { useGameTick } from './hooks/useGameTick';
+import { calculateProduction, calculateClickValue } from '../game/core/calculations';
 import {
   clickAction,
   buyUnitAction,
@@ -44,6 +45,20 @@ export function GameProvider({ userId, children }: Props) {
 
   // Manage game tick (points per second, upgrade expiration)
   useGameTick(userId, setState);
+
+  // Recalculate production when units or upgrades change
+  useEffect(() => {
+    const flatUnits = state.grid.flat().filter(u => u !== null);
+    const newProduction = calculateProduction(flatUnits, state.upgrades.active);
+    const newClickValue = calculateClickValue(newProduction, state.upgrades.active);
+    setState(prev => ({
+      ...prev,
+      production: {
+        pointsPerSecond: newProduction,
+        clickValue: newClickValue,
+      },
+    }));
+  }, [state.grid, state.upgrades.active]);
 
   // Create stable action references
   const actions = useMemo<GameActions>(() => ({

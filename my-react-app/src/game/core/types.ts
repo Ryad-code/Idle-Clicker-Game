@@ -54,12 +54,18 @@ export class Unit {
   type: UnitType;
   position: { x: number; y: number };
   value: number;
+  // Tracks if this unit's bonus is currently active
+  bonusActive: boolean;
 
-  constructor(id: string, type: UnitType, x: number, y: number, value: number) {
+  /**
+   * @param bonusActive - whether the unit's bonus is active (default: false)
+   */
+  constructor(id: string, type: UnitType, x: number, y: number, value: number, bonusActive = false) {
     this.id = id;
     this.type = type;
     this.position = { x, y };
     this.value = value;
+    this.bonusActive = bonusActive;
   }
 }
 

@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useGameState } from "../contexts";
 import { UNIT_CONFIG } from "../game/config/units";
 import {
@@ -14,6 +15,10 @@ import {
 function UnitPanel() {
   const state = useGameState();
   const grid = state.grid;
+
+  useEffect(() => {
+      console.log('Current grid state:', grid);
+    }, [grid]);
   
 
   // Render the current grid using styled components
@@ -27,8 +32,8 @@ function UnitPanel() {
             return (
               <GridUnitCard
                 key={idx}
-                $color={meta.color}
-                title={meta.description}
+                $color={cell.bonusActive ? meta.bonusColor : meta.color}
+                title={`${meta.value * (cell.bonusActive ? meta.bonus : 1)}`}
               >
                 {meta.emoji}
               </GridUnitCard>
@@ -71,8 +76,9 @@ function UnitPanel() {
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
                 <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div>
+                <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
                 <div style={{ fontSize: 13, marginTop: 4 }}>
-                  <b>Owned:</b> {unitCounts[type]} &nbsp;|&nbsp; <b>Value:</b> {meta.value}/s
+                  <b>Owned:</b> {unitCounts[type]} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s
                 </div>
               </div>
             </StatBox>

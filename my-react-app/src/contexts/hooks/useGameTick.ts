@@ -1,6 +1,6 @@
 import { useEffect, useRef, type Dispatch, type SetStateAction } from 'react';
 import type { GameState } from '../../game/core/types';
-import { calculateProduction, calculateClickValue, filterExpiredUpgrades } from '../../game/core/calculations';
+import { filterExpiredUpgrades } from '../../game/core/calculations';
 import { GAME_TICK_INTERVAL_MS } from '../../game/config/constants';
 
 /**
@@ -30,21 +30,6 @@ export function useGameTick(
         setState(prev => {
           // Filter expired upgrades
           const filteredUpgrades = filterExpiredUpgrades(prev.upgrades.active);
-          const upgradesChanged = filteredUpgrades.length !== prev.upgrades.active.length;
-          
-          // Only update if something changed
-          if (prev.production.pointsPerSecond === 0 && !upgradesChanged) {
-            return prev;
-          }
-          
-          // Recalculate production if upgrades expired
-          let newProduction = prev.production.pointsPerSecond;
-          let newClickValue = prev.production.clickValue;
-          
-          if (upgradesChanged) {
-            newProduction = calculateProduction(prev.inventory.units, filteredUpgrades);
-            newClickValue = calculateClickValue(newProduction, filteredUpgrades);
-          }
           
           return {
             ...prev,
@@ -54,10 +39,6 @@ export function useGameTick(
             },
             upgrades: {
               active: filteredUpgrades,
-            },
-            production: {
-              pointsPerSecond: newProduction,
-              clickValue: newClickValue,
             },
           };
         });

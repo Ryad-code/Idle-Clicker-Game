@@ -14,7 +14,9 @@ export interface UnitMetadata {
   name: string;        // Human-readable name
   emoji: string;       // Visual icon
   color: string;       // Hex color for styling
+  bonusColor: string;  // Hex color for styling when bonus is active
   description: string; // Tooltip/info text
+  bonusDescription: string; // Description of the bonus effect
 }
 
 /**
@@ -30,7 +32,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit1", 
     emoji: "👆", 
     color: "#4CAF50",
-    description: "Autoclicks once every 10 seconds (Cursor)"
+    bonusColor: "#2a00e6ff",
+    description: "Autoclicks once every 10 seconds (Cursor)",
+    bonusDescription: "+10% value when adjacent to a Grandma"
   },
   unit2: { 
     cost: 100, 
@@ -40,7 +44,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit2", 
     emoji: "👵", 
     color: "#8B7355",
-    description: "A nice grandma to bake more cookies (Grandma)"
+    bonusColor: "#FFD600",
+    description: "A nice grandma to bake more cookies (Grandma)",
+    bonusDescription: "+20% value when 3 Grandmas are in a row or column"
   },
   unit3: { 
     cost: 1100, 
@@ -50,7 +56,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit3", 
     emoji: "🌾", 
     color: "#7CB342",
-    description: "Grows cookie plants from cookie seeds (Farm)"
+    bonusColor: "#FF9100",
+    description: "Grows cookie plants from cookie seeds (Farm)",
+    bonusDescription: "+30% value when surrounded by Cursors or Grandmas"
   },
   unit4: { 
     cost: 12000, 
@@ -60,7 +68,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit4", 
     emoji: "⛏️", 
     color: "#78909C",
-    description: "Mines out cookie dough and chocolate chips (Mine)"
+    bonusColor: "#00B8D4",
+    description: "Mines out cookie dough and chocolate chips (Mine)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit5: { 
     cost: 130000, 
@@ -70,7 +80,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit5", 
     emoji: "🏭", 
     color: "#607D8B",
-    description: "Produces large quantities of cookies (Factory)"
+    bonusColor: "#FF1744",
+    description: "Produces large quantities of cookies (Factory)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit6: { 
     cost: 1400000, 
@@ -80,7 +92,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit6", 
     emoji: "🏦", 
     color: "#5C6BC0",
-    description: "Generates cookies from interest (Bank)"
+    bonusColor: "#00BFAE",
+    description: "Generates cookies from interest (Bank)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit7: { 
     cost: 20000000, 
@@ -90,7 +104,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit7", 
     emoji: "🛕", 
     color: "#8E24AA",
-    description: "Full of precious, ancient chocolate (Temple)"
+    bonusColor: "#D500F9",
+    description: "Full of precious, ancient chocolate (Temple)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit8: { 
     cost: 330000000, 
@@ -100,7 +116,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit8", 
     emoji: "🧙", 
     color: "#5E35B1",
-    description: "Summons cookies with magic spells (Wizard Tower)"
+    bonusColor: "#651FFF",
+    description: "Summons cookies with magic spells (Wizard Tower)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit9: { 
     cost: 5100000000, 
@@ -110,7 +128,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit9", 
     emoji: "🚢", 
     color: "#1976D2",
-    description: "Brings cookies from the past (Shipment)"
+    bonusColor: "#00B0FF",
+    description: "Brings cookies from the past (Shipment)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit10: { 
     cost: 75000000000, 
@@ -120,7 +140,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit10", 
     emoji: "🔬", 
     color: "#00897B",
-    description: "Turns gold into cookies (Alchemy Lab)"
+    bonusColor: "#00E5FF",
+    description: "Turns gold into cookies (Alchemy Lab)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit11: { 
     cost: 1000000000000, 
@@ -130,7 +152,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit11", 
     emoji: "🌐", 
     color: "#0288D1",
-    description: "Opens portals to the cookieverse (Portal)"
+    bonusColor: "#76FF03",
+    description: "Opens portals to the cookieverse (Portal)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit12: { 
     cost: 14000000000000, 
@@ -140,7 +164,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit12", 
     emoji: "⏰", 
     color: "#F57C00",
-    description: "Brings cookies from the past (Time Machine)"
+    bonusColor: "#FFEA00",
+    description: "Brings cookies from the past (Time Machine)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit13: { 
     cost: 170000000000000, 
@@ -150,7 +176,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit13", 
     emoji: "🔭", 
     color: "#512DA8",
-    description: "Generates antimatter cookies (Antimatter Condenser)"
+    bonusColor: "#C51162",
+    description: "Generates antimatter cookies (Antimatter Condenser)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit14: { 
     cost: 2100000000000000, 
@@ -160,7 +188,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit14", 
     emoji: "🌌", 
     color: "#303F9F",
-    description: "Converts prisms to cookies (Prism)"
+    bonusColor: "#AA00FF",
+    description: "Converts prisms to cookies (Prism)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit15: { 
     cost: 26000000000000000, 
@@ -170,7 +200,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit15", 
     emoji: "🕳️", 
     color: "#000000",
-    description: "Turns matter into cookies (Chancemaker)"
+    bonusColor: "#FF3D00",
+    description: "Turns matter into cookies (Chancemaker)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit16: { 
     cost: 310000000000000000, 
@@ -180,7 +212,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit16", 
     emoji: "⚛️", 
     color: "#1565C0",
-    description: "Manipulates the very fabric of cookies (Fractal Engine)"
+    bonusColor: "#00C853",
+    description: "Manipulates the very fabric of cookies (Fractal Engine)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit17: { 
     cost: 71000000000000000000, 
@@ -190,7 +224,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit17", 
     emoji: "🕸️", 
     color: "#4A148C",
-    description: "Generates cookies from the javascript (Javascript Console)"
+    bonusColor: "#FF6D00",
+    description: "Generates cookies from the javascript (Javascript Console)",
+    bonusDescription: "Bonus not yet implemented"
   },
   unit18: { 
     cost: 12000000000000000000000, 
@@ -200,7 +236,9 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
     name: "unit18", 
     emoji: "💎", 
     color: "#00BCD4",
-    description: "A timeless recipe (Idleverse)"
+    bonusColor: "#FFD600",
+    description: "A timeless recipe (Idleverse)",
+    bonusDescription: "Bonus not yet implemented"
   }
 };
 

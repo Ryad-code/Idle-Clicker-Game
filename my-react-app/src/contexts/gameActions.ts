@@ -40,6 +40,7 @@ import {
   calculateUnitCost 
 } from '../game/core/calculations';
 import { UNIT_CONFIG } from '../game/config/units';
+import { updateUnitsBonusState } from '../game/core/bonuses';
 import { UPGRADES } from '../game/config/upgrades';
 
 /**
@@ -76,12 +77,16 @@ export function buyUnitAction(
     const cost = calculateUnitCost(flatUnits, type, config.cost);
     // Prevent purchase if not enough points
     if (prev.currency.points < cost) return prev;
-    // Place the new unit in the first available cell
-    const newGrid = placeUnitInGrid(grid, type, config.value);
+    // Place the new unit in a random available cell
+    const placedGrid = placeUnitInGrid(grid, type, config.value);
+    // Update each unit's bonusActive property based on the new grid
+    const newGrid = updateUnitsBonusState(placedGrid);
     // Recalculate production/click values with new units
     const newUnits = newGrid.flat().filter((u): u is Unit => u !== null);
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
+    console.log("grid: ", newGrid)
+    console.log("units: ", newUnits)
     // Return updated state
     return {
       ...prev,
@@ -118,9 +123,12 @@ export function sellUnitAction(
     if (!lastPos) return prev;
     const config = UNIT_CONFIG[type];
     // Remove unit from grid
-    const newGrid = prev.grid.map((row, y) =>
+    // Remove the unit from the grid
+    const removedGrid = prev.grid.map((row, y) =>
       row.map((cell, x) => (x === lastPos!.x && y === lastPos!.y ? null : cell))
     );
+    // Update each unit's bonusActive property based on the new grid
+    const newGrid = updateUnitsBonusState(removedGrid);
     const newUnits = newGrid.flat().filter(u => u !== null);
     const newProduction = calculateProduction(newUnits, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
