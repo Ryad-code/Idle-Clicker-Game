@@ -164,10 +164,9 @@ export function calculateUpgradeCost(
   const currentValue = kind === 'production' ? currentProduction : currentClickValue;
   
   // Net benefit: extra value from the multiplier over duration
-  const netBenefit = currentValue * BigInt(Math.floor(upgrade.multiplier - 1)) * BigInt(upgrade.durationSeconds);
-  
-  // Cost: 40% of net benefit
-  return netBenefit * 4n / 10n;
+  const netBenefitFloat = Number(currentValue) * (upgrade.multiplier - 1) * upgrade.durationSeconds;
+  const costFloat = netBenefitFloat * 0.4;
+  return BigInt(Math.max(0, Math.floor(costFloat)));
 }
 
 export function buyUpgradeAction(
@@ -224,15 +223,19 @@ export function moveUnitAction(
   setState(prev => {
     const grid = prev.grid;
     const fromUnit = grid[fromY]?.[fromX];
-    const toUnit = grid[toY]?.[toY];
+    const toUnit = grid[toY]?.[toX];
     
     if (!fromUnit) return prev; // Must have a unit to move/swap
     
     // Create new grid by swapping positions (toUnit can be null)
     const newGrid = grid.map((row, y) =>
       row.map((cell, x) => {
-        if (y === fromY && x === fromX) return toUnit ? { ...toUnit, position: { x: fromX, y: fromY } } as Unit : null;
-        if (y === toY && x === toX) return { ...fromUnit, position: { x: toX, y: toY } } as Unit;
+        if (y === fromY && x === fromX) {
+          return toUnit ? new Unit(toUnit.id, toUnit.type, fromX, fromY, toUnit.value, toUnit.bonusActive) : null;
+        }
+        if (y === toY && x === toX) {
+          return new Unit(fromUnit.id, fromUnit.type, toX, toY, fromUnit.value, fromUnit.bonusActive);
+        }
         return cell;
       })
     );
