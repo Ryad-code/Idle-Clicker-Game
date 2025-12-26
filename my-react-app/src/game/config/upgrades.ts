@@ -3,7 +3,6 @@ export interface Upgrade {
   name: string;
   icon: string;
   multiplier: number;
-  cost: number;
   durationSeconds: number;
 }
 
@@ -17,7 +16,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Spark',
     icon: '⚡',
     multiplier: 1.1,
-    cost: 10,
     durationSeconds: 120,
   },
   {
@@ -25,7 +23,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Flame',
     icon: '🔥',
     multiplier: 1.2,
-    cost: 20,
     durationSeconds: 120,
   },
   {
@@ -33,7 +30,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Inferno',
     icon: '🌋',
     multiplier: 1.3,
-    cost: 30,
     durationSeconds: 120,
   },
   {
@@ -41,7 +37,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Surge',
     icon: '💥',
     multiplier: 1.5,
-    cost: 50,
     durationSeconds: 90,
   },
   {
@@ -49,7 +44,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Turbo',
     icon: '🚀',
     multiplier: 1.75,
-    cost: 75,
     durationSeconds: 90,
   },
   {
@@ -57,7 +51,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Overdrive',
     icon: '⚙️',
     multiplier: 2.0,
-    cost: 100,
     durationSeconds: 60,
   },
   {
@@ -65,7 +58,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Blaze',
     icon: '🔆',
     multiplier: 2.5,
-    cost: 150,
     durationSeconds: 60,
   },
   {
@@ -73,7 +65,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Supernova',
     icon: '✨',
     multiplier: 3.0,
-    cost: 200,
     durationSeconds: 45,
   },
   {
@@ -81,7 +72,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Hyperdrive',
     icon: '🌟',
     multiplier: 3.5,
-    cost: 250,
     durationSeconds: 45,
   },
   {
@@ -89,7 +79,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Apocalypse',
     icon: '💫',
     multiplier: 4.0,
-    cost: 300,
     durationSeconds: 30,
   },
   // Click upgrades mirroring production scaling
@@ -98,7 +87,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Spark',
     icon: '⚡',
     multiplier: 1.1,
-    cost: 10,
     durationSeconds: 120,
   },
   {
@@ -106,7 +94,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Flame',
     icon: '🔥',
     multiplier: 1.2,
-    cost: 20,
     durationSeconds: 120,
   },
   {
@@ -114,7 +101,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Inferno',
     icon: '🌋',
     multiplier: 1.3,
-    cost: 30,
     durationSeconds: 120,
   },
   {
@@ -122,7 +108,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Surge',
     icon: '💥',
     multiplier: 1.5,
-    cost: 50,
     durationSeconds: 90,
   },
   {
@@ -130,7 +115,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Turbo',
     icon: '🚀',
     multiplier: 1.75,
-    cost: 75,
     durationSeconds: 90,
   },
   {
@@ -138,7 +122,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Overdrive',
     icon: '⚙️',
     multiplier: 2.0,
-    cost: 100,
     durationSeconds: 60,
   },
   {
@@ -146,7 +129,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Blaze',
     icon: '🔆',
     multiplier: 2.5,
-    cost: 150,
     durationSeconds: 60,
   },
   {
@@ -154,7 +136,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Supernova',
     icon: '✨',
     multiplier: 3.0,
-    cost: 200,
     durationSeconds: 45,
   },
   {
@@ -162,7 +143,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Hyperdrive',
     icon: '🌟',
     multiplier: 3.5,
-    cost: 250,
     durationSeconds: 45,
   },
   {
@@ -170,7 +150,6 @@ export const UPGRADES: Upgrade[] = [
     name: 'Apocalypse',
     icon: '💫',
     multiplier: 4.0,
-    cost: 300,
     durationSeconds: 30,
   },
 ];

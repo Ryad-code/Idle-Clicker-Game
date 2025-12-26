@@ -41,7 +41,7 @@ import {
 } from '../game/core/calculations';
 import { UNIT_CONFIG } from '../game/config/units';
 import { updateUnitsBonusState } from '../game/core/bonuses';
-import { UPGRADES } from '../game/config/upgrades';
+import { UPGRADES, getUpgradeKind } from '../game/config/upgrades';
 
 /**
  * Action functions for game state updates
@@ -143,6 +143,33 @@ export function sellUnitAction(
   });
 }
 
+/**
+ * Calculates the dynamic cost of an upgrade as 40% of its net benefit.
+ * Net benefit = currentValue * (multiplier - 1) * durationSeconds
+ * Where currentValue is production for production upgrades, clickValue for click upgrades.
+ */
+export function calculateUpgradeCost(
+  upgradeId: string,
+  grid: (Unit | null)[][],
+  activeUpgrades: { upgradeId: string; purchasedAt: Date }[]
+): number {
+  const upgrade = UPGRADES.find(u => u.id === upgradeId);
+  if (!upgrade) return 0;
+
+  const kind = getUpgradeKind(upgradeId);
+  const currentProduction = calculateProduction(grid, activeUpgrades);
+  const currentClickValue = calculateClickValue(currentProduction, activeUpgrades);
+
+  // Use the relevant current value
+  const currentValue = kind === 'production' ? currentProduction : currentClickValue;
+
+  // Net benefit: extra value from the multiplier over duration
+  const netBenefit = currentValue * (upgrade.multiplier - 1) * upgrade.durationSeconds;
+
+  // Cost: 40% of net benefit, rounded to nearest integer
+  return Math.round(netBenefit * 0.4);
+}
+
 export function buyUpgradeAction(
   setState: Dispatch<SetStateAction<GameState>>,
   upgradeId: string
@@ -150,7 +177,10 @@ export function buyUpgradeAction(
   setState(prev => {
     const upgrade = UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade) return prev;
-    if (prev.currency.points < upgrade.cost) return prev;
+    
+    // Calculate dynamic cost as 40% of net benefit
+    const cost = calculateUpgradeCost(upgradeId, prev.grid, prev.upgrades.active);
+    if (prev.currency.points < cost) return prev;
     
     const newUpgrades = [...prev.upgrades.active, { upgradeId, purchasedAt: new Date() }];
     const newProduction = calculateProduction(prev.grid, newUpgrades);
@@ -160,7 +190,7 @@ export function buyUpgradeAction(
       ...prev,
       currency: {
         ...prev.currency,
-        points: prev.currency.points - upgrade.cost,
+        points: prev.currency.points - cost,
       },
       upgrades: {
         active: newUpgrades,

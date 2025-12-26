@@ -4,6 +4,7 @@ import { useGameState, useGameActions } from "../contexts";
 import type { UnitType } from "../game/core/types";
 import { calculateUnitCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
+import { calculateUpgradeCost } from "../contexts/gameActions";
 import ErrorMessage from "./UI/ErrorMessage";
 import {
   DashboardContainer,
@@ -63,7 +64,8 @@ function ShopPanel() {
           <UpgradeGrid>
             {selectedUpgrades.map((upgrade: Upgrade) => {
               const isActive = upgrades.active.some(au => au.upgradeId === upgrade.id);
-              const canAfford = currency.points >= upgrade.cost;
+              const cost = calculateUpgradeCost(upgrade.id, grid, upgrades.active);
+              const canAfford = currency.points >= cost;
               const canBuy = canAfford && !isActive;
               
               return (
@@ -84,7 +86,7 @@ function ShopPanel() {
                   <UpgradeName>{upgrade.id}</UpgradeName>
                   <UpgradeInfo>
                     <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
-                    <UpgradeCost>{upgrade.cost} pts</UpgradeCost>
+                    <UpgradeCost>{cost} pts</UpgradeCost>
                     <span>{upgrade.durationSeconds}s</span>
                   </UpgradeInfo>
                 </UpgradeCard>
