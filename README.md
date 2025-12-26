@@ -1,2 +1,3 @@
-# Canva-Web-app
-A Canva web app to edit, organize, store and retrieve your data
+27/12/2025
+---> create UseCalculate hook
+---> move gameActions type definition to types.ts
