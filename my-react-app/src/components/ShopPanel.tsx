@@ -5,6 +5,7 @@ import type { UnitType } from "../game/core/types";
 import { calculateUnitCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { calculateUpgradeCost } from "../contexts/gameActions";
+import { formatBigInt } from "../utils/formatters";
 import ErrorMessage from "./UI/ErrorMessage";
 import {
   DashboardContainer,
@@ -45,7 +46,7 @@ function ShopPanel() {
     const meta = UNIT_CONFIG[unitType];
     const cost = calculateUnitCost(allUnits, unitType, meta.cost);
     const owned = allUnits.filter(u => u.type === unitType).length;
-    return owned > 0 || currency.points >= cost * 0.9;
+    return owned > 0 || currency.points >= cost * 9n / 10n;
   };
 
   const availableUnits = UNIT_TYPES.filter(isUnlocked);
@@ -86,7 +87,7 @@ function ShopPanel() {
                   <UpgradeName>{upgrade.id}</UpgradeName>
                   <UpgradeInfo>
                     <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
-                    <UpgradeCost>{cost} pts</UpgradeCost>
+                    <UpgradeCost>{formatBigInt(cost)} pts</UpgradeCost>
                     <span>{upgrade.durationSeconds}s</span>
                   </UpgradeInfo>
                 </UpgradeCard>
@@ -113,7 +114,7 @@ function ShopPanel() {
                   <span>{meta.name}</span>
                   <ButtonInfo>({owned})</ButtonInfo>
                 </ButtonLabel>
-                <ButtonPrice>{cost}</ButtonPrice>
+                <ButtonPrice>{formatBigInt(cost)}</ButtonPrice>
               </BuyButton>
               <SmallSellButton 
                 onClick={() => sellUnit(unitType)}

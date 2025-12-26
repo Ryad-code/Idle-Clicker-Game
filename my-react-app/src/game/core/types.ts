@@ -20,13 +20,13 @@ export type Grid = (Unit | null)[][];
 export interface GameState {
   // Hot path - changes every tick/click
   currency: {
-    points: number;
+    points: bigint;
     totalClicks: number;
   };
   // Warm path - recalculated on unit/upgrade changes
   production: {
-    pointsPerSecond: number;
-    clickValue: number;
+    pointsPerSecond: bigint;
+    clickValue: bigint;
   };
   // Cold path - changes on buy/expire
   upgrades: {

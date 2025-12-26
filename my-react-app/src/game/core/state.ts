@@ -7,9 +7,9 @@ import { filterExpiredUpgrades } from './calculations';
  */
 interface PlayerDBRow {
   user_id: string;
-  points: number;
-  clickvalue: number;
-  pointspersecond: number;
+  points: string; // Stored as string to preserve bigint precision
+  clickvalue: string; // Stored as string to preserve bigint precision
+  pointspersecond: string; // Stored as string to preserve bigint precision
   totalclicks: number;
   created_at: string;
   updated_at: string;
@@ -43,10 +43,10 @@ export function stateToDBFormat(state: GameState, userId: string) {
   return {
     player: {
       user_id: userId,
-      points: Math.floor(state.currency.points),
-      clickvalue: Math.floor(state.production.clickValue),
-      pointspersecond: Math.floor(state.production.pointsPerSecond),
-      totalclicks: Math.floor(state.currency.totalClicks),
+      points: state.currency.points.toString(), // Convert bigint to string for DB storage
+      clickvalue: state.production.clickValue.toString(), // Convert bigint to string for DB storage
+      pointspersecond: state.production.pointsPerSecond.toString(), // Convert bigint to string for DB storage
+      totalclicks: state.currency.totalClicks,
       created_at: state.metadata.createdAt.toISOString(),
       updated_at: new Date().toISOString(),
     },
@@ -109,12 +109,12 @@ export function dbToStateFormat(
 
   return {
     currency: {
-      points: playerRow.points || 0,
+      points: BigInt(playerRow.points || "0"), // Parse string back to bigint
       totalClicks: playerRow.totalclicks || 0,
     },
     production: {
-      pointsPerSecond: playerRow.pointspersecond || 0,
-      clickValue: playerRow.clickvalue || 1,
+      pointsPerSecond: BigInt(playerRow.pointspersecond || "0"), // Parse string back to bigint
+      clickValue: BigInt(playerRow.clickvalue || "1"), // Parse string back to bigint
     },
     grid,
     upgrades: {
@@ -137,12 +137,12 @@ export function dbToStateFormat(
 export function createDefaultState(): GameState {
   return {
     currency: {
-      points: 0,
+      points: 0n,
       totalClicks: 0,
     },
     production: {
-      pointsPerSecond: 0,
-      clickValue: 1,
+      pointsPerSecond: 0n,
+      clickValue: 1n,
     },
     grid: Array.from({ length: 11 }, () => Array(11).fill(null)),
     upgrades: {

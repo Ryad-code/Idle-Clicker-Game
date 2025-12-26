@@ -1,5 +1,6 @@
 import { useGameState, useGameActions } from "../contexts";
 import { getUpgradeKind, UPGRADES } from "../game/config/upgrades";
+import { formatBigInt } from "../utils/formatters";
 import { 
   ClickerContainer, 
   PointsDisplay, 
@@ -57,7 +58,7 @@ function ClickerPanel() {
       {ui.error && <ErrorMessage message={ui.error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
-        <PointsValue>{Math.floor(currency.points).toLocaleString()}</PointsValue>
+        <PointsValue>{formatBigInt(currency.points)}</PointsValue>
         <input 
           type="number" 
           placeholder="Set points (test)" 
@@ -76,11 +77,11 @@ function ClickerPanel() {
       <StatsContainer>
         <StatRow>
           <StatLabel>Per Second:</StatLabel>
-          <StatValue>{Math.floor(production.pointsPerSecond)}</StatValue>
+          <StatValue>{formatBigInt(production.pointsPerSecond)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Click Value:</StatLabel>
-          <StatValue>{Math.floor(production.clickValue)}</StatValue>
+          <StatValue>{formatBigInt(production.clickValue)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Total Clicks:</StatLabel>

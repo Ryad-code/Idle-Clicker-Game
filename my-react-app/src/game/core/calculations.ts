@@ -6,8 +6,8 @@ import { getUnitBonusMultiplier } from './bonuses';
 /**
  * Calculate total production from units with grid bonuses and active upgrade multipliers
  */
-export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): number {
-  let totalProduction = 0;
+export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): bigint {
+  let totalProduction = 0n;
   const upgradeMultiplier = getActiveMultiplier(activeUpgrades, 'production');
   
   for (let y = 0; y < grid.length; y++) {
@@ -15,29 +15,30 @@ export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: Act
       const unit = grid[y][x];
       if (unit) {
         const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
-        totalProduction += unit.value * bonusMultiplier;
+        totalProduction += BigInt(Math.floor(unit.value * bonusMultiplier));
       }
     }
   }
   
-  return totalProduction * upgradeMultiplier;
+  return totalProduction * BigInt(Math.floor(upgradeMultiplier));
 }
 
 /**
  * Calculate click value based on production with active upgrade multipliers
  */
-export function calculateClickValue(production: number, activeUpgrades: ActiveUpgrade[]): number {
-  const baseClick = Math.max(MIN_CLICK_VALUE, MIN_CLICK_VALUE + Math.floor(production * CLICK_VALUE_RATIO));
+export function calculateClickValue(production: bigint, activeUpgrades: ActiveUpgrade[]): bigint {
+  const prodNum = Number(production); // Convert to number for calculations, but cap if needed
+  const baseClick = Math.max(MIN_CLICK_VALUE, MIN_CLICK_VALUE + Math.floor(prodNum * CLICK_VALUE_RATIO));
   const multiplier = getActiveMultiplier(activeUpgrades, 'click');
-  return Math.max(MIN_CLICK_VALUE, Math.floor(baseClick * multiplier));
+  return BigInt(Math.max(MIN_CLICK_VALUE, Math.floor(baseClick * multiplier)));
 }
 
 /**
  * Calculate unit cost based on owned count (exponential scaling)
  */
-export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): number {
+export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): bigint {
   const count = units.filter(u => u.type === type).length;
-  return Math.round(baseCost * Math.pow(UNIT_COST_MULTIPLIER, count));
+  return BigInt(Math.round(baseCost * Math.pow(UNIT_COST_MULTIPLIER, count)));
 }
 
 /**

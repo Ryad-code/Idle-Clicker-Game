@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import { useGameState } from '../contexts';
+import { formatBigInt } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 
 const Container = styled.div`
@@ -110,7 +111,7 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Total Points Earned</StatLabel>
-            <StatValue>{Math.floor(currency.points).toLocaleString()}</StatValue>
+            <StatValue>{formatBigInt(currency.points)}</StatValue>
           </StatCard>
 
           <StatCard>
@@ -120,12 +121,12 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Points Per Second</StatLabel>
-            <StatValue>{Math.floor(production.pointsPerSecond).toLocaleString()}</StatValue>
+            <StatValue>{formatBigInt(production.pointsPerSecond)}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Click Value</StatLabel>
-            <StatValue>{production.clickValue.toLocaleString()}</StatValue>
+            <StatValue>{formatBigInt(production.clickValue)}</StatValue>
           </StatCard>
 
           <StatCard>

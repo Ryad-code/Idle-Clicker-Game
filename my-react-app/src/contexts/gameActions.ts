@@ -1,3 +1,14 @@
+import type { Dispatch, SetStateAction } from 'react';
+import type { GameState, UnitType } from '../game/core/types';
+import { Unit } from '../game/core/types';
+import { 
+  calculateProduction, 
+  calculateClickValue, 
+  calculateUnitCost 
+} from '../game/core/calculations';
+import { UNIT_CONFIG } from '../game/config/units';
+import { updateUnitsBonusState } from '../game/core/bonuses';
+import { UPGRADES, getUpgradeKind } from '../game/config/upgrades';
 
 /**
  * Places a new unit of the given type into the first available cell in the grid.
@@ -31,17 +42,6 @@ export function placeUnitInGrid(
     })
   );
 }
-import type { Dispatch, SetStateAction } from 'react';
-import type { GameState, UnitType } from '../game/core/types';
-import { Unit } from '../game/core/types';
-import { 
-  calculateProduction, 
-  calculateClickValue, 
-  calculateUnitCost 
-} from '../game/core/calculations';
-import { UNIT_CONFIG } from '../game/config/units';
-import { updateUnitsBonusState } from '../game/core/bonuses';
-import { UPGRADES, getUpgradeKind } from '../game/config/upgrades';
 
 /**
  * Action functions for game state updates
@@ -132,7 +132,7 @@ export function sellUnitAction(
       ...prev,
       currency: {
         ...prev.currency,
-        points: prev.currency.points + config.refund,
+        points: prev.currency.points + BigInt(config.refund),
       },
       grid: newGrid,
       production: {
@@ -152,22 +152,22 @@ export function calculateUpgradeCost(
   upgradeId: string,
   grid: (Unit | null)[][],
   activeUpgrades: { upgradeId: string; purchasedAt: Date }[]
-): number {
+): bigint {
   const upgrade = UPGRADES.find(u => u.id === upgradeId);
-  if (!upgrade) return 0;
+  if (!upgrade) return 0n;
 
   const kind = getUpgradeKind(upgradeId);
   const currentProduction = calculateProduction(grid, activeUpgrades);
   const currentClickValue = calculateClickValue(currentProduction, activeUpgrades);
-
+  
   // Use the relevant current value
   const currentValue = kind === 'production' ? currentProduction : currentClickValue;
-
+  
   // Net benefit: extra value from the multiplier over duration
-  const netBenefit = currentValue * (upgrade.multiplier - 1) * upgrade.durationSeconds;
-
-  // Cost: 40% of net benefit, rounded to nearest integer
-  return Math.round(netBenefit * 0.4);
+  const netBenefit = currentValue * BigInt(Math.floor(upgrade.multiplier - 1)) * BigInt(upgrade.durationSeconds);
+  
+  // Cost: 40% of net benefit
+  return netBenefit * 4n / 10n;
 }
 
 export function buyUpgradeAction(
@@ -211,7 +211,7 @@ export function setPointsAction(
     ...prev,
     currency: {
       ...prev.currency,
-      points,
+      points: BigInt(points),
     },
   }));
 }
