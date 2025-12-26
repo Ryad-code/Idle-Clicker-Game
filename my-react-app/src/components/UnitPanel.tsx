@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useGameState } from "../contexts";
+import { useEffect, useState } from "react";
+import { useGameState, useGameActions } from "../contexts";
 import { UNIT_CONFIG } from "../game/config/units";
 import {
   HomeContainer,
@@ -15,7 +15,9 @@ import {
 
 function UnitPanel() {
   const state = useGameState();
+  const { moveUnit } = useGameActions();
   const grid = state.grid;
+  const [selected, setSelected] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
     console.log("grid:", grid);
@@ -23,12 +25,30 @@ function UnitPanel() {
     }, [grid]);
   
 
+  const handleCellClick = (x: number, y: number) => {
+    const cell = grid[y][x];
+    if (!selected) {
+      if (cell) setSelected({ x, y }); // Select the unit
+    } else {
+      const { x: sx, y: sy } = selected;
+      if (x === sx && y === sy) {
+        setSelected(null); // Deselect if same
+      } else {
+        moveUnit(sx, sy, x, y); // Move or swap
+        setSelected(null);
+      }
+    }
+  };
+
   // Render the current grid using styled components
   const renderGrid = () => {
     const size = grid.length;
     return (
       <GridContainer size={size}>
         {grid.flat().map((cell, idx) => {
+          const x = idx % size;
+          const y = Math.floor(idx / size);
+          const isSelected = selected && selected.x === x && selected.y === y;
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
             return (
@@ -36,6 +56,11 @@ function UnitPanel() {
                 key={idx}
                 $color={cell.bonusActive ? meta.bonusColor : meta.color}
                 title={`${meta.value * (cell.bonusActive ? meta.bonus : 1)}`}
+                style={{
+                  border: isSelected ? "2px solid #2196F3" : "1px solid #bbb",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleCellClick(x, y)}
               >
                 {meta.emoji}
               </GridUnitCard>
@@ -45,7 +70,8 @@ function UnitPanel() {
               <GridUnitCard
                 key={idx}
                 $color={"#fff"}
-                style={{ border: "1px solid #eee", color: "#bbb" }}
+                style={{ border: "1px solid #eee", color: "#bbb", cursor: "pointer" }}
+                onClick={() => handleCellClick(x, y)}
               />
             );
           }

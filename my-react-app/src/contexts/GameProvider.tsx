@@ -11,6 +11,7 @@ import {
   sellUnitAction,
   buyUpgradeAction,
   setPointsAction,
+  moveUnitAction,
 } from './gameActions';
 
 /**
@@ -28,6 +29,7 @@ interface GameActions {
   buyUpgrade: (upgradeId: string) => void;
   save: () => Promise<void>;
   setPoints: (points: number) => void;
+  moveUnit: (fromX: number, fromY: number, toX: number, toY: number) => void;
 }
 
 const GameActionsContext = createContext<GameActions | null>(null);
@@ -67,6 +69,7 @@ export function GameProvider({ userId, children }: Props) {
     buyUpgrade: (upgradeId) => buyUpgradeAction(setState, upgradeId),
     save,
     setPoints: (points) => setPointsAction(setState, points),
+    moveUnit: (fromX, fromY, toX, toY) => moveUnitAction(setState, fromX, fromY, toX, toY),
   }), [save]);
 
   return (

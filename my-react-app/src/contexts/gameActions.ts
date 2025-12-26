@@ -185,3 +185,37 @@ export function setPointsAction(
     },
   }));
 }
+
+export function moveUnitAction(
+  setState: Dispatch<SetStateAction<GameState>>,
+  fromX: number, fromY: number,
+  toX: number, toY: number
+) {
+  setState(prev => {
+    const grid = prev.grid;
+    const fromUnit = grid[fromY]?.[fromX];
+    const toUnit = grid[toY]?.[toY];
+    
+    if (!fromUnit) return prev; // Must have a unit to move/swap
+    
+    // Create new grid by swapping positions (toUnit can be null)
+    const newGrid = grid.map((row, y) =>
+      row.map((cell, x) => {
+        if (y === fromY && x === fromX) return toUnit ? { ...toUnit, position: { x: fromX, y: fromY } } as Unit : null;
+        if (y === toY && x === toX) return { ...fromUnit, position: { x: toX, y: toY } } as Unit;
+        return cell;
+      })
+    );
+    
+    // Update bonuses and recalculate
+    const updatedGrid = updateUnitsBonusState(newGrid);
+    const newProduction = calculateProduction(updatedGrid, prev.upgrades.active);
+    const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
+    
+    return {
+      ...prev,
+      grid: updatedGrid,
+      production: { pointsPerSecond: newProduction, clickValue: newClickValue },
+    };
+  });
+}
