@@ -1,10 +1,10 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useState, useMemo, useEffect } from 'react';
-import type { GameState, UnitType } from '../game/core/types';
+import { createContext, useContext, useState, useMemo } from 'react';
+import type { GameState, GameActions } from '../game/core/types';
 import { createDefaultState } from '../game/core/state';
 import { useGamePersistence } from './hooks/useGamePersistence';
 import { useGameTick } from './hooks/useGameTick';
-import { calculateProduction, calculateClickValue } from '../game/core/calculations';
+import { useProductionCalculation } from './hooks/useProductionCalculation';
 import {
   clickAction,
   buyUnitAction,
@@ -22,16 +22,6 @@ const GameStateContext = createContext<GameState | null>(null);
 /**
  * Game actions context - stable function references
  */
-interface GameActions {
-  click: () => void;
-  buyUnit: (type: UnitType) => void;
-  sellUnit: (type: UnitType) => void;
-  buyUpgrade: (upgradeId: string) => void;
-  save: () => Promise<void>;
-  setPoints: (points: number) => void;
-  moveUnit: (fromX: number, fromY: number, toX: number, toY: number) => void;
-}
-
 const GameActionsContext = createContext<GameActions | null>(null);
 
 interface Props {
@@ -49,17 +39,7 @@ export function GameProvider({ userId, children }: Props) {
   useGameTick(userId, setState);
 
   // Recalculate production when units or upgrades change
-  useEffect(() => {
-    const newProduction = calculateProduction(state.grid, state.upgrades.active);
-    const newClickValue = calculateClickValue(newProduction, state.upgrades.active);
-    setState(prev => ({
-      ...prev,
-      production: {
-        pointsPerSecond: newProduction,
-        clickValue: newClickValue,
-      },
-    }));
-  }, [state.grid, state.upgrades.active]);
+  useProductionCalculation(state, setState);
 
   // Create stable action references
   const actions = useMemo<GameActions>(() => ({
