@@ -1,6 +1,7 @@
 import type { GameState, UnitType } from './types';
 import { Unit } from './types';
 import { filterExpiredUpgrades } from './calculations';
+import { GRID_COLS } from '../config/grid';
 
 /**
  * Database row format for players table
@@ -25,6 +26,8 @@ interface UnitDBRow {
   value: number;
   position_x: number;
   position_y: number;
+  stacked_count: number;
+  max_capacity: number;
 }
 
 /**
@@ -61,6 +64,8 @@ export function stateToDBFormat(state: GameState, userId: string) {
                 value: u.value,
                 position_x: x,
                 position_y: y,
+                stacked_count: u.stackedCount,
+                max_capacity: u.maxCapacity,
               }
             : null
         )
@@ -94,7 +99,7 @@ export function dbToStateFormat(
       row.position_x >= 0 && row.position_x < gridCols &&
       row.position_y >= 0 && row.position_y < gridRows
     ) {
-      const unit = new Unit(row.id, row.type as UnitType, row.position_x, row.position_y, row.value ?? 0);
+      const unit = new Unit(row.id, row.type as UnitType, row.position_x, row.position_y, row.value ?? 0, false, row.stacked_count ?? 1, row.max_capacity ?? 1);
       grid[row.position_y][row.position_x] = unit;
     }
   }
@@ -144,7 +149,7 @@ export function createDefaultState(): GameState {
       pointsPerSecond: 0n,
       clickValue: 1n,
     },
-    grid: Array.from({ length: 11 }, () => Array(11).fill(null)),
+    grid: Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null)),
     upgrades: {
       active: [],
     },

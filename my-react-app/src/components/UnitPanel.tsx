@@ -51,11 +51,12 @@ function UnitPanel() {
           const isSelected = selected && selected.x === x && selected.y === y;
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
+            const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? meta.bonus : 1);
             return (
               <GridUnitCard
                 key={idx}
                 $color={cell.bonusActive ? meta.bonusColor : meta.color}
-                title={`${meta.value * (cell.bonusActive ? meta.bonus : 1)}`}
+                title={`Production: ${actualProduction} | Stacked: ${cell.stackedCount} | Max: ${cell.maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
                 style={{
                   border: isSelected ? "2px solid #2196F3" : "1px solid #bbb",
                   cursor: "pointer",
@@ -87,9 +88,9 @@ function UnitPanel() {
     const bonusCounts: Record<string, number> = {};
     grid.flat().forEach(cell => {
       if (cell) {
-        unitCounts[cell.type] = (unitCounts[cell.type] || 0) + 1;
+        unitCounts[cell.type] = (unitCounts[cell.type] || 0) + cell.stackedCount;
         if (cell.bonusActive) {
-          bonusCounts[cell.type] = (bonusCounts[cell.type] || 0) + 1;
+          bonusCounts[cell.type] = (bonusCounts[cell.type] || 0) + cell.stackedCount;
         }
       }
     });

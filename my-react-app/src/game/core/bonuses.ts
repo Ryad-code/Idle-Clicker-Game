@@ -395,7 +395,7 @@ export function updateUnitsBonusState(grid: (Unit | null)[][]): (Unit | null)[][
       if (unit.type === 'unit17') isActive = unit17Bonus(grid, x, y) > 0;
       if (unit.type === 'unit18') isActive = unit18Bonus(grid, x, y) > 0;
       // Return a new Unit instance with updated bonusActive
-      return new Unit(unit.id, unit.type, unit.position.x, unit.position.y, unit.value, isActive);
+      return new Unit(unit.id, unit.type, unit.position.x, unit.position.y, unit.value, isActive, unit.stackedCount, unit.maxCapacity);
     })
   );
 }

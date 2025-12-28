@@ -221,26 +221,71 @@ export function moveUnitAction(
   toX: number, toY: number
 ) {
   setState(prev => {
-    const grid = prev.grid;
-    const fromUnit = grid[fromY]?.[fromX];
-    const toUnit = grid[toY]?.[toX];
-    
-    if (!fromUnit) return prev; // Must have a unit to move/swap
-    
-    // Create new grid by swapping positions (toUnit can be null)
-    const newGrid = grid.map((row, y) =>
-      row.map((cell, x) => {
-        if (y === fromY && x === fromX) {
-          return toUnit ? new Unit(toUnit.id, toUnit.type, fromX, fromY, toUnit.value, toUnit.bonusActive) : null;
+    const newGrid = prev.grid.map(row => row.slice()); // Deep copy rows
+    const source = newGrid[fromY][fromX];
+    const dest = newGrid[toY][toX];
+
+    if (!source) return prev; // No unit to move
+
+    if (!dest) {
+      // Destination free: move unit
+      newGrid[toY][toX] = new Unit(
+        source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
+      );
+      newGrid[fromY][fromX] = null;
+    } else {
+      if (source.type !== dest.type) {
+        // Different types: swap units
+        newGrid[toY][toX] = new Unit(
+          source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
+        );
+        newGrid[fromY][fromX] = new Unit(
+          dest.id, dest.type, fromX, fromY, dest.value, dest.bonusActive, dest.stackedCount, dest.maxCapacity
+        );
+      } else {
+        // Same type: attempt to stack
+        if (dest.stackedCount + source.stackedCount <= dest.maxCapacity) {
+          // Stack: add to dest, remove source
+          newGrid[toY][toX] = new Unit(
+            dest.id, dest.type, toX, toY, dest.value, dest.bonusActive, dest.stackedCount + source.stackedCount, dest.maxCapacity
+          );
+          newGrid[fromY][fromX] = null;
+        } else {
+          // Cannot stack: cancel movement
+          return prev;
         }
-        if (y === toY && x === toX) {
-          return new Unit(fromUnit.id, fromUnit.type, toX, toY, fromUnit.value, fromUnit.bonusActive);
+      }
+    }
+
+    // Update bonuses and recalculate
+    const updatedGrid = updateUnitsBonusState(newGrid);
+    const newProduction = calculateProduction(updatedGrid, prev.upgrades.active);
+    const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);
+
+    return {
+      ...prev,
+      grid: updatedGrid,
+      production: { pointsPerSecond: newProduction, clickValue: newClickValue },
+    };
+  });
+}
+
+export function upgradeUnitTypeAction(
+  setState: Dispatch<SetStateAction<GameState>>,
+  type: UnitType
+) {
+  console.log(`Upgrading all units of type ${type}`);
+  setState(prev => {
+    // Create new grid with upgraded maxCapacity for units of the type
+    const newGrid = prev.grid.map(row =>
+      row.map(cell => {
+        if (cell && cell.type === type) {
+          return new Unit(cell.id, cell.type, cell.position.x, cell.position.y, cell.value, cell.bonusActive, cell.stackedCount, cell.maxCapacity * 2);
         }
         return cell;
       })
     );
-    
-    // Update bonuses and recalculate
+    // Update bonuses and recalculate production
     const updatedGrid = updateUnitsBonusState(newGrid);
     const newProduction = calculateProduction(updatedGrid, prev.upgrades.active);
     const newClickValue = calculateClickValue(newProduction, prev.upgrades.active);

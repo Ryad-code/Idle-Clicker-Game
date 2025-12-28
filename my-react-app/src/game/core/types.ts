@@ -56,16 +56,21 @@ export class Unit {
   value: number;
   // Tracks if this unit's bonus is currently active
   bonusActive: boolean;
+  // New fields for stacking
+  stackedCount: number;
+  maxCapacity: number;
 
   /**
    * @param bonusActive - whether the unit's bonus is active (default: false)
    */
-  constructor(id: string, type: UnitType, x: number, y: number, value: number, bonusActive = false) {
+  constructor(id: string, type: UnitType, x: number, y: number, value: number, bonusActive = false, stackedCount = 1, maxCapacity = 1) {
     this.id = id;
     this.type = type;
     this.position = { x, y };
     this.value = value;
     this.bonusActive = bonusActive;
+    this.stackedCount = stackedCount;
+    this.maxCapacity = maxCapacity;
   }
 }
 
@@ -88,4 +93,5 @@ export interface GameActions {
   save: () => Promise<void>;
   setPoints: (points: number) => void;
   moveUnit: (fromX: number, fromY: number, toX: number, toY: number) => void;
+  upgradeUnitType: (type: UnitType) => void;
 }

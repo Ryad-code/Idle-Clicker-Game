@@ -31,7 +31,7 @@ import {
 function ShopPanel() {
   const { currency, grid, upgrades, ui } = useGameState();
   const allUnits = grid.flat().filter(u => u !== null);
-  const { buyUnit, sellUnit, buyUpgrade } = useGameActions();
+  const { buyUnit, sellUnit, buyUpgrade, upgradeUnitType } = useGameActions();
   const [selectedUpgrades, setSelectedUpgrades] = useState(() => 
     [...UPGRADES].sort(() => Math.random() - 0.5).slice(0, 3)
   );
@@ -100,7 +100,7 @@ function ShopPanel() {
           const meta = UNIT_CONFIG[unitType];
           const cost = calculateUnitCost(allUnits, unitType, meta.cost);
           const canAfford = currency.points >= cost;
-          const owned = allUnits.filter(u => u.type === unitType).length;
+          const owned = allUnits.filter(u => u.type === unitType).reduce((sum, u) => sum + u.stackedCount, 0);
           const canSell = owned > 0;
           return (
             <UnitRow key={unitType}>
@@ -122,6 +122,13 @@ function ShopPanel() {
                 title={`Sell for ${meta.refund} pts`}
               >
                 Sell ({meta.refund})
+              </SmallSellButton>
+              <SmallSellButton 
+                onClick={() => upgradeUnitType(unitType)}
+                $disabled={owned === 0}
+                title={`Upgrade ${meta.name} capacity`}
+              >
+                Upgrade
               </SmallSellButton>
             </UnitRow>
           );

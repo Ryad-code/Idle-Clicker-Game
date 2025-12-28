@@ -15,7 +15,7 @@ export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: Act
       const unit = grid[y][x];
       if (unit) {
         const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
-        totalProduction += BigInt(Math.floor(unit.value * bonusMultiplier));
+        totalProduction += BigInt(Math.floor(unit.value * unit.stackedCount * bonusMultiplier));
       }
     }
   }
@@ -37,7 +37,7 @@ export function calculateClickValue(production: bigint, activeUpgrades: ActiveUp
  * Calculate unit cost based on owned count (exponential scaling)
  */
 export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): bigint {
-  const count = units.filter(u => u.type === type).length;
+  const count = units.filter(u => u.type === type).reduce((sum, u) => sum + u.stackedCount, 0);
   return BigInt(Math.round(baseCost * Math.pow(UNIT_COST_MULTIPLIER, count)));
 }
 

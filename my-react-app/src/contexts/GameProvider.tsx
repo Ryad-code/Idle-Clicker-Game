@@ -12,6 +12,7 @@ import {
   buyUpgradeAction,
   setPointsAction,
   moveUnitAction,
+  upgradeUnitTypeAction,
 } from './gameActions';
 
 /**
@@ -50,6 +51,7 @@ export function GameProvider({ userId, children }: Props) {
     save,
     setPoints: (points) => setPointsAction(setState, points),
     moveUnit: (fromX, fromY, toX, toY) => moveUnitAction(setState, fromX, fromY, toX, toY),
+    upgradeUnitType: (type) => upgradeUnitTypeAction(setState, type),
   }), [save]);
 
   return (

@@ -35,6 +35,8 @@ my-react-app/
 - **Authentication**: User signup and login with Supabase Auth.
 - **Grid-Based Gameplay**: Place units on a 11x11 grid to earn production points.
 - **Unit Bonuses**: Each unit has unique grid-based bonuses (e.g., adjacency, clusters).
+- **Unit Stacking**: Combine same-type units by moving them together to multiply production.
+- **Capacity Upgrades**: Upgrade unit types to increase their maximum stacking capacity.
 - **Upgrades**: Temporary multipliers for production or click value.
 - **Persistence**: Auto-save/load game state to/from Supabase.
 - **Real-Time Updates**: Production updates every second; bonuses apply immediately.
@@ -53,9 +55,11 @@ my-react-app/
 5. Build for production: `npm run build`
 
 ## Core Mechanics
-- **Production**: Calculated from unit values, grid bonuses, and active upgrades.
+- **Production**: Calculated from unit values, grid bonuses, active upgrades, and stacking multipliers.
 - **Clicking**: Earns points based on production with upgrade multipliers.
 - **Bonuses**: Triggered by unit positions (e.g., chains, clusters, synergies).
+- **Stacking**: Units of the same type can be stacked up to their maximum capacity by moving them onto each other, multiplying their production.
+- **Capacity Management**: Upgrade unit types to double their stacking capacity.
 - **Upgrades**: Purchased with points; expire after time.
 
 ## API Reference
