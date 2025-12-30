@@ -11,7 +11,6 @@ This is a React-based idle clicker game where players place units on a grid to g
 
 ## Project Structure
 ```
-my-react-app/
 ├── src/
 │   ├── components/          # UI components (UnitPanel, ClickerPanel, ShopPanel, Layout, UI)
 │   ├── contexts/            # State management (GameProvider, gameActions, hooks)
@@ -48,11 +47,10 @@ my-react-app/
 - **Stats**: Displays game statistics and progress.
 
 ## How to Run
-1. Navigate to the app directory: `cd my-react-app`
-2. Install dependencies: `npm install`
-3. Set up Supabase (add your URL and anon key to `.env`)
-4. Start dev server: `npm run dev`
-5. Build for production: `npm run build`
+1. Install dependencies: `npm install`
+2. Set up Supabase (add your URL and anon key to `.env`)
+3. Start dev server: `npm run dev`
+4. Build for production: `npm run build`
 
 ## Core Mechanics
 - **Production**: Calculated from unit values, grid bonuses, active upgrades, and stacking multipliers.
