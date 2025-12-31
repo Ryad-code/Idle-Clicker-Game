@@ -112,30 +112,3 @@ export function cleanupTickSystem(): void {
   stopAutoSaveInterval();
   console.log('Tick system cleanup completed');
 }
-
-/**
- * Restarts the tick system intervals.
- * Useful for recovery scenarios or after cleanup.
- * Only starts intervals that aren't already running.
- */
-export function restartTickSystem(): void {
-  startTickInterval();
-  startAutoSaveInterval();
-  console.log('Tick system restarted');
-}
-
-/**
- * Gets the current status of the tick system intervals.
- * Useful for debugging and monitoring.
- */
-export function getTickSystemStatus(): {
-  tickIntervalRunning: boolean;
-  autoSaveIntervalRunning: boolean;
-  currentUserId: string | undefined;
-} {
-  return {
-    tickIntervalRunning: tickIntervalId !== null,
-    autoSaveIntervalRunning: autoSaveIntervalId !== null,
-    currentUserId,
-  };
-}
