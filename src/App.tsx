@@ -6,16 +6,46 @@ import Page2 from './pages/Page2';
 import AuthPage from './pages/AuthPage';
 import Footer from './components/Layout/Footer';
 import { useAuth } from './hooks/useAuth';
-import { GameProvider } from './contexts';
+import { useEffect } from 'react';
 
+import './game/gameEngine';
+import './game/tick';
+import { setUserId, cleanupTickSystem, startTickInterval, startAutoSaveInterval } from './game/tick';
+
+/**
+ * Main App Component
+ *
+ * This component sets up the application structure with:
+ * - Authentication handling
+ * - Game logic hooks (persistence, ticks, production)
+ * - Routing for different pages
+ * - Global layout and footer
+ */
 function App() {
   const user = useAuth();
 
-  // While checking the session, show nothing (or you can add a spinner)
+  console.log("App mounted");
+
+  // Set userId for auto-save when user changes
+  useEffect(() => {
+    setUserId(user?.id);
+  }, [user?.id]);
+
+  // Start tick system when app mounts
+  useEffect(() => {
+    console.log("Starting tick system...");
+    startTickInterval();
+    startAutoSaveInterval();
+    
+    return () => {
+      cleanupTickSystem();
+    };
+  }, []);
+
+  // Show loading state while checking authentication
   if (user === undefined) return null;
 
   return (
-    <GameProvider userId={user?.id}>
     <Router>
       <Routes>
         {/* Auth page for unauthenticated users */}
@@ -41,7 +71,6 @@ function App() {
 
       <Footer />
     </Router>
-    </GameProvider>
   );
 }
 

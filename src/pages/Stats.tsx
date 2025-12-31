@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
-import { useGameState } from '../contexts';
+import { useGameStore } from '../game/gameStore';
 import { formatBigInt } from '../utils/formatters';
 import { useEffect, useState } from 'react';
+import { Unit } from '../game/core/types';
 
 const Container = styled.div`
   width: 100%;
@@ -72,12 +73,17 @@ const StatValue = styled.div`
 `;
 
 function Stats() {
-  const { currency, production, metadata, grid } = useGameState();
+  const points = useGameStore(state => state.points);
+  const pointsPerSecond = useGameStore(state => state.pointsPerSecond);
+  const clickValue = useGameStore(state => state.clickValue);
+  const totalClicks = useGameStore(state => state.totalClicks);
+  const createdAt = useGameStore(state => state.createdAt);
+  const grid = useGameStore(state => state.grid);
   const [duration, setDuration] = useState('');
 
   useEffect(() => {
     const updateDuration = () => {
-      const elapsed = Date.now() - metadata.createdAt.getTime();
+      const elapsed = Date.now() - createdAt.getTime();
       const days = Math.floor(elapsed / (1000 * 60 * 60 * 24));
       const hours = Math.floor((elapsed % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
@@ -97,7 +103,7 @@ function Stats() {
     updateDuration();
     const interval = setInterval(updateDuration, 1000);
     return () => clearInterval(interval);
-  }, [metadata.createdAt]);
+  }, [createdAt]);
 
   return (
     <Container>
@@ -111,27 +117,27 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Total Points Earned</StatLabel>
-            <StatValue>{formatBigInt(currency.points)}</StatValue>
+            <StatValue>{formatBigInt(points)}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Total Clicks</StatLabel>
-            <StatValue>{currency.totalClicks.toLocaleString()}</StatValue>
+            <StatValue>{totalClicks.toLocaleString()}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Points Per Second</StatLabel>
-            <StatValue>{formatBigInt(production.pointsPerSecond)}</StatValue>
+            <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Click Value</StatLabel>
-            <StatValue>{formatBigInt(production.clickValue)}</StatValue>
+            <StatValue>{formatBigInt(clickValue)}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Total Units Owned</StatLabel>
-            <StatValue>{grid.flat().filter(u => u !== null).length.toLocaleString()}</StatValue>
+            <StatValue>{grid.flat().filter((u): u is Unit => u !== null).length.toLocaleString()}</StatValue>
           </StatCard>
         </StatsGrid>
       </StatsContainer>

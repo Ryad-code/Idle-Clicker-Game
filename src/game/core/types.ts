@@ -19,29 +19,24 @@ export type Grid = (Unit | null)[][];
  */
 export interface GameState {
   // Hot path - changes every tick/click
-  currency: {
-    points: bigint;
-    totalClicks: number;
-  };
+  points: bigint;
+  totalClicks: number;
+
   // Warm path - recalculated on unit/upgrade changes
-  production: {
-    pointsPerSecond: bigint;
-    clickValue: bigint;
-  };
+  pointsPerSecond: bigint;
+  clickValue: bigint;
+
   // Cold path - changes on buy/expire
-  upgrades: {
-    active: Array<{ upgradeId: string; purchasedAt: Date }>;
-  };
+  activeUpgrades: Array<{ upgradeId: string; purchasedAt: Date }>;
+
   // Static - set once
-  metadata: {
-    createdAt: Date;
-  };
+  createdAt: Date;
+
   // UI state
-  ui: {
-    isLoading: boolean;
-    isSaving: boolean;
-    error: string | null;
-  };
+  isLoading: boolean;
+  isSaving: boolean;
+  error: string | null;
+
   // Grid is now the single source of truth for units
   grid: Grid;
 }

@@ -26,7 +26,7 @@ export interface UnitMetadata {
 export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
   unit1: { 
     cost: 15, 
-    value: 0.1, 
+    value: 1, 
     refund: 8,
     bonus: 5,
     name: "unit1", 
@@ -38,7 +38,7 @@ export const UNIT_CONFIG: Record<UnitType, UnitMetadata> = {
   },
   unit2: { 
     cost: 100, 
-    value: 1, 
+    value: 2, 
     refund: 50,
     bonus: 10,
     name: "unit2", 

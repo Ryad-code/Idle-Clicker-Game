@@ -2,7 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../UI/Button';
 import { supabase } from '../../supabaseClient';
-import { useGameActions } from '../../contexts';
+import { useGameStore } from '../../game/gameStore';
+import { gameEngine } from '../../game/gameEngine';
 import { HeaderContainer, NavBar, HomeBar } from '../../styles/components/layout.styles';
 import { theme } from '../../styles/theme';
 
@@ -34,7 +35,7 @@ const SaveIconButton = styled.button`
 
 function Header() {
   const navigate = useNavigate();
-  const { save } = useGameActions();
+  const syncWithEngine = useGameStore(state => state.syncWithEngine);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -42,7 +43,8 @@ function Header() {
   }
 
   const handleManualSave = async () => {
-    await save();
+    await gameEngine.save();
+    syncWithEngine();
   };
 
   return (
