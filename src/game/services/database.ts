@@ -46,6 +46,7 @@ export async function loadPlayerFromDB(userId: string): Promise<GameState> {
  * Save GameState to Supabase
  */
 export async function savePlayerToDB(userId: string, state: GameState): Promise<void> {
+  console.log("saving to DB...");
   try {
     const { player, units, upgrades } = stateToDBFormat(state, userId);
 
@@ -100,7 +101,6 @@ export async function savePlayerToDB(userId: string, state: GameState): Promise<
 
       if (insertUpgradesError) throw insertUpgradesError;
     }
-    console.log("savePlayerToDB: ", { player, units, upgrades });
   } catch (error) {
     logError('savePlayerToDB', error);
     throw error;

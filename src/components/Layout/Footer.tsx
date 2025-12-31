@@ -20,7 +20,7 @@ function Footer() {
     <>
       <HoverZone onMouseEnter={showFooter} />
       <FooterContainer
-        visible={visible}
+        $isVisible={visible}
         onMouseEnter={showFooter}
         onMouseLeave={hideFooter}
       >

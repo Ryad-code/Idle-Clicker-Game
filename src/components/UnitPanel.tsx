@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useGameState, useGameActions } from "../contexts";
+import { useGameStore } from "../game/gameStore";
+import { gameEngine } from "../game/gameEngine";
 import { UNIT_CONFIG } from "../game/config/units";
+import { Unit } from "../game/core/types";
 import {
   HomeContainer,
   GridUnitCard,
@@ -14,15 +16,13 @@ import {
 
 
 function UnitPanel() {
-  const state = useGameState();
-  const { moveUnit } = useGameActions();
-  const grid = state.grid;
+  const grid = useGameStore(state => state.grid);
+  const syncWithEngine = useGameStore(state => state.syncWithEngine);
   const [selected, setSelected] = useState<{ x: number; y: number } | null>(null);
 
   useEffect(() => {
-    console.log("grid:", grid);
-      // Debug logging removed for production
-    }, [grid]);
+    // Debug logging removed for production
+  }, [grid]);
   
 
   const handleCellClick = (x: number, y: number) => {
@@ -34,7 +34,8 @@ function UnitPanel() {
       if (x === sx && y === sy) {
         setSelected(null); // Deselect if same
       } else {
-        moveUnit(sx, sy, x, y); // Move or swap
+        gameEngine.moveUnit(sx, sy, x, y); // Move or swap
+        syncWithEngine();
         setSelected(null);
       }
     }
@@ -45,7 +46,7 @@ function UnitPanel() {
     const size = grid.length;
     return (
       <GridContainer size={size}>
-        {grid.flat().map((cell, idx) => {
+        {grid.flat().map((cell: Unit | null, idx: number) => {
           const x = idx % size;
           const y = Math.floor(idx / size);
           const isSelected = selected && selected.x === x && selected.y === y;
@@ -86,7 +87,7 @@ function UnitPanel() {
     // Count units by type
     const unitCounts: Record<string, number> = {};
     const bonusCounts: Record<string, number> = {};
-    grid.flat().forEach(cell => {
+    grid.flat().forEach((cell: Unit | null) => {
       if (cell) {
         unitCounts[cell.type] = (unitCounts[cell.type] || 0) + cell.stackedCount;
         if (cell.bonusActive) {

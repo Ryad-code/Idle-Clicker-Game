@@ -4,7 +4,7 @@
 This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, authentication, and persistent state via Supabase. Players can sign up, log in, and track their progress across sessions.
 
 ## Architecture
-- **Frontend**: React with TypeScript, using Context API for state management and React Router for navigation.
+- **Frontend**: React with TypeScript, using Zustand for state management and React Router for navigation.
 - **Backend**: Supabase for authentication and database persistence.
 - **Build Tool**: Vite for development and building.
 - **Styling**: Styled-components with a custom theme.
@@ -13,12 +13,12 @@ This is a React-based idle clicker game where players place units on a grid to g
 ```
 ├── src/
 │   ├── components/          # UI components (UnitPanel, ClickerPanel, ShopPanel, Layout, UI)
-│   ├── contexts/            # State management (GameProvider, gameActions, hooks)
 │   ├── game/
 │   │   ├── config/          # Game data (units, upgrades, constants, grid)
 │   │   ├── core/            # Game logic (calculations, bonuses, state, types)
-│   │   └── services/        # Database interactions
-│   ├── hooks/               # Custom hooks (useAuth, useGamePersistence, useGameTick)
+│   │   ├── services/        # Database interactions
+│   │   └── gameStore.ts     # Zustand state management store
+│   ├── hooks/               # Custom hooks (useAuth)
 │   ├── pages/               # Page components (AuthPage, HomePage, Stats)
 │   ├── styles/              # Theme and component-specific styles
 │   ├── utils/               # Utility functions (errorUtils, formatters)
@@ -48,7 +48,10 @@ This is a React-based idle clicker game where players place units on a grid to g
 
 ## How to Run
 1. Install dependencies: `npm install`
-2. Set up Supabase (add your URL and anon key to `.env`)
+2. Set up Supabase:
+   - Create a new Supabase project
+   - Copy `.env.example` to `.env`
+   - Add your Supabase URL and anon key to `.env`
 3. Start dev server: `npm run dev`
 4. Build for production: `npm run build`
 

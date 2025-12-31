@@ -46,11 +46,11 @@ export function stateToDBFormat(state: GameState, userId: string) {
   return {
     player: {
       user_id: userId,
-      points: state.currency.points.toString(), // Convert bigint to string for DB storage
-      clickvalue: state.production.clickValue.toString(), // Convert bigint to string for DB storage
-      pointspersecond: state.production.pointsPerSecond.toString(), // Convert bigint to string for DB storage
-      totalclicks: state.currency.totalClicks,
-      created_at: state.metadata.createdAt.toISOString(),
+      points: state.points.toString(), // Convert bigint to string for DB storage
+      clickvalue: state.clickValue.toString(), // Convert bigint to string for DB storage
+      pointspersecond: state.pointsPerSecond.toString(), // Convert bigint to string for DB storage
+      totalclicks: state.totalClicks,
+      created_at: state.createdAt.toISOString(),
       updated_at: new Date().toISOString(),
     },
     units: state.grid
@@ -72,7 +72,7 @@ export function stateToDBFormat(state: GameState, userId: string) {
       )
       .flat()
       .filter(u => u !== null),
-    upgrades: state.upgrades.active.map(u => ({
+    upgrades: state.activeUpgrades.map(u => ({
       player_id: userId,
       upgrade_id: u.upgradeId,
       purchased_at: u.purchasedAt.toISOString(),
@@ -113,26 +113,16 @@ export function dbToStateFormat(
   const filteredUpgrades = filterExpiredUpgrades(activeUpgrades);
 
   return {
-    currency: {
-      points: BigInt(playerRow.points || "0"), // Parse string back to bigint
-      totalClicks: playerRow.totalclicks || 0,
-    },
-    production: {
-      pointsPerSecond: BigInt(playerRow.pointspersecond || "0"), // Parse string back to bigint
-      clickValue: BigInt(playerRow.clickvalue || "1"), // Parse string back to bigint
-    },
+    points: BigInt(playerRow.points || "0"), // Parse string back to bigint
+    totalClicks: playerRow.totalclicks || 0,
+    pointsPerSecond: 0n, // Will be recalculated by gameEngine.loadState()
+    clickValue: 1n, // Will be recalculated by gameEngine.loadState()
     grid,
-    upgrades: {
-      active: filteredUpgrades,
-    },
-    metadata: {
-      createdAt: playerRow.created_at ? new Date(playerRow.created_at) : new Date(),
-    },
-    ui: {
-      isLoading: false,
-      isSaving: false,
-      error: null,
-    },
+    activeUpgrades: filteredUpgrades,
+    createdAt: playerRow.created_at ? new Date(playerRow.created_at) : new Date(),
+    isLoading: false,
+    isSaving: false,
+    error: null,
   };
 }
 
@@ -141,25 +131,15 @@ export function dbToStateFormat(
  */
 export function createDefaultState(): GameState {
   return {
-    currency: {
-      points: 0n,
-      totalClicks: 0,
-    },
-    production: {
-      pointsPerSecond: 0n,
-      clickValue: 1n,
-    },
+    points: 0n,
+    totalClicks: 0,
+    pointsPerSecond: 0n,
+    clickValue: 1n,
     grid: Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null)),
-    upgrades: {
-      active: [],
-    },
-    metadata: {
-      createdAt: new Date(),
-    },
-    ui: {
-      isLoading: false,
-      isSaving: false,
-      error: null,
-    },
+    activeUpgrades: [],
+    createdAt: new Date(),
+    isLoading: false,
+    isSaving: false,
+    error: null,
   };
 }

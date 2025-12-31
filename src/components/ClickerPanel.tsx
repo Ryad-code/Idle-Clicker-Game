@@ -1,5 +1,6 @@
-import { useGameState, useGameActions } from "../contexts";
-import { getUpgradeKind, UPGRADES } from "../game/config/upgrades";
+import { useGameStore } from "../game/gameStore";
+import { gameEngine } from "../game/gameEngine";
+import { UPGRADES } from "../game/config/upgrades";
 import { formatBigInt } from "../utils/formatters";
 import { 
   ClickerContainer, 
@@ -10,55 +11,58 @@ import {
   StatRow,
   StatLabel,
   StatValue,
-  ClickButton
-  ,
+  ClickButton,
   ActiveUpgradesContainer,
   ActiveUpgradesTitle,
   ActiveUpgradeBadge,
   BadgeLeft,
-  BadgeType,
   BadgeRight
 } from "../styles/components/clickerPanel.styles";
 import ErrorMessage from "./UI/ErrorMessage";
 
 function ClickerPanel() {
-  const { currency, production, upgrades, ui } = useGameState();
-  const { click, setPoints } = useGameActions();
+  const points = useGameStore(state => state.points);
+  const pointsPerSecond = useGameStore(state => state.pointsPerSecond);
+  const clickValue = useGameStore(state => state.clickValue);
+  const activeUpgrades = useGameStore(state => state.activeUpgrades);
+  const totalClicks = useGameStore(state => state.totalClicks);
+  const error = useGameStore(state => state.error);
+  const syncWithEngine = useGameStore(state => state.syncWithEngine);
   
-  // Format active upgrades for display with remaining time
-  const now = Date.now();
   const upgradeMap = new Map(UPGRADES.map(u => [u.id, u]));
+  const now = Date.now();
   
-  const activeUpgrades = upgrades.active
-    .map(pu => {
+  const activeUpgradeDisplays = activeUpgrades
+    .map((pu) => {
       const upgrade = upgradeMap.get(pu.upgradeId);
       if (!upgrade) return null;
-      
       const expiresAt = pu.purchasedAt.getTime() + upgrade.durationSeconds * 1000;
       const remainingMs = expiresAt - now;
       if (remainingMs <= 0) return null;
-      
-      return {
-        ...upgrade,
-        kind: getUpgradeKind(upgrade.id),
-        remainingSeconds: Math.ceil(remainingMs / 1000),
-      };
+      const remainingSeconds = Math.ceil(remainingMs / 1000);
+      return { upgradeId: pu.upgradeId, icon: upgrade.icon, remainingSeconds };
     })
-    .filter((item): item is NonNullable<typeof item> => item !== null);
-
+    .filter(Boolean);
+  
   const handlePointsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseFloat(e.target.value);
     if (!isNaN(value) && value >= 0) {
-      setPoints(value);
+      gameEngine.setPoints(value);
+      syncWithEngine();
     }
+  };
+
+  const handleClick = () => {
+    gameEngine.click();
+    syncWithEngine();
   };
 
   return (
     <ClickerContainer>
-      {ui.error && <ErrorMessage message={ui.error} />}
+      {error && <ErrorMessage message={error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
-        <PointsValue>{formatBigInt(currency.points)}</PointsValue>
+        <PointsValue>{formatBigInt(points)}</PointsValue>
         <input 
           type="number" 
           placeholder="Set points (test)" 
@@ -77,38 +81,36 @@ function ClickerPanel() {
       <StatsContainer>
         <StatRow>
           <StatLabel>Per Second:</StatLabel>
-          <StatValue>{formatBigInt(production.pointsPerSecond)}</StatValue>
+          <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Click Value:</StatLabel>
-          <StatValue>{formatBigInt(production.clickValue)}</StatValue>
+          <StatValue>{formatBigInt(clickValue)}</StatValue>
         </StatRow>
         <StatRow>
           <StatLabel>Total Clicks:</StatLabel>
-          <StatValue>{currency.totalClicks.toLocaleString()}</StatValue>
+          <StatValue>{totalClicks.toLocaleString()}</StatValue>
         </StatRow>
       </StatsContainer>
 
-      {activeUpgrades.length > 0 && (
+      {activeUpgradeDisplays.length > 0 && (
         <ActiveUpgradesContainer>
           <ActiveUpgradesTitle>Active Upgrades</ActiveUpgradesTitle>
-          {activeUpgrades.map(upgrade => (
-            <ActiveUpgradeBadge key={upgrade.id}>
+          {activeUpgradeDisplays.map((item) => (
+            <ActiveUpgradeBadge key={item?.upgradeId}>
               <BadgeLeft>
-                <span>{upgrade.icon}</span>
-                <span>{upgrade.name}</span>
-                <BadgeType>{upgrade.kind}</BadgeType>
+                <span>{item?.icon}</span>
+                <span>{item?.upgradeId}</span>
               </BadgeLeft>
               <BadgeRight>
-                <span>×{upgrade.multiplier}</span>
-                <span>{upgrade.remainingSeconds}s</span>
+                <span>{item?.remainingSeconds}s</span>
               </BadgeRight>
             </ActiveUpgradeBadge>
           ))}
         </ActiveUpgradesContainer>
       )}
 
-      <ClickButton onClick={click}>
+      <ClickButton onClick={handleClick}>
         CLICK
       </ClickButton>
     </ClickerContainer>

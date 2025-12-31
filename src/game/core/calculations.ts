@@ -7,6 +7,7 @@ import { getUnitBonusMultiplier } from './bonuses';
  * Calculate total production from units with grid bonuses and active upgrade multipliers
  */
 export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): bigint {
+  console.log("calculation...");
   let totalProduction = 0n;
   const upgradeMultiplier = getActiveMultiplier(activeUpgrades, 'production');
   
@@ -15,12 +16,16 @@ export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: Act
       const unit = grid[y][x];
       if (unit) {
         const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
-        totalProduction += BigInt(Math.floor(unit.value * unit.stackedCount * bonusMultiplier));
+        const baseProduction = BigInt(unit.value) * BigInt(unit.stackedCount);
+        const bonusBig = BigInt(Math.round(bonusMultiplier * 100));
+        const unitProduction = (baseProduction * bonusBig) / 100n;
+        totalProduction += unitProduction;
       }
     }
   }
   
-  return totalProduction * BigInt(Math.floor(upgradeMultiplier));
+  const upgradeBig = BigInt(Math.round(upgradeMultiplier * 100));
+  return (totalProduction * upgradeBig) / 100n;
 }
 
 /**
@@ -39,6 +44,24 @@ export function calculateClickValue(production: bigint, activeUpgrades: ActiveUp
 export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): bigint {
   const count = units.filter(u => u.type === type).reduce((sum, u) => sum + u.stackedCount, 0);
   return BigInt(Math.round(baseCost * Math.pow(UNIT_COST_MULTIPLIER, count)));
+}
+
+/**
+ * Calculates the dynamic cost of an upgrade based on its net benefit.
+ * Returns the cost as a bigint.
+ */
+export function calculateUpgradeCost(
+  upgradeId: string,
+  pointsPerSecond: bigint,
+  clickValue: bigint
+): bigint {
+  const upgrade = UPGRADES.find(u => u.id === upgradeId);
+  if (!upgrade) return 0n;
+  const kind = getUpgradeKind(upgradeId);
+  const currentValue = kind === 'production' ? pointsPerSecond : clickValue;
+  const netBenefitFloat = Number(currentValue) * (upgrade.multiplier - 1) * upgrade.durationSeconds;
+  const costFloat = netBenefitFloat * 0.4;
+  return BigInt(Math.max(0, Math.floor(costFloat)));
 }
 
 /**
@@ -70,6 +93,7 @@ export function getActiveMultiplier(
  * Filter out expired upgrades
  */
 export function filterExpiredUpgrades(activeUpgrades: ActiveUpgrade[], now: Date = new Date()): ActiveUpgrade[] {
+  console.log("filtering expired upgrades...");
   if (!activeUpgrades || activeUpgrades.length === 0) return [];
   
   const nowMs = now.getTime();

@@ -63,7 +63,7 @@ export const BodyContainer = styled.main`
   background-color: ${theme.colors.background};
 `;
 
-export const FooterContainer = styled.footer<{ visible: boolean }>`
+export const FooterContainer = styled.footer<{ $isVisible: boolean }>`
   position: fixed;
   bottom: 0;
   left: 0;
@@ -74,7 +74,7 @@ export const FooterContainer = styled.footer<{ visible: boolean }>`
   justify-content: center;
   align-items: center;
   transition: transform ${theme.transition.slow};
-  transform: ${({ visible }) => (visible ? "translateY(0)" : "translateY(100%)")};
+  transform: ${({ $isVisible }) => ($isVisible ? "translateY(0)" : "translateY(100%)")};
   z-index: 1000;
   font-size: ${theme.typography.fontSize.xs};
   color: ${theme.colors.textTertiary};
