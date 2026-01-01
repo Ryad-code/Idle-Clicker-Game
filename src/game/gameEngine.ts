@@ -194,17 +194,24 @@ export class GameEngine {
       return;
     }
 
+    // Create a deep copy of the grid to avoid mutating the original state
     const newGrid = this.gameGrid.map(row => row.slice());
     const source = newGrid[fromY][fromX];
     const dest = newGrid[toY][toX];
+
+    // If there's no unit at the source position, do nothing
     if (!source) return;
+
+    // If the destination is empty, simply move the unit there
     if (!dest) {
       newGrid[toY][toX] = new Unit(
         source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
       );
       newGrid[fromY][fromX] = null;
     } else {
+      // If destination has a unit
       if (source.type !== dest.type) {
+        // Different unit types: swap the units
         newGrid[toY][toX] = new Unit(
           source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
         );
@@ -212,17 +219,23 @@ export class GameEngine {
           dest.id, dest.type, fromX, fromY, dest.value, dest.bonusActive, dest.stackedCount, dest.maxCapacity
         );
       } else {
+        // Same unit type: attempt to stack them
         if (dest.stackedCount + source.stackedCount <= dest.maxCapacity) {
+          // Stack the units by combining their counts
           newGrid[toY][toX] = new Unit(
             dest.id, dest.type, toX, toY, dest.value, dest.bonusActive, dest.stackedCount + source.stackedCount, dest.maxCapacity
           );
           newGrid[fromY][fromX] = null;
         } else {
+          // Cannot stack due to capacity limit, do nothing
           return;
         }
       }
     }
+
+    // Update the game grid with bonus states recalculated
     this.gameGrid = updateUnitsBonusState(newGrid);
+    // Recalculate production and click values based on the new grid
     this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
     this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
   }
