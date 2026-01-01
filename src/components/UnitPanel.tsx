@@ -3,6 +3,7 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UNIT_CONFIG } from "../game/config/units";
 import { Unit } from "../game/core/types";
+import Tooltip from "./UI/Tooltip";
 import {
   HomeContainer,
   GridUnitCard,
@@ -49,27 +50,36 @@ function UnitPanel() {
             const meta = UNIT_CONFIG[cell.type];
             const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? meta.bonus : 1);
             return (
-              <GridUnitCard
+              <Tooltip
                 key={idx}
-                $color={cell.bonusActive ? meta.bonusColor : meta.color}
-                title={`Production: ${actualProduction} | Stacked: ${cell.stackedCount} | Max: ${cell.maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
-                style={{
-                  border: isSelected ? "2px solid #2196F3" : "1px solid #bbb",
-                  cursor: "pointer",
-                }}
-                onClick={() => handleCellClick(x, y)}
+                content={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${cell.maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
+                position="top"
               >
-                {meta.emoji}
-              </GridUnitCard>
+                <GridUnitCard
+                  $color={cell.bonusActive ? meta.bonusColor : meta.color}
+                  style={{
+                    border: isSelected ? "2px solid #2196F3" : "1px solid #bbb",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleCellClick(x, y)}
+                >
+                  {meta.emoji}
+                </GridUnitCard>
+              </Tooltip>
             );
           } else {
             return (
-              <GridUnitCard
+              <Tooltip
                 key={idx}
-                $color={"#fff"}
-                style={{ border: "1px solid #eee", color: "#bbb", cursor: "pointer" }}
-                onClick={() => handleCellClick(x, y)}
-              />
+                content="Empty slot - Click to move units here"
+                position="top"
+              >
+                <GridUnitCard
+                  $color={"#fff"}
+                  style={{ border: "1px solid #eee", color: "#bbb", cursor: "pointer" }}
+                  onClick={() => handleCellClick(x, y)}
+                />
+              </Tooltip>
             );
           }
         })}
@@ -102,17 +112,23 @@ function UnitPanel() {
           const count = unitCounts[type];
           const bonusCount = bonusCounts[type] || 0;
           return (
-            <StatBox key={type} style={{ width: 320, maxWidth: '100%' }}>
-              <StatEmoji>{meta.emoji}</StatEmoji>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
-                <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div>
-                <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
-                <div style={{ fontSize: 13, marginTop: 4 }}>
-                  <b>Owned:</b> {count} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
+            <Tooltip
+              key={type}
+              content={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}
+              position="left"
+            >
+              <StatBox style={{ width: 320, maxWidth: '100%' }}>
+                <StatEmoji>{meta.emoji}</StatEmoji>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
+                  <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div>
+                  <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
+                  <div style={{ fontSize: 13, marginTop: 4 }}>
+                    <b>Owned:</b> {count} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
+                  </div>
                 </div>
-              </div>
-            </StatBox>
+              </StatBox>
+            </Tooltip>
           );
         })}
       </UnitRows>

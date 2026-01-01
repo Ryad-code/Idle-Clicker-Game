@@ -4,6 +4,7 @@ export interface Upgrade {
   icon: string;
   multiplier: number;
   durationSeconds: number;
+  description: string;
 }
 
 export function getUpgradeKind(upgradeId: string): 'production' | 'click' {
@@ -17,6 +18,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '⚡',
     multiplier: 1.1,
     durationSeconds: 120,
+    description: 'Increases production by 10%',
   },
   {
     id: 'upgrade2',
@@ -24,6 +26,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🔥',
     multiplier: 1.2,
     durationSeconds: 120,
+    description: 'Increases production by 20%',
   },
   {
     id: 'upgrade3',
@@ -31,6 +34,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🌋',
     multiplier: 1.3,
     durationSeconds: 120,
+    description: 'Increases production by 30%',
   },
   {
     id: 'upgrade4',
@@ -38,6 +42,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '💥',
     multiplier: 1.5,
     durationSeconds: 90,
+    description: 'Increases production by 50%',
   },
   {
     id: 'upgrade5',
@@ -45,6 +50,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🚀',
     multiplier: 1.75,
     durationSeconds: 90,
+    description: 'Increases production by 75%',
   },
   {
     id: 'upgrade6',
@@ -52,6 +58,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '⚙️',
     multiplier: 2.0,
     durationSeconds: 60,
+    description: 'Doubles production',
   },
   {
     id: 'upgrade7',
@@ -59,6 +66,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🔆',
     multiplier: 2.5,
     durationSeconds: 60,
+    description: 'Increases production by 150%',
   },
   {
     id: 'upgrade8',
@@ -66,6 +74,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '✨',
     multiplier: 3.0,
     durationSeconds: 45,
+    description: 'Triples production',
   },
   {
     id: 'upgrade9',
@@ -73,6 +82,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🌟',
     multiplier: 3.5,
     durationSeconds: 45,
+    description: 'Increases production by 250%',
   },
   {
     id: 'upgrade10',
@@ -80,6 +90,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '💫',
     multiplier: 4.0,
     durationSeconds: 30,
+    description: 'Quadruples production',
   },
   // Click upgrades mirroring production scaling
   {
@@ -88,6 +99,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '⚡',
     multiplier: 1.1,
     durationSeconds: 120,
+    description: 'Increases click value by 10%',
   },
   {
     id: 'click2',
@@ -95,6 +107,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🔥',
     multiplier: 1.2,
     durationSeconds: 120,
+    description: 'Increases click value by 20%',
   },
   {
     id: 'click3',
@@ -102,6 +115,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🌋',
     multiplier: 1.3,
     durationSeconds: 120,
+    description: 'Increases click value by 30%',
   },
   {
     id: 'click4',
@@ -109,6 +123,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '💥',
     multiplier: 1.5,
     durationSeconds: 90,
+    description: 'Increases click value by 50%',
   },
   {
     id: 'click5',
@@ -116,6 +131,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🚀',
     multiplier: 1.75,
     durationSeconds: 90,
+    description: 'Increases click value by 75%',
   },
   {
     id: 'click6',
@@ -123,6 +139,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '⚙️',
     multiplier: 2.0,
     durationSeconds: 60,
+    description: 'Doubles click value',
   },
   {
     id: 'click7',
@@ -130,6 +147,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🔆',
     multiplier: 2.5,
     durationSeconds: 60,
+    description: 'Increases click value by 150%',
   },
   {
     id: 'click8',
@@ -137,6 +155,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '✨',
     multiplier: 3.0,
     durationSeconds: 45,
+    description: 'Triples click value',
   },
   {
     id: 'click9',
@@ -144,6 +163,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '🌟',
     multiplier: 3.5,
     durationSeconds: 45,
+    description: 'Increases click value by 250%',
   },
   {
     id: 'click10',
@@ -151,6 +171,7 @@ export const UPGRADES: Upgrade[] = [
     icon: '💫',
     multiplier: 4.0,
     durationSeconds: 30,
+    description: 'Quadruples click value',
   },
 ];
 

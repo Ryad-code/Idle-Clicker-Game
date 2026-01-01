@@ -2,6 +2,7 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UPGRADES } from "../game/config/upgrades";
 import { formatBigInt } from "../utils/formatters";
+import Tooltip from "./UI/Tooltip";
 import { 
   ClickerContainer, 
   PointsDisplay, 
@@ -79,34 +80,50 @@ function ClickerPanel() {
       </PointsDisplay>
       
       <StatsContainer>
-        <StatRow>
-          <StatLabel>Per Second:</StatLabel>
-          <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
-        </StatRow>
-        <StatRow>
-          <StatLabel>Click Value:</StatLabel>
-          <StatValue>{formatBigInt(clickValue)}</StatValue>
-        </StatRow>
-        <StatRow>
-          <StatLabel>Total Clicks:</StatLabel>
-          <StatValue>{totalClicks.toLocaleString()}</StatValue>
-        </StatRow>
+        <Tooltip content="Points generated automatically every second from all your units" position="right">
+          <StatRow>
+            <StatLabel>Per Second:</StatLabel>
+            <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
+          </StatRow>
+        </Tooltip>
+        <Tooltip content="Points earned per click, boosted by active upgrades" position="right">
+          <StatRow>
+            <StatLabel>Click Value:</StatLabel>
+            <StatValue>{formatBigInt(clickValue)}</StatValue>
+          </StatRow>
+        </Tooltip>
+        <Tooltip content="Total number of clicks you've made since starting" position="right">
+          <StatRow>
+            <StatLabel>Total Clicks:</StatLabel>
+            <StatValue>{totalClicks.toLocaleString()}</StatValue>
+          </StatRow>
+        </Tooltip>
       </StatsContainer>
 
       {activeUpgradeDisplays.length > 0 && (
         <ActiveUpgradesContainer>
           <ActiveUpgradesTitle>Active Upgrades</ActiveUpgradesTitle>
-          {activeUpgradeDisplays.map((item) => (
-            <ActiveUpgradeBadge key={item?.upgradeId}>
-              <BadgeLeft>
-                <span>{item?.icon}</span>
-                <span>{item?.upgradeId}</span>
-              </BadgeLeft>
-              <BadgeRight>
-                <span>{item?.remainingSeconds}s</span>
-              </BadgeRight>
-            </ActiveUpgradeBadge>
-          ))}
+          {activeUpgradeDisplays.map((item) => {
+            const upgrade = upgradeMap.get(item?.upgradeId || '');
+            if (!upgrade) return null;
+            return (
+              <Tooltip
+                key={item?.upgradeId}
+                content={`${upgrade.description} - ${item?.remainingSeconds}s remaining`}
+                position="bottom"
+              >
+                <ActiveUpgradeBadge>
+                  <BadgeLeft>
+                    <span>{item?.icon}</span>
+                    <span>{item?.upgradeId}</span>
+                  </BadgeLeft>
+                  <BadgeRight>
+                    <span>{item?.remainingSeconds}s</span>
+                  </BadgeRight>
+                </ActiveUpgradeBadge>
+              </Tooltip>
+            );
+          })}
         </ActiveUpgradesContainer>
       )}
 

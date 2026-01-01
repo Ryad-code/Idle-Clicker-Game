@@ -7,6 +7,7 @@ import { calculateUnitCost, calculateUpgradeCost } from "../game/core/calculatio
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { formatBigInt } from "../utils/formatters";
 import ErrorMessage from "./UI/ErrorMessage";
+import Tooltip from "./UI/Tooltip";
 import {
   DashboardContainer,
   ShopContainer,
@@ -97,27 +98,27 @@ function ShopPanel() {
               const canBuy = canAfford && !isActive;
               
               return (
-                <UpgradeCard
+                <Tooltip
                   key={upgrade.id}
-                  onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
-                  style={{
-                    cursor: canBuy ? 'pointer' : 'not-allowed',
-                    opacity: canBuy ? 1 : 0.5,
-                  }}
-                  title={
-                    isActive ? 'Already active' : 
-                    canAfford ? 'Click to buy' : 
-                    'Not enough points'
-                  }
+                  content={`${upgrade.description} (Duration: ${upgrade.durationSeconds}s)`}
+                  position="top"
                 >
-                  <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
-                  <UpgradeName>{upgrade.id}</UpgradeName>
-                  <UpgradeInfo>
-                    <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
-                    <UpgradeCost>{formatBigInt(cost)} pts</UpgradeCost>
-                    <span>{upgrade.durationSeconds}s</span>
-                  </UpgradeInfo>
-                </UpgradeCard>
+                  <UpgradeCard
+                    onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
+                    style={{
+                      cursor: canBuy ? 'pointer' : 'not-allowed',
+                      opacity: canBuy ? 1 : 0.5,
+                    }}
+                  >
+                    <UpgradeIcon>{upgrade.icon}</UpgradeIcon>
+                    <UpgradeName>{upgrade.id}</UpgradeName>
+                    <UpgradeInfo>
+                      <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
+                      <UpgradeCost>{formatBigInt(cost)} pts</UpgradeCost>
+                      <span>{upgrade.durationSeconds}s</span>
+                    </UpgradeInfo>
+                  </UpgradeCard>
+                </Tooltip>
               );
             })}
           </UpgradeGrid>
@@ -131,32 +132,35 @@ function ShopPanel() {
           const canSell = owned > 0;
           return (
             <UnitRow key={unitType}>
-              <BuyButton 
-                onClick={() => handleBuyUnit(unitType)}
-                $disabled={!canAfford}
-                title={meta.description + meta.value}
-              >
-                <ButtonLabel>
-                  <span>{meta.emoji}</span>
-                  <span>{meta.name}</span>
-                  <ButtonInfo>({owned})</ButtonInfo>
-                </ButtonLabel>
-                <ButtonPrice>{formatBigInt(cost)}</ButtonPrice>
-              </BuyButton>
-              <SmallSellButton 
-                onClick={() => handleSellUnit(unitType)}
-                $disabled={!canSell}
-                title={`Sell for ${meta.refund} pts`}
-              >
-                Sell ({meta.refund})
-              </SmallSellButton>
-              <SmallSellButton 
-                onClick={() => handleUpgradeUnitType(unitType)}
-                $disabled={owned === 0}
-                title={`Upgrade ${meta.name} capacity`}
-              >
-                Upgrade
-              </SmallSellButton>
+              <Tooltip content={`${meta.description} - Produces ${meta.value} points per second`} position="top">
+                <BuyButton 
+                  onClick={() => handleBuyUnit(unitType)}
+                  $disabled={!canAfford}
+                >
+                  <ButtonLabel>
+                    <span>{meta.emoji}</span>
+                    <span>{meta.name}</span>
+                    <ButtonInfo>({owned})</ButtonInfo>
+                  </ButtonLabel>
+                  <ButtonPrice>{formatBigInt(cost)}</ButtonPrice>
+                </BuyButton>
+              </Tooltip>
+              <Tooltip content={`Sell one ${meta.name} for ${meta.refund} points`} position="top">
+                <SmallSellButton 
+                  onClick={() => handleSellUnit(unitType)}
+                  $disabled={!canSell}
+                >
+                  Sell ({meta.refund})
+                </SmallSellButton>
+              </Tooltip>
+              <Tooltip content={`Double the stacking capacity of all ${meta.name} units`} position="top">
+                <SmallSellButton 
+                  onClick={() => handleUpgradeUnitType(unitType)}
+                  $disabled={owned === 0}
+                >
+                  Upgrade
+                </SmallSellButton>
+              </Tooltip>
             </UnitRow>
           );
         })}
