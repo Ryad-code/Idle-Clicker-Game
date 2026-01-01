@@ -1,6 +1,5 @@
 import { gameEngine } from './gameEngine';
 import { useGameStore } from './gameStore';
-import { loadPlayerFromDB } from './services/database';
 
 /**
  * Game Tick System
@@ -24,25 +23,10 @@ let autoSaveIntervalId: NodeJS.Timeout | null = null;
 
 /**
  * Set the current user ID for auto-save functionality
- * Also loads saved game data when user logs in
  */
 export function setUserId(userId: string | undefined) {
   currentUserId = userId;
   gameEngine.setUserId(userId || null);
-  if (userId) {
-    // Load saved game data
-    loadPlayerFromDB(userId)
-      .then(savedState => {
-        gameEngine.loadState(savedState);
-        useGameStore.getState().syncWithEngine();
-        console.log('Game loaded from database');
-      })
-      .catch(err => {
-        console.error('Failed to load game:', err);
-        // If loading fails, start with default state
-        useGameStore.getState().syncWithEngine();
-      });
-  }
 }
 
 /**

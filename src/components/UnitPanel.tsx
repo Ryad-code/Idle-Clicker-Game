@@ -20,11 +20,6 @@ function UnitPanel() {
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
   const [selected, setSelected] = useState<{ x: number; y: number } | null>(null);
 
-  useEffect(() => {
-    // Debug logging removed for production
-  }, [grid]);
-  
-
   const handleCellClick = (x: number, y: number) => {
     const cell = grid[y][x];
     if (!selected) {

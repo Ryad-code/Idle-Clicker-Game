@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import './game/gameEngine';
 import './game/tick';
 import { setUserId, cleanupTickSystem, startTickInterval, startAutoSaveInterval } from './game/tick';
+import { gameEngine } from './game/gameEngine';
+import { useGameStore } from './game/gameStore';
 
 /**
  * Main App Component
@@ -23,8 +25,18 @@ import { setUserId, cleanupTickSystem, startTickInterval, startAutoSaveInterval 
  */
 function App() {
   const user = useAuth();
+  const syncWithEngine = useGameStore(state => state.syncWithEngine);
 
   console.log("App mounted");
+
+  // Initialize game when user changes
+  useEffect(() => {
+    const initGame = async () => {
+      await gameEngine.initialize(user?.id || null);
+      syncWithEngine();
+    };
+    initGame();
+  }, [user?.id, syncWithEngine]);
 
   // Set userId for auto-save when user changes
   useEffect(() => {

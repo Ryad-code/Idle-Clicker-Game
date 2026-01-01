@@ -11,7 +11,7 @@ import { UNIT_CONFIG } from './config/units';
 import { updateUnitsBonusState } from './core/bonuses';
 import { GRID_COLS, GRID_ROWS } from './config/grid';
 import { UPGRADES } from './config/upgrades';
-import { savePlayerToDB } from './services/database';
+import { savePlayerToDB, loadPlayerFromDB } from './services/database';
 
 /**
  * GameEngine Class - Core Game Logic
@@ -97,6 +97,23 @@ export class GameEngine {
     this.gameGrid = updateUnitsBonusState(this.gameGrid);
     this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
     this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
+  }
+
+  /**
+   * Initializes the game engine with user data.
+   * Loads saved state if userId is provided.
+   */
+  async initialize(userId: string | null): Promise<void> {
+    this.userId = userId;
+    if (userId) {
+      try {
+        const savedState = await loadPlayerFromDB(userId);
+        this.loadState(savedState);
+      } catch (error) {
+        console.warn('Failed to load game state:', error);
+        // Continue with default state
+      }
+    }
   }
 
   /**
