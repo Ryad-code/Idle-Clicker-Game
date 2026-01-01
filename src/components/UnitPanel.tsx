@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UNIT_CONFIG } from "../game/config/units";
