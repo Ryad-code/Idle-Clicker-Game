@@ -19,6 +19,7 @@ import {
   UnitRow,
   BuyButton,
   SmallSellButton,
+  ButtonGroup,
   UpgradeSection,
   UpgradeGrid,
   UpgradeCard,
@@ -150,22 +151,24 @@ function ShopPanel() {
                   <ButtonPrice>{formatDecimal(cost)}</ButtonPrice>
                 </BuyButton>
               </Tooltip>
-              <Tooltip content={`Sell one ${meta.name} for ${meta.refund} points`} position="top">
-                <SmallSellButton 
-                  onClick={() => handleSellUnit(unitType)}
-                  $disabled={!canSell}
-                >
-                  Sell ({meta.refund})
-                </SmallSellButton>
-              </Tooltip>
-              <Tooltip content={`Double the stacking capacity of all ${meta.name} units (requires even number of units and all fully stacked)`} position="top">
-                <SmallSellButton 
-                  onClick={() => handleUpgradeUnitType(unitType)}
-                  $disabled={owned === 0 || !gameEngine.isUnitTypeFullyStacked(unitType) || owned % 2 !== 0}
-                >
-                  Upgrade
-                </SmallSellButton>
-              </Tooltip>
+              <ButtonGroup>
+                <Tooltip content={`Sell one ${meta.name} for ${meta.refund} points`} position="top">
+                  <SmallSellButton 
+                    onClick={() => handleSellUnit(unitType)}
+                    $disabled={!canSell}
+                  >
+                    Sell
+                  </SmallSellButton>
+                </Tooltip>
+                <Tooltip content={`Double the stacking capacity of all ${meta.name} units (requires even number of units and all fully stacked)`} position="top">
+                  <SmallSellButton 
+                    onClick={() => handleUpgradeUnitType(unitType)}
+                    $disabled={owned === 0 || !gameEngine.isUnitTypeFullyStacked(unitType) || owned % 2 !== 0}
+                  >
+                    Level Up
+                  </SmallSellButton>
+                </Tooltip>
+              </ButtonGroup>
             </UnitRow>
           );
         })}

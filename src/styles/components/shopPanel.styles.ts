@@ -92,12 +92,18 @@ export const SectionTitle = styled.h3`
 
 export const UnitRow = styled.div`
   display: flex;
+  flex-direction: column;
   gap: ${theme.spacing.sm};
-  align-items: stretch;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: ${theme.spacing.sm};
+  width: 100%;
 `;
 
 export const BuyButton = styled.button<{ $disabled?: boolean }>`
-  flex: 2;
+  width: 100%;
   padding: ${theme.spacing.md};
   font-size: ${theme.typography.fontSize.sm};
   font-weight: ${theme.typography.fontWeight.medium};
@@ -127,8 +133,9 @@ export const BuyButton = styled.button<{ $disabled?: boolean }>`
 
 export const SmallSellButton = styled.button<{ $disabled?: boolean }>`
   flex: 1;
+  min-width: 0;
   padding: ${theme.spacing.md};
-  font-size: ${theme.typography.fontSize.sm};
+  font-size: ${theme.typography.fontSize.xs};
   font-weight: ${theme.typography.fontWeight.medium};
   font-family: ${theme.typography.fontFamily};
   border-radius: ${theme.radius.md};
@@ -141,6 +148,7 @@ export const SmallSellButton = styled.button<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+  white-space: nowrap;
 
   &:hover {
     background: ${props => props.$disabled ? theme.colors.background : theme.colors.errorHover};
