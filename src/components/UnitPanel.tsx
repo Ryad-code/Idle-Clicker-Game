@@ -17,6 +17,7 @@ import {
 
 
 function UnitPanel() {
+  console.log("rendering UnitPanel...");
   const grid = useGameStore(state => state.grid);
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
   const [selected, setSelected] = useState<{ x: number; y: number } | null>(null);
@@ -48,7 +49,7 @@ function UnitPanel() {
           const isSelected = selected && selected.x === x && selected.y === y;
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
-            const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? (1 + meta.bonus) : 1);
+            const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? (meta.bonus) : 1);
             return (
               <Tooltip
                 key={idx}

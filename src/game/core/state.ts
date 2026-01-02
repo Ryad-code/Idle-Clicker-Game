@@ -1,3 +1,4 @@
+import Decimal from 'break_infinity.js';
 import type { GameState, UnitType } from './types';
 import { Unit } from './types';
 import { filterExpiredUpgrades } from './calculations';
@@ -8,9 +9,9 @@ import { GRID_COLS } from '../config/grid';
  */
 interface PlayerDBRow {
   user_id: string;
-  points: string; // Stored as string to preserve bigint precision
-  clickvalue: string; // Stored as string to preserve bigint precision
-  pointspersecond: string; // Stored as string to preserve bigint precision
+  points: string; // Stored as string to preserve Decimal precision
+  clickvalue: string; // Stored as string to preserve Decimal precision
+  pointspersecond: string; // Stored as string to preserve Decimal precision
   totalclicks: number;
   created_at: string;
   updated_at: string;
@@ -41,14 +42,15 @@ interface UpgradeDBRow {
 
 /**
  * Convert GameState to database format for saving
+ * Converts Decimal values to strings for database storage
  */
 export function stateToDBFormat(state: GameState, userId: string) {
   return {
     player: {
       user_id: userId,
-      points: state.points.toString(), // Convert bigint to string for DB storage
-      clickvalue: state.clickValue.toString(), // Convert bigint to string for DB storage
-      pointspersecond: state.pointsPerSecond.toString(), // Convert bigint to string for DB storage
+      points: state.points.toString(), // Convert Decimal to string for DB storage
+      clickvalue: state.clickValue.toString(), // Convert Decimal to string for DB storage
+      pointspersecond: state.pointsPerSecond.toString(), // Convert Decimal to string for DB storage
       totalclicks: state.totalClicks,
       created_at: state.createdAt.toISOString(),
       updated_at: new Date().toISOString(),
@@ -82,6 +84,7 @@ export function stateToDBFormat(state: GameState, userId: string) {
 
 /**
  * Convert database format to GameState
+ * Parses string values back to Decimals
  */
 export function dbToStateFormat(
   playerRow: PlayerDBRow,
@@ -113,10 +116,10 @@ export function dbToStateFormat(
   const filteredUpgrades = filterExpiredUpgrades(activeUpgrades);
 
   return {
-    points: BigInt(playerRow.points || "0"), // Parse string back to bigint
+    points: new Decimal(playerRow.points || "0"), // Parse string to Decimal
     totalClicks: playerRow.totalclicks || 0,
-    pointsPerSecond: 0n, // Will be recalculated by gameEngine.loadState()
-    clickValue: 1n, // Will be recalculated by gameEngine.loadState()
+    pointsPerSecond: new Decimal(0), // Will be recalculated by gameEngine.loadState()
+    clickValue: new Decimal(1), // Will be recalculated by gameEngine.loadState()
     grid,
     activeUpgrades: filteredUpgrades,
     createdAt: playerRow.created_at ? new Date(playerRow.created_at) : new Date(),
@@ -128,13 +131,14 @@ export function dbToStateFormat(
 
 /**
  * Create default/empty game state
+ * Uses Decimal for numeric values
  */
 export function createDefaultState(): GameState {
   return {
-    points: 0n,
+    points: new Decimal(0),
     totalClicks: 0,
-    pointsPerSecond: 0n,
-    clickValue: 1n,
+    pointsPerSecond: new Decimal(0),
+    clickValue: new Decimal(1),
     grid: Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null)),
     activeUpgrades: [],
     createdAt: new Date(),

@@ -1,7 +1,7 @@
 import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UPGRADES } from "../game/config/upgrades";
-import { formatBigInt } from "../utils/formatters";
+import { formatDecimal } from "../utils/formatters";
 import Tooltip from "./UI/Tooltip";
 import { 
   ClickerContainer, 
@@ -63,7 +63,7 @@ function ClickerPanel() {
       {error && <ErrorMessage message={error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
-        <PointsValue>{formatBigInt(points)}</PointsValue>
+        <PointsValue>{formatDecimal(points)}</PointsValue>
         <input 
           type="number" 
           placeholder="Set points (test)" 
@@ -83,13 +83,13 @@ function ClickerPanel() {
         <Tooltip content="Points generated automatically every second from all your units" position="right">
           <StatRow>
             <StatLabel>Per Second:</StatLabel>
-            <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
+            <StatValue>{formatDecimal(pointsPerSecond)}</StatValue>
           </StatRow>
         </Tooltip>
         <Tooltip content="Points earned per click, boosted by active upgrades" position="right">
           <StatRow>
             <StatLabel>Click Value:</StatLabel>
-            <StatValue>{formatBigInt(clickValue)}</StatValue>
+            <StatValue>{formatDecimal(clickValue)}</StatValue>
           </StatRow>
         </Tooltip>
         <Tooltip content="Total number of clicks you've made since starting" position="right">

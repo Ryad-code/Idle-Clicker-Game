@@ -5,7 +5,7 @@ import { gameEngine } from "../game/gameEngine";
 import type { UnitType, Unit, ActiveUpgrade } from "../game/core/types";
 import { calculateUnitCost, calculateUpgradeCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
-import { formatBigInt } from "../utils/formatters";
+import { formatDecimal } from "../utils/formatters";
 import ErrorMessage from "./UI/ErrorMessage";
 import Tooltip from "./UI/Tooltip";
 import {
@@ -73,7 +73,8 @@ function ShopPanel() {
     const meta = UNIT_CONFIG[unitType];
     const cost = calculateUnitCost(allUnits, unitType, meta.cost);
     const owned = allUnits.filter(u => u.type === unitType).length;
-    return owned > 0 || points >= cost * 9n / 10n;
+    // Check if player owns units or has at least 90% of the cost
+    return owned > 0 || points.gte(cost.times(0.9));
   };
 
   const availableUnits = UNIT_TYPES.filter(isUnlocked);
@@ -94,7 +95,8 @@ function ShopPanel() {
             {selectedUpgrades.map((upgrade: Upgrade) => {
               const isActive = activeUpgrades.some((au: ActiveUpgrade) => au.upgradeId === upgrade.id);
               const cost = calculateUpgradeCost(upgrade.id, pointsPerSecond, clickValue);
-              const canAfford = points >= cost;
+              // Check if player can afford using Decimal comparison
+              const canAfford = points.gte(cost);
               const canBuy = canAfford && !isActive;
               
               return (
@@ -114,7 +116,7 @@ function ShopPanel() {
                     <UpgradeName>{upgrade.id}</UpgradeName>
                     <UpgradeInfo>
                       <UpgradeMultiplier>×{upgrade.multiplier}</UpgradeMultiplier>
-                      <UpgradeCost>{formatBigInt(cost)} pts</UpgradeCost>
+                      <UpgradeCost>{formatDecimal(cost)} pts</UpgradeCost>
                       <span>{upgrade.durationSeconds}s</span>
                     </UpgradeInfo>
                   </UpgradeCard>
@@ -127,7 +129,8 @@ function ShopPanel() {
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
           const cost = calculateUnitCost(allUnits, unitType, meta.cost);
-          const canAfford = points >= cost;
+          // Check if player can afford using Decimal comparison
+          const canAfford = points.gte(cost);
           const owned = allUnits.filter(u => u.type === unitType).reduce((sum, u) => sum + u.stackedCount, 0);
           const canSell = owned > 0;
           return (
@@ -142,7 +145,7 @@ function ShopPanel() {
                     <span>{meta.name}</span>
                     <ButtonInfo>({owned})</ButtonInfo>
                   </ButtonLabel>
-                  <ButtonPrice>{formatBigInt(cost)}</ButtonPrice>
+                  <ButtonPrice>{formatDecimal(cost)}</ButtonPrice>
                 </BuyButton>
               </Tooltip>
               <Tooltip content={`Sell one ${meta.name} for ${meta.refund} points`} position="top">

@@ -1,3 +1,4 @@
+import Decimal from 'break_infinity.js';
 import type { UnitType, Grid, ActiveUpgrade, GameState } from './core/types';
 import { Unit } from './core/types';
 import {
@@ -32,11 +33,11 @@ import { savePlayerToDB, loadPlayerFromDB } from './services/database';
  * environment (React, Node.js, etc.) without modification.
  */
 export class GameEngine {
-  // Core game state - player's resources and statistics
-  points: bigint = 0n;              // Current points/currency
+  // Core game state - player's resources and statistics (using Decimal for precision)
+  points: Decimal = new Decimal(0);           // Current points/currency
   totalClicks: number = 0;          // Total clicks ever made
-  pointsPerSecond: bigint = 1n;     // Current production rate
-  clickValue: bigint = 1n;          // Points gained per click
+  pointsPerSecond: Decimal = new Decimal(1);   // Current production rate
+  clickValue: Decimal = new Decimal(1);        // Points gained per click
 
   // Game world state
   gameGrid: Grid = Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null));
@@ -53,14 +54,16 @@ export class GameEngine {
 
   /**
    * Handles a click action: increases points by clickValue and increments totalClicks.
+   * Uses Decimal addition for precise point tracking.
    */
   click(): void {
-    this.points += this.clickValue;
+    this.points = this.points.plus(this.clickValue);
     this.totalClicks += 1;
   }
 
   /**
    * Processes a game tick: adds points per second to the current points.
+   * Also removes expired upgrades and recalculates production if needed.
    */
   tick(): void {
     // Remove expired upgrades only if there are active upgrades
@@ -74,8 +77,8 @@ export class GameEngine {
         this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
       }
     }
-    // Add points
-    this.points += this.pointsPerSecond;
+    // Add points using Decimal addition
+    this.points = this.points.plus(this.pointsPerSecond);
   }
 
   /**
@@ -119,23 +122,30 @@ export class GameEngine {
   /**
    * Buys a unit of the specified type if affordable and space available.
    * Places the unit on the grid and updates production values.
+   * Uses Decimal for cost comparison and subtraction.
    */
   buyUnit(type: UnitType): void {
     const config = UNIT_CONFIG[type];
     const flatUnits = this.gameGrid.flat().filter((u): u is Unit => u !== null);
     if (flatUnits.length >= this.gameGrid.length * this.gameGrid[0].length) return;
+    
     const cost = calculateUnitCost(flatUnits, type, config.cost);
-    if (this.points < cost) return;
+    // Check if player can afford using Decimal comparison
+    if (this.points.lt(cost)) return;
+    
     const placedGrid = this.placeUnitInGrid(this.gameGrid, type, config.value);
     this.gameGrid = updateUnitsBonusState(placedGrid);
     this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
     this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
-    this.points -= cost;
+    
+    // Deduct cost using Decimal subtraction
+    this.points = this.points.minus(cost);
   }
 
   /**
    * Sells the last unit of the specified type from the grid.
    * Refunds points and updates production values.
+   * Uses Decimal for refund addition.
    */
   sellUnit(type: UnitType): void {
     let lastPos: { x: number; y: number } | null = null;
@@ -150,6 +160,7 @@ export class GameEngine {
       if (lastPos) break;
     }
     if (!lastPos) return;
+    
     const config = UNIT_CONFIG[type];
     const removedGrid = this.gameGrid.map((row, y) =>
       row.map((cell, x) => (x === lastPos!.x && y === lastPos!.y ? null : cell))
@@ -157,29 +168,38 @@ export class GameEngine {
     this.gameGrid = updateUnitsBonusState(removedGrid);
     this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
     this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
-    this.points += BigInt(config.refund);
+    
+    // Add refund using Decimal addition
+    this.points = this.points.plus(config.refund);
   }
 
   /**
    * Buys an upgrade by ID if affordable.
    * Adds the upgrade to active list and updates production values.
+   * Uses Decimal for cost comparison and subtraction.
    */
   buyUpgrade(upgradeId: string): void {
     const upgrade = UPGRADES.find(u => u.id === upgradeId);
     if (!upgrade) return;
+    
     const cost = calculateUpgradeCost(upgradeId, this.pointsPerSecond, this.clickValue);
-    if (this.points < cost) return;
+    // Check if player can afford using Decimal comparison
+    if (this.points.lt(cost)) return;
+    
     this.activeUpgrades = [...this.activeUpgrades, { upgradeId, purchasedAt: new Date() }];
     this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
     this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
-    this.points -= cost;
+    
+    // Deduct cost using Decimal subtraction
+    this.points = this.points.minus(cost);
   }
 
   /**
    * Sets the points to a new value (for testing/debugging).
+   * Converts number to Decimal.
    */
   setPoints(newPoints: number): void {
-    this.points = BigInt(newPoints);
+    this.points = new Decimal(newPoints);
   }
 
   /**

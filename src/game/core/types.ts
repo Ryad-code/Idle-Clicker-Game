@@ -1,3 +1,4 @@
+import Decimal from "break_infinity.js";
 
 /**
  * Unit type string union
@@ -16,15 +17,16 @@ export type Grid = (Unit | null)[][];
 /**
  * Flattened game state structure
  * Organized by change frequency for optimal re-renders
+ * Uses Decimal for precise numeric calculations with large numbers
  */
 export interface GameState {
   // Hot path - changes every tick/click
-  points: bigint;
+  points: Decimal;
   totalClicks: number;
 
   // Warm path - recalculated on unit/upgrade changes
-  pointsPerSecond: bigint;
-  clickValue: bigint;
+  pointsPerSecond: Decimal;
+  clickValue: Decimal;
 
   // Cold path - changes on buy/expire
   activeUpgrades: Array<{ upgradeId: string; purchasedAt: Date }>;

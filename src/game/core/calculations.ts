@@ -1,3 +1,4 @@
+import Decimal from 'break_infinity.js';
 import type { Unit, ActiveUpgrade, UnitType } from './types';
 import { UPGRADES, getUpgradeKind } from '../config/upgrades';
 import { UNIT_COST_MULTIPLIER, CLICK_VALUE_RATIO, MIN_CLICK_VALUE } from '../config/constants';
@@ -5,66 +6,87 @@ import { getUnitBonusMultiplier } from './bonuses';
 
 /**
  * Calculate total production from units with grid bonuses and active upgrade multipliers
+ * Returns production as a Decimal for precise calculations with large numbers
  */
-export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): bigint {
+export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): Decimal {
   console.log("calculation...");
-  let totalProduction = 0n;
+  let totalProduction = new Decimal(0); // Start with Decimal zero
   const upgradeMultiplier = getActiveMultiplier(activeUpgrades, 'production');
   
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[y].length; x++) {
       const unit = grid[y][x];
       if (unit) {
+        // Get the bonus multiplier for this grid position
         const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
 
-        const baseProduction = BigInt(unit.value) * BigInt(unit.stackedCount);
-        const bonusBig = BigInt(Math.round(bonusMultiplier * 100));
-        const unitProduction = (baseProduction * bonusBig) / 100n;
-        totalProduction += unitProduction;
-        console.log("bonusMultiplier at (" + x + "," + y + "):", bonusMultiplier, "unitProduction:", unitProduction.toString());
-
+        // Calculate unit production: base value * stack count * bonus
+        const baseProduction = new Decimal(unit.value).times(unit.stackedCount);
+        const unitProduction = baseProduction.times(bonusMultiplier);
+        
+        // Add to total production
+        totalProduction = totalProduction.plus(unitProduction);
       }
     }
   }
   
-  const upgradeBig = BigInt(Math.round(upgradeMultiplier * 100));
-  return (totalProduction * upgradeBig) / 100n;
+  // Apply upgrade multiplier to total production
+  return totalProduction.times(upgradeMultiplier);
 }
 
 /**
  * Calculate click value based on production with active upgrade multipliers
+ * Returns click value as a Decimal
  */
-export function calculateClickValue(production: bigint, activeUpgrades: ActiveUpgrade[]): bigint {
-  const prodNum = Number(production); // Convert to number for calculations, but cap if needed
-  const baseClick = Math.max(MIN_CLICK_VALUE, MIN_CLICK_VALUE + Math.floor(prodNum * CLICK_VALUE_RATIO));
+export function calculateClickValue(production: Decimal, activeUpgrades: ActiveUpgrade[]): Decimal {
+  // Base click value: minimum + ratio of production
+  const baseClick = new Decimal(MIN_CLICK_VALUE).plus(production.times(CLICK_VALUE_RATIO));
+  
+  // Apply click upgrade multiplier
   const multiplier = getActiveMultiplier(activeUpgrades, 'click');
-  return BigInt(Math.max(MIN_CLICK_VALUE, Math.floor(baseClick * multiplier)));
+  const finalClick = baseClick.times(multiplier);
+  
+  // Ensure minimum click value
+  return Decimal.max(finalClick, MIN_CLICK_VALUE);
 }
 
 /**
  * Calculate unit cost based on owned count (exponential scaling)
+ * Returns cost as a Decimal
  */
-export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): bigint {
+export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): Decimal {
+  // Count total units of this type (including stacks)
   const count = units.filter(u => u.type === type).reduce((sum, u) => sum + u.stackedCount, 0);
-  return BigInt(Math.round(baseCost * Math.pow(UNIT_COST_MULTIPLIER, count)));
+  
+  // Exponential cost scaling: baseCost * multiplier^count
+  const cost = baseCost * Math.pow(UNIT_COST_MULTIPLIER, count);
+  return new Decimal(cost);
 }
 
 /**
  * Calculates the dynamic cost of an upgrade based on its net benefit.
- * Returns the cost as a bigint.
+ * Returns the cost as a Decimal.
+ * Formula: cost = (production/click gain per second * duration * multiplier boost) * 0.4
  */
 export function calculateUpgradeCost(
   upgradeId: string,
-  pointsPerSecond: bigint,
-  clickValue: bigint
-): bigint {
+  pointsPerSecond: Decimal,
+  clickValue: Decimal
+): Decimal {
   const upgrade = UPGRADES.find(u => u.id === upgradeId);
-  if (!upgrade) return 0n;
+  if (!upgrade) return new Decimal(0);
+  
+  // Determine which value to use based on upgrade kind
   const kind = getUpgradeKind(upgradeId);
   const currentValue = kind === 'production' ? pointsPerSecond : clickValue;
-  const netBenefitFloat = Number(currentValue) * (upgrade.multiplier - 1) * upgrade.durationSeconds;
-  const costFloat = netBenefitFloat * 0.4;
-  return BigInt(Math.max(0, Math.floor(costFloat)));
+  
+  // Calculate net benefit: current value * bonus multiplier * duration
+  const netBenefit = currentValue.times(upgrade.multiplier - 1).times(upgrade.durationSeconds);
+  
+  // Cost is 40% of net benefit
+  const cost = netBenefit.times(0.4);
+  
+  return Decimal.max(cost, 0); // Ensure non-negative
 }
 
 /**

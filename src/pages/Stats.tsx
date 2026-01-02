@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { theme } from '../styles/theme';
 import { useGameStore } from '../game/gameStore';
-import { formatBigInt } from '../utils/formatters';
+import { formatDecimal } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { Unit } from '../game/core/types';
 
@@ -117,7 +117,7 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Total Points Earned</StatLabel>
-            <StatValue>{formatBigInt(points)}</StatValue>
+            <StatValue>{formatDecimal(points)}</StatValue>
           </StatCard>
 
           <StatCard>
@@ -127,12 +127,12 @@ function Stats() {
 
           <StatCard>
             <StatLabel>Points Per Second</StatLabel>
-            <StatValue>{formatBigInt(pointsPerSecond)}</StatValue>
+            <StatValue>{formatDecimal(pointsPerSecond)}</StatValue>
           </StatCard>
 
           <StatCard>
             <StatLabel>Click Value</StatLabel>
-            <StatValue>{formatBigInt(clickValue)}</StatValue>
+            <StatValue>{formatDecimal(clickValue)}</StatValue>
           </StatCard>
 
           <StatCard>
