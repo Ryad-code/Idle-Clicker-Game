@@ -48,7 +48,7 @@ function UnitPanel() {
           const isSelected = selected && selected.x === x && selected.y === y;
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
-            const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? meta.bonus : 1);
+            const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? (1 + meta.bonus) : 1);
             return (
               <Tooltip
                 key={idx}

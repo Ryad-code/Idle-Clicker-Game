@@ -2,6 +2,7 @@
 // Each function is commented for clarity
 
 import { Unit } from './types';
+import { UNIT_CONFIG } from '../config/units';
 
 // BONUS 1: Cursor Chain
 // +10% Cursor value if 3 Cursors in a row or column
@@ -13,11 +14,11 @@ export function unit1Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   if (
     grid[y]?.[x-1]?.type === 'unit1' &&
     grid[y]?.[x+1]?.type === 'unit1'
-  ) return 0.1;
+  ) return UNIT_CONFIG.unit1.bonus;
   if (
     grid[y-1]?.[x]?.type === 'unit1' &&
     grid[y+1]?.[x]?.type === 'unit1'
-  ) return 0.1;
+  ) return UNIT_CONFIG.unit1.bonus;
   return 0;
 }
 
@@ -35,7 +36,7 @@ export function unit2Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
     ];
     for (const [nx, ny] of neighbors) {
       if (grid[ny]?.[nx]?.type === 'unit2') {
-        return 0.15;
+        return UNIT_CONFIG.unit2.bonus;
       }
     }
   }
@@ -60,7 +61,7 @@ export function unit3Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
       return 0;
     }
   }
-  return 0.3;
+  return UNIT_CONFIG.unit3.bonus;
 }
 
 // BONUS 4: Mine Diagonal
@@ -75,7 +76,7 @@ export function unit4Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   ];
   for (const [nx, ny] of diagonals) {
     if (grid[ny]?.[nx]?.type === 'unit4') {
-      return 0.15;
+      return UNIT_CONFIG.unit4.bonus;
     }
   }
   return 0;
@@ -89,7 +90,7 @@ export function unit5Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   if (!unit || unit.type !== 'unit5') return 0;
   // Center: in center
   if (x === 2 && y === 2) {
-    return 0.25;
+    return UNIT_CONFIG.unit5.bonus;
   }
   return 0;
 }
@@ -104,7 +105,7 @@ export function unit6Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   const symmetricX = 4 - x;
   const symmetricY = 4 - y;
   if (grid[symmetricY]?.[symmetricX]?.type === 'unit6') {
-    return 0.3;
+    return UNIT_CONFIG.unit6.bonus;
   }
   return 0;
 }
@@ -122,7 +123,7 @@ export function unit7Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
     grid[y-1]?.[x]?.type === 'unit7' &&
     grid[y+1]?.[x]?.type === 'unit7'
   ) {
-    return 0.2;
+    return UNIT_CONFIG.unit7.bonus;
   }
   return 0;
 }
@@ -137,7 +138,7 @@ export function unit8Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   if (
     (grid[y-1]?.[x]?.type === 'unit8' || grid[y+1]?.[x]?.type === 'unit8')
   ) {
-    return 0.25;
+    return UNIT_CONFIG.unit8.bonus;
   }
   return 0;
 }
@@ -153,7 +154,7 @@ export function unit9Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   for (let i = 0; i < 5; i++) {
     if (grid[y]?.[i]?.type === 'unit9') count++;
   }
-  if (count >= 3) return 0.35;
+  if (count >= 3) return UNIT_CONFIG.unit9.bonus;
   return 0;
 }
 
@@ -169,7 +170,7 @@ export function unit10Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   ];
   for (const [nx, ny] of neighbors) {
     if (grid[ny]?.[nx]?.type === 'unit9') {
-      return 0.25; // 25% bonus
+      return UNIT_CONFIG.unit10.bonus;
     }
   }
   return 0;
@@ -185,12 +186,12 @@ export function unit11Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   if (
     grid[y]?.[x-1]?.type === 'unit11' &&
     grid[y]?.[x+1]?.type === 'unit11'
-  ) return 0.35;
+  ) return UNIT_CONFIG.unit11.bonus;
   // Check vertical
   if (
     grid[y-1]?.[x]?.type === 'unit11' &&
     grid[y+1]?.[x]?.type === 'unit11'
-  ) return 0.35;
+  ) return UNIT_CONFIG.unit11.bonus;
   return 0;
 }
 
@@ -212,7 +213,7 @@ export function unit12Bonus(grid: (Unit | null)[][], x: number, y: number): numb
       return 0; // If any neighbor is missing or not the right type, no bonus
     }
   }
-  return 0.45;
+  return UNIT_CONFIG.unit12.bonus;
 }
 
 // BONUS 13: Condenser Synergy
@@ -227,7 +228,7 @@ export function unit13Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   ];
   for (const [nx, ny] of neighbors) {
     if (grid[ny]?.[nx]?.type === 'unit12') {
-      return 0.3; // 30% bonus
+      return UNIT_CONFIG.unit13.bonus;
     }
   }
   return 0;
@@ -243,12 +244,12 @@ export function unit14Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   if (
     grid[y]?.[x-1]?.type === 'unit14' &&
     grid[y]?.[x+1]?.type === 'unit14'
-  ) return 0.4;
+  ) return UNIT_CONFIG.unit14.bonus;
   // Check vertical
   if (
     grid[y-1]?.[x]?.type === 'unit14' &&
     grid[y+1]?.[x]?.type === 'unit14'
-  ) return 0.4;
+  ) return UNIT_CONFIG.unit14.bonus;
   return 0;
 }
 
@@ -270,7 +271,7 @@ export function unit15Bonus(grid: (Unit | null)[][], x: number, y: number): numb
       return 0; // If any neighbor is missing or not the right type, no bonus
     }
   }
-  return 0.5;
+  return UNIT_CONFIG.unit15.bonus;
 }
 
 // BONUS 16: Engine Synergy
@@ -285,7 +286,7 @@ export function unit16Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   ];
   for (const [nx, ny] of neighbors) {
     if (grid[ny]?.[nx]?.type === 'unit15') {
-      return 0.35; // 35% bonus
+      return UNIT_CONFIG.unit16.bonus;
     }
   }
   return 0;
@@ -301,12 +302,12 @@ export function unit17Bonus(grid: (Unit | null)[][], x: number, y: number): numb
   if (
     grid[y]?.[x-1]?.type === 'unit17' &&
     grid[y]?.[x+1]?.type === 'unit17'
-  ) return 0.45;
+  ) return UNIT_CONFIG.unit17.bonus;
   // Check vertical
   if (
     grid[y-1]?.[x]?.type === 'unit17' &&
     grid[y+1]?.[x]?.type === 'unit17'
-  ) return 0.45;
+  ) return UNIT_CONFIG.unit17.bonus;
   return 0;
 }
 
@@ -328,34 +329,39 @@ export function unit18Bonus(grid: (Unit | null)[][], x: number, y: number): numb
       return 0; // If any neighbor is missing or not the right type, no bonus
     }
   }
-  return 0.55;
+  return UNIT_CONFIG.unit18.bonus;
 }
 
 // AGGREGATE FUNCTION
 // Returns the total bonus multiplier for a unit at (x, y)
 export function getUnitBonusMultiplier(grid: (Unit | null)[][], x: number, y: number): number {
-  // Add all applicable bonuses for the unit at (x, y)
-  return (
-    1 +
-    unit1Bonus(grid, x, y) +
-    unit2Bonus(grid, x, y) +
-    unit3Bonus(grid, x, y) +
-    unit4Bonus(grid, x, y) +
-    unit5Bonus(grid, x, y) +
-    unit6Bonus(grid, x, y) +
-    unit7Bonus(grid, x, y) +
-    unit8Bonus(grid, x, y) +
-    unit9Bonus(grid, x, y) +
-    unit10Bonus(grid, x, y) +
-    unit11Bonus(grid, x, y) +
-    unit12Bonus(grid, x, y) +
-    unit13Bonus(grid, x, y) +
-    unit14Bonus(grid, x, y) +
-    unit15Bonus(grid, x, y) +
-    unit16Bonus(grid, x, y) +
-    unit17Bonus(grid, x, y) +
-    unit18Bonus(grid, x, y)
-  );
+  const unit = grid[y]?.[x];
+  if (!unit) return 1;
+
+  let bonus = 0;
+  
+  // Only call the relevant bonus function for this unit type
+  switch (unit.type) {
+    case 'unit1': bonus = unit1Bonus(grid, x, y); break;
+    case 'unit2': bonus = unit2Bonus(grid, x, y); break;
+    case 'unit3': bonus = unit3Bonus(grid, x, y); break;
+    case 'unit4': bonus = unit4Bonus(grid, x, y); break;
+    case 'unit5': bonus = unit5Bonus(grid, x, y); break;
+    case 'unit6': bonus = unit6Bonus(grid, x, y); break;
+    case 'unit7': bonus = unit7Bonus(grid, x, y); break;
+    case 'unit8': bonus = unit8Bonus(grid, x, y); break;
+    case 'unit9': bonus = unit9Bonus(grid, x, y); break;
+    case 'unit10': bonus = unit10Bonus(grid, x, y); break;
+    case 'unit11': bonus = unit11Bonus(grid, x, y); break;
+    case 'unit12': bonus = unit12Bonus(grid, x, y); break;
+    case 'unit13': bonus = unit13Bonus(grid, x, y); break;
+    case 'unit14': bonus = unit14Bonus(grid, x, y); break;
+    case 'unit15': bonus = unit15Bonus(grid, x, y); break;
+    case 'unit16': bonus = unit16Bonus(grid, x, y); break;
+    case 'unit17': bonus = unit17Bonus(grid, x, y); break;
+    case 'unit18': bonus = unit18Bonus(grid, x, y); break;
+  }
+  return bonus? bonus : 1;
 }
 
 /*

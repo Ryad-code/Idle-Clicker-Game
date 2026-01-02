@@ -76,17 +76,3 @@ export interface ActiveUpgrade {
   upgradeId: string;
   purchasedAt: Date;
 }
-
-/**
- * Game actions context - stable function references
- */
-export interface GameActions {
-  click: () => void;
-  buyUnit: (type: UnitType) => void;
-  sellUnit: (type: UnitType) => void;
-  buyUpgrade: (upgradeId: string) => void;
-  save: () => Promise<void>;
-  setPoints: (points: number) => void;
-  moveUnit: (fromX: number, fromY: number, toX: number, toY: number) => void;
-  upgradeUnitType: (type: UnitType) => void;
-}

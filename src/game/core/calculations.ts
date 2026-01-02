@@ -16,10 +16,13 @@ export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: Act
       const unit = grid[y][x];
       if (unit) {
         const bonusMultiplier = getUnitBonusMultiplier(grid, x, y);
+
         const baseProduction = BigInt(unit.value) * BigInt(unit.stackedCount);
         const bonusBig = BigInt(Math.round(bonusMultiplier * 100));
         const unitProduction = (baseProduction * bonusBig) / 100n;
         totalProduction += unitProduction;
+        console.log("bonusMultiplier at (" + x + "," + y + "):", bonusMultiplier, "unitProduction:", unitProduction.toString());
+
       }
     }
   }

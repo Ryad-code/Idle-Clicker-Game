@@ -28,11 +28,6 @@ export const theme = {
     error: '#F44336',
     errorHover: '#D32F2F',
     warning: '#FF9800',
-    
-    // Unit colors (subtle, muted)
-    unit1: '#66BB6A',
-    unit2: '#42A5F5',
-    unit3: '#FFA726',
   },
   
   // Spacing scale (8px base)
