@@ -58,25 +58,46 @@ function ClickerPanel() {
     syncWithEngine();
   };
 
+  const handleReset = () => {
+    gameEngine.resetGame();
+    syncWithEngine();
+  };
+
   return (
     <ClickerContainer>
       {error && <ErrorMessage message={error} />}
       <PointsDisplay>
         <PointsTitle>Points</PointsTitle>
         <PointsValue>{formatDecimal(points)}</PointsValue>
-        <input 
-          type="number" 
-          placeholder="Set points (test)" 
-          onChange={handlePointsChange}
-          style={{
-            marginTop: '8px',
-            padding: '8px',
-            fontSize: '14px',
-            borderRadius: '4px',
-            border: '1px solid #E5E5E5',
-            width: '100%'
-          }}
-        />
+        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          <input 
+            type="number" 
+            placeholder="Set points (test)" 
+            onChange={handlePointsChange}
+            style={{
+              padding: '8px',
+              fontSize: '14px',
+              borderRadius: '4px',
+              border: '1px solid #E5E5E5',
+              flex: 1
+            }}
+          />
+          <button
+            onClick={handleReset}
+            style={{
+              padding: '8px 12px',
+              fontSize: '14px',
+              borderRadius: '4px',
+              border: '1px solid #E5E5E5',
+              backgroundColor: '#ff4444',
+              color: 'white',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            Reset
+          </button>
+        </div>
       </PointsDisplay>
       
       <StatsContainer>

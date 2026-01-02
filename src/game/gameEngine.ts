@@ -1,6 +1,6 @@
 import Decimal from 'break_infinity.js';
-import type { UnitType, Grid, ActiveUpgrade, GameState } from './core/types';
-import { Unit } from './core/types';
+import type { UnitType, Grid, ActiveUpgrade, GameState, UnitLevels } from './core/types';
+import { Unit, getMaxCapacity } from './core/types';
 import {
   calculateProduction,
   calculateClickValue,
@@ -42,6 +42,13 @@ export class GameEngine {
   // Game world state
   gameGrid: Grid = Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null));
   activeUpgrades: ActiveUpgrade[] = [];
+  
+  // Unit upgrade levels - determines maxCapacity (2^level) for each unit type
+  unitLevels: UnitLevels = {
+    unit1: 0, unit2: 0, unit3: 0, unit4: 0, unit5: 0, unit6: 0,
+    unit7: 0, unit8: 0, unit9: 0, unit10: 0, unit11: 0, unit12: 0,
+    unit13: 0, unit14: 0, unit15: 0, unit16: 0, unit17: 0, unit18: 0,
+  };
 
   // Metadata and UI state
   createdAt: Date = new Date();     // When the game was created
@@ -90,6 +97,7 @@ export class GameEngine {
     this.totalClicks = state.totalClicks;
     this.gameGrid = state.grid;
     this.activeUpgrades = state.activeUpgrades;
+    this.unitLevels = state.unitLevels || this.unitLevels;
     this.createdAt = state.createdAt;
     this.isLoading = state.isLoading;
     this.isSaving = state.isSaving;
@@ -129,7 +137,8 @@ export class GameEngine {
     const flatUnits = this.gameGrid.flat().filter((u): u is Unit => u !== null);
     if (flatUnits.length >= this.gameGrid.length * this.gameGrid[0].length) return;
     
-    const cost = calculateUnitCost(flatUnits, type, config.cost);
+    const numToBuy = getMaxCapacity(this.unitLevels[type]);
+    const cost = calculateUnitCost(flatUnits, type, config.cost, numToBuy);
     // Check if player can afford using Decimal comparison
     if (this.points.lt(cost)) return;
     
@@ -203,6 +212,20 @@ export class GameEngine {
   }
 
   /**
+   * Resets the game by clearing all units and resetting unit levels to 0.
+   */
+  resetGame(): void {
+    this.gameGrid = Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null));
+    this.unitLevels = {
+      unit1: 0, unit2: 0, unit3: 0, unit4: 0, unit5: 0, unit6: 0,
+      unit7: 0, unit8: 0, unit9: 0, unit10: 0, unit11: 0, unit12: 0,
+      unit13: 0, unit14: 0, unit15: 0, unit16: 0, unit17: 0, unit18: 0,
+    };
+    this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
+    this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
+  }
+
+  /**
    * Moves a unit from one grid position to another.
    * Handles moving, swapping, or stacking units as appropriate.
    */
@@ -225,7 +248,7 @@ export class GameEngine {
     // If the destination is empty, simply move the unit there
     if (!dest) {
       newGrid[toY][toX] = new Unit(
-        source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
+        source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount
       );
       newGrid[fromY][fromX] = null;
     } else {
@@ -233,17 +256,18 @@ export class GameEngine {
       if (source.type !== dest.type) {
         // Different unit types: swap the units
         newGrid[toY][toX] = new Unit(
-          source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount, source.maxCapacity
+          source.id, source.type, toX, toY, source.value, source.bonusActive, source.stackedCount
         );
         newGrid[fromY][fromX] = new Unit(
-          dest.id, dest.type, fromX, fromY, dest.value, dest.bonusActive, dest.stackedCount, dest.maxCapacity
+          dest.id, dest.type, fromX, fromY, dest.value, dest.bonusActive, dest.stackedCount
         );
       } else {
         // Same unit type: attempt to stack them
-        if (dest.stackedCount + source.stackedCount <= dest.maxCapacity) {
+        const maxCapacity = getMaxCapacity(this.unitLevels[dest.type]);
+        if (dest.stackedCount + source.stackedCount <= maxCapacity) {
           // Stack the units by combining their counts
           newGrid[toY][toX] = new Unit(
-            dest.id, dest.type, toX, toY, dest.value, dest.bonusActive, dest.stackedCount + source.stackedCount, dest.maxCapacity
+            dest.id, dest.type, toX, toY, dest.value, dest.bonusActive, dest.stackedCount + source.stackedCount
           );
           newGrid[fromY][fromX] = null;
         } else {
@@ -261,19 +285,34 @@ export class GameEngine {
   }
 
   /**
-   * Upgrades all units of the specified type by doubling their maxCapacity.
-   * Updates the grid and production values.
+   * Checks if all units of the given type are fully stacked.
+   */
+  isUnitTypeFullyStacked(type: UnitType): boolean {
+    const maxCapacity = getMaxCapacity(this.unitLevels[type]);
+    return this.gameGrid.flat().every(unit => 
+      unit === null || unit.type !== type || unit.stackedCount >= maxCapacity
+    );
+  }
+
+  /**
+   * Upgrades a unit type by incrementing its level.
+   * This doubles the maxCapacity for all units of that type (2^level).
    */
   upgradeUnitType(type: UnitType): void {
-    const newGrid = this.gameGrid.map(row =>
-      row.map(cell => {
-        if (cell && cell.type === type) {
-          return new Unit(cell.id, cell.type, cell.position.x, cell.position.y, cell.value, cell.bonusActive, cell.stackedCount, cell.maxCapacity * 2);
-        }
-        return cell;
-      })
-    );
-    this.gameGrid = updateUnitsBonusState(newGrid);
+    const totalOwned = this.gameGrid.flat().filter(unit => unit && unit.type === type).length;
+    if (totalOwned === 0 || !this.isUnitTypeFullyStacked(type) || totalOwned % 2 !== 0) {
+      return; // Prevent upgrade if no units, not fully stacked, or odd number
+    }
+    
+    // Create new object to trigger Zustand reactivity
+    this.unitLevels = {
+      ...this.unitLevels,
+      [type]: this.unitLevels[type] + 1,
+    };
+    
+    // Recalculate production since capacity increased
+    this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
+    this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
   }
 
   // Private helper methods
@@ -298,10 +337,11 @@ export class GameEngine {
     if (available.length === 0) return grid;
     const idx = Math.floor(Math.random() * available.length);
     const { x, y } = available[idx];
+    const maxCapacity = getMaxCapacity(this.unitLevels[type]);
     return grid.map((row, rowIdx) =>
       row.map((cell, colIdx) => {
         if (rowIdx === y && colIdx === x) {
-          return new Unit(crypto.randomUUID(), type, x, y, value);
+          return new Unit(crypto.randomUUID(), type, x, y, value, false, maxCapacity);
         }
         return cell;
       })
@@ -345,6 +385,7 @@ export class GameEngine {
         isSaving: this.isSaving,
         error: this.error,
         grid: this.gameGrid,
+        unitLevels: this.unitLevels,
       };
       
       await savePlayerToDB(this.userId, state);

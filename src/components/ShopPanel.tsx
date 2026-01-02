@@ -3,6 +3,7 @@ import { UNIT_CONFIG, UNIT_TYPES } from "../game/config/units";
 import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import type { UnitType, Unit, ActiveUpgrade } from "../game/core/types";
+import { getMaxCapacity } from "../game/core/types";
 import { calculateUnitCost, calculateUpgradeCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
@@ -128,10 +129,11 @@ function ShopPanel() {
         <SectionTitle>UNITS</SectionTitle>
         {availableUnits.map((unitType: UnitType) => {
           const meta = UNIT_CONFIG[unitType];
-          const cost = calculateUnitCost(allUnits, unitType, meta.cost);
+          const numEffectiveToBuy = getMaxCapacity(useGameStore.getState().unitLevels[unitType]);
+          const cost = calculateUnitCost(allUnits, unitType, meta.cost, numEffectiveToBuy);
           // Check if player can afford using Decimal comparison
           const canAfford = points.gte(cost);
-          const owned = allUnits.filter(u => u.type === unitType).reduce((sum, u) => sum + u.stackedCount, 0);
+          const owned = allUnits.filter(u => u.type === unitType).length;
           const canSell = owned > 0;
           return (
             <UnitRow key={unitType}>
@@ -156,10 +158,10 @@ function ShopPanel() {
                   Sell ({meta.refund})
                 </SmallSellButton>
               </Tooltip>
-              <Tooltip content={`Double the stacking capacity of all ${meta.name} units`} position="top">
+              <Tooltip content={`Double the stacking capacity of all ${meta.name} units (requires even number of units and all fully stacked)`} position="top">
                 <SmallSellButton 
                   onClick={() => handleUpgradeUnitType(unitType)}
-                  $disabled={owned === 0}
+                  $disabled={owned === 0 || !gameEngine.isUnitTypeFullyStacked(unitType) || owned % 2 !== 0}
                 >
                   Upgrade
                 </SmallSellButton>

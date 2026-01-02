@@ -9,7 +9,6 @@ import { getUnitBonusMultiplier } from './bonuses';
  * Returns production as a Decimal for precise calculations with large numbers
  */
 export function calculateProduction(grid: (Unit | null)[][], activeUpgrades: ActiveUpgrade[]): Decimal {
-  console.log("calculation...");
   let totalProduction = new Decimal(0); // Start with Decimal zero
   const upgradeMultiplier = getActiveMultiplier(activeUpgrades, 'production');
   
@@ -54,12 +53,15 @@ export function calculateClickValue(production: Decimal, activeUpgrades: ActiveU
  * Calculate unit cost based on owned count (exponential scaling)
  * Returns cost as a Decimal
  */
-export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number): Decimal {
+export function calculateUnitCost(units: Unit[], type: UnitType, baseCost: number, numToBuy: number = 1): Decimal {
   // Count total units of this type (including stacks)
   const count = units.filter(u => u.type === type).reduce((sum, u) => sum + u.stackedCount, 0);
   
-  // Exponential cost scaling: baseCost * multiplier^count
-  const cost = baseCost * Math.pow(UNIT_COST_MULTIPLIER, count);
+  // Calculate cost for buying multiple effective units using geometric series sum
+  // Sum = baseCost * multiplier^count * (multiplier^numToBuy - 1) / (multiplier - 1)
+  const base = baseCost * Math.pow(UNIT_COST_MULTIPLIER, count);
+  const geometricSum = (Math.pow(UNIT_COST_MULTIPLIER, numToBuy) - 1) / (UNIT_COST_MULTIPLIER - 1);
+  const cost = base * geometricSum;
   return new Decimal(cost);
 }
 
@@ -118,7 +120,6 @@ export function getActiveMultiplier(
  * Filter out expired upgrades
  */
 export function filterExpiredUpgrades(activeUpgrades: ActiveUpgrade[], now: Date = new Date()): ActiveUpgrade[] {
-  console.log("filtering expired upgrades...");
   if (!activeUpgrades || activeUpgrades.length === 0) return [];
   
   const nowMs = now.getTime();

@@ -39,6 +39,7 @@ export const useGameStore = create<GameStore>((set) => ({
   isSaving: gameEngine.isSaving,
   error: gameEngine.error,
   grid: gameEngine.grid,
+  unitLevels: gameEngine.unitLevels,
 
   /**
    * Syncs the store state with the current game engine state.
@@ -56,6 +57,7 @@ export const useGameStore = create<GameStore>((set) => ({
       isSaving: gameEngine.isSaving,
       error: gameEngine.error,
       grid: gameEngine.grid,
+      unitLevels: gameEngine.unitLevels,
     });
   },
 }));

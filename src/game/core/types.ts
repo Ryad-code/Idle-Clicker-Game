@@ -8,11 +8,24 @@ export type UnitType =
   | "unit7" | "unit8" | "unit9" | "unit10" | "unit11" | "unit12"
   | "unit13" | "unit14" | "unit15" | "unit16" | "unit17" | "unit18";
 
+/**
+ * Unit levels map - tracks upgrade level for each unit type
+ * Level determines maxCapacity: 2^level
+ */
+export type UnitLevels = Record<UnitType, number>;
 
 /**
  * Game grid as a 2D array of Units (or null for empty cells)
  */
 export type Grid = (Unit | null)[][];
+
+/**
+ * Calculate max capacity for a unit based on its level
+ * Formula: 2^level (level 0 = capacity 1, level 1 = capacity 2, etc.)
+ */
+export function getMaxCapacity(level: number): number {
+  return Math.pow(2, level);
+}
 
 /**
  * Flattened game state structure
@@ -41,6 +54,9 @@ export interface GameState {
 
   // Grid is now the single source of truth for units
   grid: Grid;
+  
+  // Unit upgrade levels - determines maxCapacity for each unit type
+  unitLevels: UnitLevels;
 }
 
 /**
@@ -53,21 +69,19 @@ export class Unit {
   value: number;
   // Tracks if this unit's bonus is currently active
   bonusActive: boolean;
-  // New fields for stacking
+  // Stacking count - maxCapacity is now derived from unitLevels
   stackedCount: number;
-  maxCapacity: number;
 
   /**
    * @param bonusActive - whether the unit's bonus is active (default: false)
    */
-  constructor(id: string, type: UnitType, x: number, y: number, value: number, bonusActive = false, stackedCount = 1, maxCapacity = 1) {
+  constructor(id: string, type: UnitType, x: number, y: number, value: number, bonusActive = false, stackedCount = 1) {
     this.id = id;
     this.type = type;
     this.position = { x, y };
     this.value = value;
     this.bonusActive = bonusActive;
     this.stackedCount = stackedCount;
-    this.maxCapacity = maxCapacity;
   }
 }
 

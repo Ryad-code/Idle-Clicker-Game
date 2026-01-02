@@ -1,5 +1,5 @@
 import Decimal from 'break_infinity.js';
-import type { GameState, UnitType } from './types';
+import type { GameState, UnitType, UnitLevels } from './types';
 import { Unit } from './types';
 import { filterExpiredUpgrades } from './calculations';
 import { GRID_COLS } from '../config/grid';
@@ -15,6 +15,7 @@ interface PlayerDBRow {
   totalclicks: number;
   created_at: string;
   updated_at: string;
+  unit_levels: string; // JSON string of UnitLevels
 }
 
 /**
@@ -28,7 +29,6 @@ interface UnitDBRow {
   position_x: number;
   position_y: number;
   stacked_count: number;
-  max_capacity: number;
 }
 
 /**
@@ -54,6 +54,7 @@ export function stateToDBFormat(state: GameState, userId: string) {
       totalclicks: state.totalClicks,
       created_at: state.createdAt.toISOString(),
       updated_at: new Date().toISOString(),
+      unit_levels: JSON.stringify(state.unitLevels), // Serialize unit levels as JSON string
     },
     units: state.grid
       .map((row, y) =>
@@ -67,7 +68,6 @@ export function stateToDBFormat(state: GameState, userId: string) {
                 position_x: x,
                 position_y: y,
                 stacked_count: u.stackedCount,
-                max_capacity: u.maxCapacity,
               }
             : null
         )
@@ -102,7 +102,7 @@ export function dbToStateFormat(
       row.position_x >= 0 && row.position_x < gridCols &&
       row.position_y >= 0 && row.position_y < gridRows
     ) {
-      const unit = new Unit(row.id, row.type as UnitType, row.position_x, row.position_y, row.value ?? 0, false, row.stacked_count ?? 1, row.max_capacity ?? 1);
+      const unit = new Unit(row.id, row.type as UnitType, row.position_x, row.position_y, row.value ?? 0, false, row.stacked_count ?? 1);
       grid[row.position_y][row.position_x] = unit;
     }
   }
@@ -114,6 +114,30 @@ export function dbToStateFormat(
   }));
 
   const filteredUpgrades = filterExpiredUpgrades(activeUpgrades);
+  
+  // Parse unit levels from JSON string, default to level 0 for all units if not present
+  let unitLevels: UnitLevels;
+  try {
+    unitLevels = JSON.parse(playerRow.unit_levels || '{}');
+  } catch {
+    unitLevels = {
+      unit1: 0, unit2: 0, unit3: 0, unit4: 0, unit5: 0, unit6: 0,
+      unit7: 0, unit8: 0, unit9: 0, unit10: 0, unit11: 0, unit12: 0,
+      unit13: 0, unit14: 0, unit15: 0, unit16: 0, unit17: 0, unit18: 0,
+    };
+  }
+  
+  // Ensure all unit types have a level (default to 0 if missing)
+  const allUnitTypes: UnitType[] = [
+    'unit1', 'unit2', 'unit3', 'unit4', 'unit5', 'unit6',
+    'unit7', 'unit8', 'unit9', 'unit10', 'unit11', 'unit12',
+    'unit13', 'unit14', 'unit15', 'unit16', 'unit17', 'unit18',
+  ];
+  allUnitTypes.forEach(type => {
+    if (unitLevels[type] === undefined) {
+      unitLevels[type] = 0;
+    }
+  });
 
   return {
     points: new Decimal(playerRow.points || "0"), // Parse string to Decimal
@@ -122,6 +146,7 @@ export function dbToStateFormat(
     clickValue: new Decimal(1), // Will be recalculated by gameEngine.loadState()
     grid,
     activeUpgrades: filteredUpgrades,
+    unitLevels, // Include parsed unit levels
     createdAt: playerRow.created_at ? new Date(playerRow.created_at) : new Date(),
     isLoading: false,
     isSaving: false,
@@ -141,6 +166,11 @@ export function createDefaultState(): GameState {
     clickValue: new Decimal(1),
     grid: Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null)),
     activeUpgrades: [],
+    unitLevels: {
+      unit1: 0, unit2: 0, unit3: 0, unit4: 0, unit5: 0, unit6: 0,
+      unit7: 0, unit8: 0, unit9: 0, unit10: 0, unit11: 0, unit12: 0,
+      unit13: 0, unit14: 0, unit15: 0, unit16: 0, unit17: 0, unit18: 0,
+    },
     createdAt: new Date(),
     isLoading: false,
     isSaving: false,

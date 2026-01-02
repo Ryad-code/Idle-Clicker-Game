@@ -3,6 +3,8 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UNIT_CONFIG } from "../game/config/units";
 import { Unit } from "../game/core/types";
+import { getMaxCapacity } from "../game/core/types";
+import { adjustColorByStack } from "../utils/colorUtils";
 import Tooltip from "./UI/Tooltip";
 import {
   HomeContainer,
@@ -17,8 +19,8 @@ import {
 
 
 function UnitPanel() {
-  console.log("rendering UnitPanel...");
   const grid = useGameStore(state => state.grid);
+  const unitLevels = useGameStore(state => state.unitLevels);
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
   const [selected, setSelected] = useState<{ x: number; y: number } | null>(null);
 
@@ -50,16 +52,19 @@ function UnitPanel() {
           if (cell) {
             const meta = UNIT_CONFIG[cell.type];
             const actualProduction = meta.value * cell.stackedCount * (cell.bonusActive ? (meta.bonus) : 1);
+            const maxCapacity = getMaxCapacity(unitLevels[cell.type]);
+            const adjustedColor = adjustColorByStack(meta.color, cell.stackedCount, maxCapacity);
             return (
               <Tooltip
                 key={idx}
-                content={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${cell.maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
+                content={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
                 position="top"
               >
                 <GridUnitCard
-                  $color={cell.bonusActive ? meta.bonusColor : meta.color}
+                  $color={adjustedColor}
                   style={{
-                    border: isSelected ? "2px solid #2196F3" : "1px solid #bbb",
+                    border: isSelected ? "2px solid #2196F3" : cell.bonusActive ? "3px solid gold" : "1px solid #bbb",
+                    boxShadow: cell.bonusActive ? "0 0 8px rgba(255,215,0,0.6)" : "none",
                     cursor: "pointer",
                   }}
                   onClick={() => handleCellClick(x, y)}
@@ -112,6 +117,8 @@ function UnitPanel() {
           const meta = UNIT_CONFIG[type as keyof typeof UNIT_CONFIG];
           const count = unitCounts[type];
           const bonusCount = bonusCounts[type] || 0;
+          const level = unitLevels[type as keyof typeof unitLevels];
+          const maxCapacity = getMaxCapacity(level);
           return (
             <Tooltip
               key={type}
@@ -122,10 +129,10 @@ function UnitPanel() {
                 <StatEmoji>{meta.emoji}</StatEmoji>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
-                  <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div>
+                  {/* <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div> */}
                   <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
                   <div style={{ fontSize: 13, marginTop: 4 }}>
-                    <b>Owned:</b> {count} &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
+                    <b>Owned:</b> {count} &nbsp;|&nbsp; <b>Level:</b> {level} (cap: {maxCapacity}) &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
                   </div>
                 </div>
               </StatBox>
