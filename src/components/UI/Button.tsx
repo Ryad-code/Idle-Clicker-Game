@@ -1,11 +1,9 @@
-import { StyledButton } from "../../styles/components/button.styles";
-import Tooltip from "./Tooltip";
+import { Button as StyledButton } from "../../styles/components";
 
 interface ButtonProps {
   label: string;
   onClick: () => void;
   tooltip?: string;
-  tooltipPosition?: 'top' | 'bottom' | 'left' | 'right';
 }
 
 /**
@@ -13,18 +11,8 @@ interface ButtonProps {
  * Designed for white and light-gray UIs.
  * Optionally displays a tooltip on hover.
  */
-function Button({ label, onClick, tooltip, tooltipPosition = 'top' }: ButtonProps) {
-  const button = <StyledButton onClick={onClick}>{label}</StyledButton>;
-  
-  if (tooltip) {
-    return (
-      <Tooltip content={tooltip} position={tooltipPosition}>
-        {button}
-      </Tooltip>
-    );
-  }
-  
-  return button;
+function Button({ label, onClick, tooltip }: ButtonProps) {
+  return <StyledButton onClick={onClick} title={tooltip}>{label}</StyledButton>;
 }
 
 export default Button;

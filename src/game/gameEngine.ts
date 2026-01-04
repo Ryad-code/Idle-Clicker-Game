@@ -309,10 +309,6 @@ export class GameEngine {
       ...this.unitLevels,
       [type]: this.unitLevels[type] + 1,
     };
-    
-    // Recalculate production since capacity increased
-    this.pointsPerSecond = calculateProduction(this.gameGrid, this.activeUpgrades);
-    this.clickValue = calculateClickValue(this.pointsPerSecond, this.activeUpgrades);
   }
 
   // Private helper methods

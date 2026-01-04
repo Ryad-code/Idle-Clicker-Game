@@ -4,7 +4,7 @@ import Button from '../UI/Button';
 import { supabase } from '../../supabaseClient';
 import { useGameStore } from '../../game/gameStore';
 import { gameEngine } from '../../game/gameEngine';
-import { HeaderContainer, NavBar, HomeBar } from '../../styles/components/layout.styles';
+import { HeaderContainer, NavBar, HomeBar } from '../../styles/components';
 import { theme } from '../../styles/theme';
 
 const SaveIconButton = styled.button`
@@ -13,23 +13,14 @@ const SaveIconButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border: none;
-  border-radius: ${theme.radius.md};
+  border: 1px solid ${theme.colors.border};
   background: ${theme.colors.primary};
-  color: ${theme.colors.white};
-  font-size: ${theme.typography.fontSize.lg};
+  color: white;
+  font-size: 18px;
   cursor: pointer;
-  transition: all ${theme.transition.fast};
-  font-family: ${theme.typography.fontFamily};
 
   &:hover {
-    background: ${theme.colors.primaryHover};
-    transform: translateY(-1px);
-    box-shadow: ${theme.shadows.md};
-  }
-
-  &:active {
-    transform: translateY(0);
+    opacity: 0.8;
   }
 `;
 
@@ -57,7 +48,6 @@ function Header() {
           💾
         </SaveIconButton>
         <Button label="Stats" onClick={() => navigate('/stats')} />
-        <Button label="Page2" onClick={() => navigate('/page2')} />
         <Button label="Logout" onClick={handleLogout} />
       </NavBar>
     </HeaderContainer>

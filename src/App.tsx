@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Layout from './components/Layout/Layout';
 import HomePage from './pages/HomePage';
 import Stats from './pages/Stats';
-import Page2 from './pages/Page2';
 import AuthPage from './pages/AuthPage';
 import Footer from './components/Layout/Footer';
 import { useAuth } from './hooks/useAuth';
@@ -27,8 +26,6 @@ function App() {
   const user = useAuth();
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
 
-  console.log("App mounted");
-
   // Initialize game when user changes
   useEffect(() => {
     const initGame = async () => {
@@ -45,7 +42,6 @@ function App() {
 
   // Start tick system when app mounts
   useEffect(() => {
-    console.log("Starting tick system...");
     startTickInterval();
     startAutoSaveInterval();
     
@@ -72,7 +68,6 @@ function App() {
             <Route element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route path="stats" element={<Stats />} />
-              <Route path="page2" element={<Page2 />} />
             </Route>
 
             {/* Redirect unknown routes to home */}

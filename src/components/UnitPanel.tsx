@@ -5,17 +5,14 @@ import { UNIT_CONFIG } from "../game/config/units";
 import { Unit } from "../game/core/types";
 import { getMaxCapacity } from "../game/core/types";
 import { adjustColorByStack } from "../utils/colorUtils";
-import Tooltip from "./UI/Tooltip";
 import {
-  HomeContainer,
-  GridUnitCard,
+  ShopContainer,
+  GridCell,
   StatBox,
-  StatEmoji,
   EmptyState,
-  UnitRows,
   GridContainer,
   UnitContainer
-} from "../styles/components/unitPanel.styles";
+} from "../styles/components";
 
 
 function UnitPanel() {
@@ -55,12 +52,8 @@ function UnitPanel() {
             const maxCapacity = getMaxCapacity(unitLevels[cell.type]);
             const adjustedColor = adjustColorByStack(meta.color, cell.stackedCount, maxCapacity);
             return (
-              <Tooltip
-                key={idx}
-                content={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
-                position="top"
-              >
-                <GridUnitCard
+                <GridCell
+                  key={idx}
                   $color={adjustedColor}
                   style={{
                     border: isSelected ? "2px solid #2196F3" : cell.bonusActive ? "3px solid gold" : "1px solid #bbb",
@@ -68,24 +61,20 @@ function UnitPanel() {
                     cursor: "pointer",
                   }}
                   onClick={() => handleCellClick(x, y)}
+                  title={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
                 >
                   {meta.emoji}
-                </GridUnitCard>
-              </Tooltip>
+                </GridCell>
             );
           } else {
             return (
-              <Tooltip
-                key={idx}
-                content="Empty slot - Click to move units here"
-                position="top"
-              >
-                <GridUnitCard
+                <GridCell
+                  key={idx}
                   $color={"#fff"}
                   style={{ border: "1px solid #eee", color: "#bbb", cursor: "pointer" }}
                   onClick={() => handleCellClick(x, y)}
+                  title="Empty slot - Click to move units here"
                 />
-              </Tooltip>
             );
           }
         })}
@@ -112,7 +101,7 @@ function UnitPanel() {
       return <EmptyState>No units owned yet.</EmptyState>;
     }
     return (
-      <UnitRows>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {ownedTypes.map(type => {
           const meta = UNIT_CONFIG[type as keyof typeof UNIT_CONFIG];
           const count = unitCounts[type];
@@ -120,13 +109,12 @@ function UnitPanel() {
           const level = unitLevels[type as keyof typeof unitLevels];
           const maxCapacity = getMaxCapacity(level);
           return (
-            <Tooltip
-              key={type}
-              content={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}
-              position="left"
-            >
-              <StatBox style={{ width: 320, maxWidth: '100%' }}>
-                <StatEmoji>{meta.emoji}</StatEmoji>
+              <StatBox 
+                key={type}
+                style={{ width: 320, maxWidth: '100%', display: 'flex', gap: '8px', alignItems: 'center' }}
+                title={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}
+              >
+                <span>{meta.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
                   {/* <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div> */}
@@ -136,21 +124,20 @@ function UnitPanel() {
                   </div>
                 </div>
               </StatBox>
-            </Tooltip>
           );
         })}
-      </UnitRows>
+      </div>
     );
   };
 
   // Only display the current grid and its dimensions
   return (
-    <HomeContainer>
+    <ShopContainer>
       <UnitContainer>
         {renderGrid()}
         {renderUnitInfos()}
       </UnitContainer>
-    </HomeContainer>
+    </ShopContainer>
   );
 }
 

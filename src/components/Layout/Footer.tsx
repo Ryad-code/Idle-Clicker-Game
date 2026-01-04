@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { FooterContainer, HoverZone } from "../../styles/components/layout.styles";
+import { FooterContainer } from "../../styles/components";
 
 function Footer() {
   const [visible, setVisible] = useState(false);
@@ -18,7 +18,7 @@ function Footer() {
 
   return (
     <>
-      <HoverZone onMouseEnter={showFooter} />
+      <div onMouseEnter={showFooter} />
       <FooterContainer
         $isVisible={visible}
         onMouseEnter={showFooter}

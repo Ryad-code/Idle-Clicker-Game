@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BodyContainer } from "../../styles/components/layout.styles";
+import { BodyContainer } from "../../styles/components";
 
 interface BodyProps {
   children?: ReactNode;

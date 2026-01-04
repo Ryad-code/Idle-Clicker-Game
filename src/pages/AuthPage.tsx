@@ -1,15 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
-import {
-  AuthContainer,
-  FormCard,
-  Title,
-  Label,
-  Input,
-  ButtonRow,
-  Button,
-  Message
-} from '../styles/components/authPage.styles';
+import { AuthContainer, FormCard, AuthInput, AuthButton } from '../styles/components';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
@@ -35,42 +26,46 @@ export default function AuthPage() {
   return (
     <AuthContainer>
       <FormCard>
-        <Title>Login / Signup</Title>
+        <h2 style={{ margin: '0 0 4px', fontSize: '24px', fontWeight: 700 }}>Login / Signup</h2>
 
-        <Label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: '#d0d0d0' }}>
           Email
-          <Input
+          <AuthInput
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             autoComplete="email"
           />
-        </Label>
+        </label>
 
-        <Label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: '#d0d0d0' }}>
           Password
-          <Input
+          <AuthInput
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             autoComplete="current-password"
           />
-        </Label>
+        </label>
 
-        <ButtonRow>
-          <Button onClick={handleLogin}>
+        <div style={{ display: 'flex', gap: '12px', marginTop: '4px' }}>
+          <AuthButton onClick={handleLogin}>
             Login
-          </Button>
-          <Button variant="ghost" onClick={handleSignup}>
+          </AuthButton>
+          <AuthButton $variant="ghost" onClick={handleSignup}>
             Signup
-          </Button>
-        </ButtonRow>
+          </AuthButton>
+        </div>
 
-        <Message tone={message.toLowerCase().includes('error') ? 'error' : 'success'}>
+        <div style={{ 
+          fontSize: '14px', 
+          color: message.toLowerCase().includes('error') ? '#ff8a8a' : '#7ee0a3',
+          minHeight: '18px'
+        }}>
           {message}
-        </Message>
+        </div>
       </FormCard>
     </AuthContainer>
   );

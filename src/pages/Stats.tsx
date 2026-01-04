@@ -16,60 +16,37 @@ const StatsContainer = styled.div`
   max-width: 800px;
   margin: 0 auto;
   padding: ${theme.spacing.lg};
-
-  @media (max-width: 768px) {
-    padding: ${theme.spacing.md};
-  }
 `;
 
 const Title = styled.h1`
-  font-size: ${theme.typography.fontSize.xxl};
-  font-weight: ${theme.typography.fontWeight.bold};
-  color: ${theme.colors.textPrimary};
+  font-size: 32px;
+  font-weight: bold;
+  color: ${theme.colors.text};
   margin-bottom: ${theme.spacing.lg};
-
-  @media (max-width: 768px) {
-    font-size: ${theme.typography.fontSize.xl};
-  }
 `;
 
 const StatsGrid = styled.div`
   display: grid;
   gap: ${theme.spacing.md};
   grid-template-columns: repeat(2, 1fr);
-
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: ${theme.spacing.sm};
-  }
 `;
 
 const StatCard = styled.div`
-  background: ${theme.colors.surface};
+  background: ${theme.colors.background};
   border: 1px solid ${theme.colors.border};
-  border-radius: ${theme.radius.lg};
   padding: ${theme.spacing.lg};
-  box-shadow: ${theme.shadows.sm};
-
-  @media (max-width: 768px) {
-    padding: ${theme.spacing.md};
-  }
 `;
 
 const StatLabel = styled.div`
-  font-size: ${theme.typography.fontSize.sm};
-  color: ${theme.colors.textSecondary};
-  margin-bottom: ${theme.spacing.xs};
+  font-size: 14px;
+  color: #666;
+  margin-bottom: ${theme.spacing.sm};
 `;
 
 const StatValue = styled.div`
-  font-size: ${theme.typography.fontSize.xl};
-  font-weight: ${theme.typography.fontWeight.semibold};
-  color: ${theme.colors.textPrimary};
-
-  @media (max-width: 768px) {
-    font-size: ${theme.typography.fontSize.lg};
-  }
+  font-size: 24px;
+  font-weight: bold;
+  color: ${theme.colors.text};
 `;
 
 function Stats() {

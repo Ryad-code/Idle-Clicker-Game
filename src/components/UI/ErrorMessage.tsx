@@ -6,18 +6,17 @@ const ErrorBox = styled.div`
   align-items: center;
   gap: ${theme.spacing.sm};
   padding: ${theme.spacing.sm} ${theme.spacing.md};
-  border-radius: ${theme.radius.md};
   background: #fdecea;
-  color: ${theme.colors.error};
-  border: 1px solid ${theme.colors.error}33;
+  color: #cc0000;
+  border: 1px solid #cc0000;
 `;
 
 const ErrorIcon = styled.span`
-  font-size: 1.2rem;
+  font-size: 18px;
 `;
 
 const ErrorText = styled.div`
-  font-size: ${theme.typography.fontSize.base};
+  font-size: 14px;
 `;
 
 interface Props {
