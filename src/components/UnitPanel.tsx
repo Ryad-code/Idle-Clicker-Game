@@ -5,10 +5,10 @@ import { UNIT_CONFIG } from "../game/config/units";
 import { Unit } from "../game/core/types";
 import { getMaxCapacity } from "../game/core/types";
 import { adjustColorByStack } from "../utils/colorUtils";
+import { Card } from 'pixel-retroui';
 import {
   ShopContainer,
   GridCell,
-  StatBox,
   EmptyState,
   GridContainer,
   UnitContainer
@@ -109,21 +109,20 @@ function UnitPanel() {
           const level = unitLevels[type as keyof typeof unitLevels];
           const maxCapacity = getMaxCapacity(level);
           return (
-              <StatBox 
+              <Card 
                 key={type}
                 style={{ width: 320, maxWidth: '100%', display: 'flex', gap: '8px', alignItems: 'center' }}
-                title={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}
               >
-                <span>{meta.emoji}</span>
+                <span title={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}>{meta.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
                   {/* <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div> */}
-                  <div style={{ fontSize: 13, color: '#888' }}>{meta.bonusDescription}</div>
-                  <div style={{ fontSize: 13, marginTop: 4 }}>
+                  <div style={{ fontSize: 10, color: '#888' }}>{meta.bonusDescription}</div>
+                  <div style={{ fontSize: 10, marginTop: 4 }}>
                     <b>Owned:</b> {count} &nbsp;|&nbsp; <b>Level:</b> {level} (cap: {maxCapacity}) &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
                   </div>
                 </div>
-              </StatBox>
+              </Card>
           );
         })}
       </div>

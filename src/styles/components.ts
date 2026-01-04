@@ -11,11 +11,13 @@ export const LayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   background-color: ${theme.colors.background};
+  color: ${theme.colors.text};
 `;
 
 export const HeaderContainer = styled.header`
   padding: ${theme.spacing.md};
-  background-color: #2c3e50;
+  background-color: #111111;
+  border-bottom: 4px solid ${theme.colors.primary};
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -39,7 +41,8 @@ export const BodyContainer = styled.main`
 
 export const FooterContainer = styled.footer<{ $isVisible: boolean }>`
   padding: ${theme.spacing.md};
-  background-color: #34495e;
+  background-color: #111111;
+  border-top: 4px solid ${theme.colors.primary};
   display: ${({ $isVisible }) => ($isVisible ? "flex" : "none")};
   justify-content: center;
 `;
@@ -86,7 +89,7 @@ export const ClickerContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #1a252f;
+  background-color: #0a0a0a;
   padding: ${theme.spacing.md};
   align-items: center;
 `;
@@ -98,8 +101,10 @@ export const PointsDisplay = styled.div`
 `;
 
 export const PointsValue = styled.div`
-  font-size: 32px;
+  font-size: 24px;
   font-weight: bold;
+  color: ${theme.colors.primary};
+  text-shadow: 2px 2px 0px rgba(0, 255, 0, 0.3);
 `;
 
 export const StatsContainer = styled.div`
@@ -111,6 +116,8 @@ export const StatRow = styled.div`
   display: flex;
   justify-content: space-between;
   margin: ${theme.spacing.sm} 0;
+  font-size: 10px;
+  padding: 4px 0;
 `;
 
 export const ClickButton = styled.button`
@@ -141,10 +148,11 @@ export const ActiveUpgradeBadge = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${theme.spacing.sm};
-  background: #f0f0f0;
+  background: #222222;
+  border: 2px solid ${theme.colors.secondary};
   color: ${theme.colors.text};
   padding: ${theme.spacing.sm};
-  font-size: 14px;
+  font-size: 10px;
 `;
 
 // ============================================================================
@@ -154,7 +162,7 @@ export const ActiveUpgradeBadge = styled.div`
 export const ShopContainer = styled.div`
   height: 100%;
   width: 100%;
-  background-color: #1f2833;
+  background-color: #0a0a0a;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -163,7 +171,7 @@ export const ShopContainer = styled.div`
 export const ShopSection = styled.div`
   flex: 1;
   min-height: 0;
-  background-color: #252d38;
+  background-color: #111111;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -181,7 +189,9 @@ export const UnitRow = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
-  background-color: #2b3540;
+  background-color: #1a1a1a;
+  border: 2px solid #333333;
+  margin-bottom: 4px;
 `;
 
 export const UnitRowButton = styled.button<{ 
@@ -189,12 +199,12 @@ export const UnitRowButton = styled.button<{
   $disabled?: boolean;
 }>`
   padding: ${theme.spacing.sm};
-  border: none;
+  border: 2px solid transparent;
   background: ${props => {
-    if (props.$disabled) return '#f0f0f0';
+    if (props.$disabled) return '#222222';
     return props.$variant === 'sell' ? '#cc0000' : '#00aa00';
   }};
-  color: ${props => props.$disabled ? '#999' : 'white'};
+  color: ${props => props.$disabled ? '#666' : '#ffffff'};
   cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.$disabled ? 0.5 : 1};
   width: ${props => props.$variant === 'sell' ? '33.33%' : '100%'};
@@ -203,12 +213,14 @@ export const UnitRowButton = styled.button<{
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  font-size: 10px;
 
   &:hover {
     background: ${props => {
-      if (props.$disabled) return '#f0f0f0';
+      if (props.$disabled) return '#222222';
       return props.$variant === 'sell' ? '#aa0000' : '#008800';
     }};
+    border-color: ${props => props.$disabled ? 'transparent' : '#ffffff'};
   }
 `;
 
@@ -230,8 +242,11 @@ export const GridCell = styled.div<{ $color: string }>`
 `;
 
 export const UnitContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: ${theme.spacing.md};
-  background-color: #1e3a2f;
+  background-color: #1e2f3d;
   margin-bottom: ${theme.spacing.md};
 `;
 

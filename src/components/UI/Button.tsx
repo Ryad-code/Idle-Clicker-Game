@@ -1,18 +1,27 @@
-import { Button as StyledButton } from "../../styles/components";
+import { Button as PixelButton } from 'pixel-retroui';
 
 interface ButtonProps {
   label: string;
   onClick: () => void;
   tooltip?: string;
+  disabled?: boolean;
+  variant?: 'primary' | 'success' | 'danger';
 }
 
 /**
- * A minimal Apple-like button with soft shadows and subtle hover feedback.
- * Designed for white and light-gray UIs.
- * Optionally displays a tooltip on hover.
+ * Pixel art styled button using pixel-retroui.
  */
-function Button({ label, onClick, tooltip }: ButtonProps) {
-  return <StyledButton onClick={onClick} title={tooltip}>{label}</StyledButton>;
+function Button({ label, onClick, tooltip, disabled, variant = 'primary' }: ButtonProps) {
+  return (
+    <PixelButton 
+      onClick={onClick} 
+      title={tooltip}
+      disabled={disabled}
+      variant={variant}
+    >
+      {label}
+    </PixelButton>
+  );
 }
 
 export default Button;

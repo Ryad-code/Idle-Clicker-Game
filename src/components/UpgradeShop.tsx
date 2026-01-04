@@ -5,11 +5,10 @@ import type { ActiveUpgrade } from "../game/core/types";
 import { calculateUpgradeCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
+import { Card, Button } from 'pixel-retroui';
 import {
   UpgradeGrid,
-  UpgradeCard,
-  SectionTitle,
-  Button
+  SectionTitle
 } from "../styles/components";
 
 function UpgradeShop() {
@@ -32,10 +31,10 @@ function UpgradeShop() {
   };
 
   return (
-    <div style={{ border: '2px solid #0066cc', padding: '16px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Card style={{ margin: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <SectionTitle>UPGRADES</SectionTitle>
-        <Button onClick={handleReloadUpgrades}>
+        <Button onClick={handleReloadUpgrades} style={{ backgroundColor: '#0099ff' }}>
           🔄 Reload
         </Button>
       </div>
@@ -47,7 +46,7 @@ function UpgradeShop() {
           const canBuy = canAfford && !isActive;
 
           return (
-              <UpgradeCard
+              <div
                 key={upgrade.id}
                 onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
                 style={{
@@ -56,20 +55,27 @@ function UpgradeShop() {
                 }}
                 title={`${upgrade.description} (Duration: ${upgrade.durationSeconds}s)`}
               >
-                <div style={{ fontSize: '24px' }}>{upgrade.icon}</div>
-                <h4 style={{ margin: '8px 0' }}>{upgrade.id}</h4>
-                <div style={{ fontSize: '12px' }}>
-                  <span>×{upgrade.multiplier}</span>
-                  <br />
-                  <span>{formatDecimal(cost)} pts</span>
-                  <br />
-                  <span>{upgrade.durationSeconds}s</span>
-                </div>
-              </UpgradeCard>
+                <Card
+                  style={{
+                    textAlign: 'center',
+                    padding: '16px'
+                  }}
+                >
+                  <div style={{ fontSize: '24px' }}>{upgrade.icon}</div>
+                  <h4 style={{ margin: '8px 0', fontSize: '10px' }}>{upgrade.id}</h4>
+                  <div style={{ fontSize: '10px' }}>
+                    <span>×{upgrade.multiplier}</span>
+                    <br />
+                    <span>{formatDecimal(cost)} pts</span>
+                    <br />
+                    <span>{upgrade.durationSeconds}s</span>
+                  </div>
+                </Card>
+              </div>
           );
         })}
       </UpgradeGrid>
-    </div>
+    </Card>
   );
 }
 

@@ -2,14 +2,11 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { UPGRADES } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
+import { Button, Card, Input } from 'pixel-retroui';
 import { 
   ClickerContainer, 
-  PointsDisplay, 
   PointsValue,
-  StatsContainer,
   StatRow,
-  ClickButton,
-  ActiveUpgradesContainer,
   ActiveUpgradeBadge
 } from "../styles/components";
 import ErrorMessage from "./UI/ErrorMessage";
@@ -58,42 +55,28 @@ function ClickerPanel() {
 
   return (
     <ClickerContainer>
+      
       {error && <ErrorMessage message={error} />}
-      <PointsDisplay>
+      <Card style={{ margin: '0 0 16px' }}>
         <h2 style={{ margin: '0 0 8px' }}>Points</h2>
         <PointsValue>{formatDecimal(points)}</PointsValue>
         <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-          <input 
+          <Input 
             type="number" 
-            placeholder="Set points (test)" 
+            placeholder="Set points" 
             onChange={handlePointsChange}
-            style={{
-              padding: '8px',
-              fontSize: '14px',
-              borderRadius: '4px',
-              border: '1px solid #E5E5E5',
-              flex: 1
-            }}
+            style={{ flex: 1 }}
           />
-          <button
+          <Button
             onClick={handleReset}
-            style={{
-              padding: '8px 12px',
-              fontSize: '14px',
-              borderRadius: '4px',
-              border: '1px solid #E5E5E5',
-              backgroundColor: '#ff4444',
-              color: 'white',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap'
-            }}
+            style={{ backgroundColor: '#cc0000', color: 'white' }}
           >
             Reset
-          </button>
+          </Button>
         </div>
-      </PointsDisplay>
+      </Card>
       
-      <StatsContainer>
+      <Card style={{ margin: '0 0 16px' }}>
           <StatRow title="Points generated automatically every second from all your units">
             <span>Per Second:</span>
             <span style={{ fontWeight: 'bold' }}>{formatDecimal(pointsPerSecond)}</span>
@@ -106,11 +89,11 @@ function ClickerPanel() {
             <span>Total Clicks:</span>
             <span style={{ fontWeight: 'bold' }}>{totalClicks.toLocaleString()}</span>
           </StatRow>
-      </StatsContainer>
+      </Card>
 
       {activeUpgradeDisplays.length > 0 && (
-        <ActiveUpgradesContainer>
-          <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#666' }}>Active Upgrades</div>
+        <Card style={{ margin: '0 0 16px' }}>
+          <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>Active Upgrades</div>
           {activeUpgradeDisplays.map((item) => {
             const upgrade = upgradeMap.get(item?.upgradeId || '');
             if (!upgrade) return null;
@@ -129,12 +112,12 @@ function ClickerPanel() {
                 </ActiveUpgradeBadge>
             );
           })}
-        </ActiveUpgradesContainer>
+        </Card>
       )}
 
-      <ClickButton onClick={handleClick}>
+      <Button onClick={handleClick} style={{ padding: '24px 48px', fontSize: '20px', backgroundColor: '#00ff00', color: '#000' }}>
         CLICK
-      </ClickButton>
+      </Button>
     </ClickerContainer>
   )
 }

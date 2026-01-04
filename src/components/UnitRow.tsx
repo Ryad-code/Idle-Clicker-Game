@@ -5,7 +5,8 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { calculateUnitCost } from "../game/core/calculations";
 import { formatDecimal } from "../utils/formatters";
-import { UnitRow as UnitRowContainer, UnitRowButton } from "../styles/components";
+import { Button } from 'pixel-retroui';
+import { UnitRow as UnitRowContainer } from "../styles/components";
 
 interface UnitRowProps {
   unitType: UnitType;
@@ -43,32 +44,36 @@ function UnitRow({ unitType }: UnitRowProps) {
 
   return (
     <UnitRowContainer>
-      <UnitRowButton
+      <Button
         onClick={handleBuyUnit}
-        $disabled={!canAfford}
+        disabled={!canAfford}
         title={`${meta.description} - Produces ${meta.value} points per second`}
+        style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', fontSize: '10px' }}
+        bg={canAfford ? '#00aa00' : '#222222'}
       >
         <div>
-          <span>{meta.emoji}</span> <span>{meta.name}</span> <span style={{ fontSize: '12px' }}>({owned})</span>
+          <span>{meta.emoji}</span> <span>{meta.name}</span>
         </div>
         <div>{formatDecimal(cost)}</div>
-      </UnitRowButton>
-      <UnitRowButton
-        $variant="sell"
+      </Button>
+      <Button
         onClick={handleSellUnit}
-        $disabled={!canSell}
+        disabled={!canSell}
         title={`Sell one ${meta.name} for ${meta.refund} points`}
+        style={{ width: '33.33%', height: '100%', fontSize: '10px' }}
+        bg={canSell ? '#cc0000' : '#222222'}
       >
         Sell
-      </UnitRowButton>
-      <UnitRowButton
-        $variant="sell"
+      </Button>
+      <Button
         onClick={handleUpgradeUnitType}
-        $disabled={!canLevelUp}
+        disabled={!canLevelUp}
         title={`Double the stacking capacity of all ${meta.name} units (requires even number of units and all fully stacked)`}
+        style={{ width: '33.33%', height: '100%', fontSize: '10px' }}
+        bg={canLevelUp ? '#cc0000' : '#222222'}
       >
         Level Up
-      </UnitRowButton>
+      </Button>
     </UnitRowContainer>
   );
 }

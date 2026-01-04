@@ -1,53 +1,48 @@
-import styled from 'styled-components';
-import { theme } from '../styles/theme';
 import { useGameStore } from '../game/gameStore';
 import { formatDecimal } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { Unit } from '../game/core/types';
+import { Card } from 'pixel-retroui';
 
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-`;
+const containerStyle: React.CSSProperties = {
+  width: '100%',
+  height: '100%',
+  overflowY: 'auto',
+  overflowX: 'hidden',
+  backgroundColor: '#0a0a0a',
+};
 
-const StatsContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-  padding: ${theme.spacing.lg};
-`;
+const statsContainerStyle: React.CSSProperties = {
+  maxWidth: '800px',
+  margin: '0 auto',
+  padding: '24px',
+};
 
-const Title = styled.h1`
-  font-size: 32px;
-  font-weight: bold;
-  color: ${theme.colors.text};
-  margin-bottom: ${theme.spacing.lg};
-`;
+const titleStyle: React.CSSProperties = {
+  fontSize: '20px',
+  fontWeight: 'bold',
+  color: '#00ff00',
+  marginBottom: '24px',
+  textShadow: '2px 2px 0px rgba(0, 255, 0, 0.3)',
+};
 
-const StatsGrid = styled.div`
-  display: grid;
-  gap: ${theme.spacing.md};
-  grid-template-columns: repeat(2, 1fr);
-`;
+const statsGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gap: '16px',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+};
 
-const StatCard = styled.div`
-  background: ${theme.colors.background};
-  border: 1px solid ${theme.colors.border};
-  padding: ${theme.spacing.lg};
-`;
+const statLabelStyle: React.CSSProperties = {
+  fontSize: '10px',
+  color: '#888',
+  marginBottom: '8px',
+};
 
-const StatLabel = styled.div`
-  font-size: 14px;
-  color: #666;
-  margin-bottom: ${theme.spacing.sm};
-`;
-
-const StatValue = styled.div`
-  font-size: 24px;
-  font-weight: bold;
-  color: ${theme.colors.text};
-`;
+const statValueStyle: React.CSSProperties = {
+  fontSize: '16px',
+  fontWeight: 'bold',
+  color: '#00ff00',
+};
 
 function Stats() {
   const points = useGameStore(state => state.points);
@@ -83,42 +78,42 @@ function Stats() {
   }, [createdAt]);
 
   return (
-    <Container>
-      <StatsContainer>
-        <Title>Game Statistics</Title>
-        <StatsGrid>
-          <StatCard>
-            <StatLabel>Game Duration</StatLabel>
-            <StatValue>{duration}</StatValue>
-          </StatCard>
+    <div style={containerStyle}>
+      <div style={statsContainerStyle}>
+        <h1 style={titleStyle}>Game Statistics</h1>
+        <div style={statsGridStyle}>
+          <Card>
+            <div style={statLabelStyle}>Game Duration</div>
+            <div style={statValueStyle}>{duration}</div>
+          </Card>
 
-          <StatCard>
-            <StatLabel>Total Points Earned</StatLabel>
-            <StatValue>{formatDecimal(points)}</StatValue>
-          </StatCard>
+          <Card>
+            <div style={statLabelStyle}>Total Points Earned</div>
+            <div style={statValueStyle}>{formatDecimal(points)}</div>
+          </Card>
 
-          <StatCard>
-            <StatLabel>Total Clicks</StatLabel>
-            <StatValue>{totalClicks.toLocaleString()}</StatValue>
-          </StatCard>
+          <Card>
+            <div style={statLabelStyle}>Total Clicks</div>
+            <div style={statValueStyle}>{totalClicks.toLocaleString()}</div>
+          </Card>
 
-          <StatCard>
-            <StatLabel>Points Per Second</StatLabel>
-            <StatValue>{formatDecimal(pointsPerSecond)}</StatValue>
-          </StatCard>
+          <Card>
+            <div style={statLabelStyle}>Points Per Second</div>
+            <div style={statValueStyle}>{formatDecimal(pointsPerSecond)}</div>
+          </Card>
 
-          <StatCard>
-            <StatLabel>Click Value</StatLabel>
-            <StatValue>{formatDecimal(clickValue)}</StatValue>
-          </StatCard>
+          <Card>
+            <div style={statLabelStyle}>Click Value</div>
+            <div style={statValueStyle}>{formatDecimal(clickValue)}</div>
+          </Card>
 
-          <StatCard>
-            <StatLabel>Total Units Owned</StatLabel>
-            <StatValue>{grid.flat().filter((u): u is Unit => u !== null).length.toLocaleString()}</StatValue>
-          </StatCard>
-        </StatsGrid>
-      </StatsContainer>
-    </Container>
+          <Card>
+            <div style={statLabelStyle}>Total Units Owned</div>
+            <div style={statValueStyle}>{grid.flat().filter((u): u is Unit => u !== null).length.toLocaleString()}</div>
+          </Card>
+        </div>
+      </div>
+    </div>
   );
 }
 

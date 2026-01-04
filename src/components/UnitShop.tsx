@@ -2,6 +2,7 @@ import { UNIT_CONFIG, UNIT_TYPES } from "../game/config/units";
 import { useGameStore } from "../game/gameStore";
 import type { UnitType, Unit } from "../game/core/types";
 import { calculateUnitCost } from "../game/core/calculations";
+import { Card } from 'pixel-retroui';
 import UnitRow from "./UnitRow";
 
 function UnitShop() {
@@ -22,11 +23,11 @@ function UnitShop() {
   const availableUnits = UNIT_TYPES.filter(isUnlocked);
 
   return (
-    <>
+    <Card style={{ margin: '16px', padding: '8px' }}>
       {availableUnits.map((unitType: UnitType) => (
         <UnitRow key={unitType} unitType={unitType} />
       ))}
-    </>
+    </Card>
   );
 }
 
