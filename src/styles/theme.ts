@@ -4,14 +4,14 @@
 
 export const theme = {
   colors: {
-    background: '#000000',
-    text: '#ffffff',
-    border: '#444444',
-    primary: '#00ff00',
-    secondary: '#0099ff',
-    danger: '#ff0033',
-    success: '#00ff00',
-    panel: '#1a1a1a',
+    background: '#BA8AA3',
+    text: '#D7A9A1',
+    border: '#27495D',
+    primary: '#747CA7',
+    secondary: '#B2EDF2',
+    danger: '#B2EDF2',
+    success: '#F56363',
+    panel: '#B2EDF2',
   },
   
   spacing: {

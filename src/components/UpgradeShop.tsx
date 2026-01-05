@@ -6,6 +6,7 @@ import { calculateUpgradeCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
 import { Card, Button } from 'pixel-retroui';
+import { theme } from "../styles/theme";
 import {
   UpgradeGrid,
   SectionTitle
@@ -34,7 +35,7 @@ function UpgradeShop() {
     <Card style={{ margin: '16px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
         <SectionTitle>UPGRADES</SectionTitle>
-        <Button onClick={handleReloadUpgrades} style={{ backgroundColor: '#0099ff' }}>
+        <Button onClick={handleReloadUpgrades} style={{ backgroundColor: theme.colors.secondary }}>
           🔄 Reload
         </Button>
       </div>

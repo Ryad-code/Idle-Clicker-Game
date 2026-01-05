@@ -6,6 +6,7 @@ import { Unit } from "../game/core/types";
 import { getMaxCapacity } from "../game/core/types";
 import { adjustColorByStack } from "../utils/colorUtils";
 import { Card } from 'pixel-retroui';
+import { theme } from "../styles/theme";
 import {
   ShopContainer,
   GridCell,
@@ -56,22 +57,22 @@ function UnitPanel() {
                   key={idx}
                   $color={adjustedColor}
                   style={{
-                    border: isSelected ? "2px solid #2196F3" : cell.bonusActive ? "3px solid gold" : "1px solid #bbb",
-                    boxShadow: cell.bonusActive ? "0 0 8px rgba(255,215,0,0.6)" : "none",
+                    border: isSelected ? `2px solid ${theme.colors.primary}` : cell.bonusActive ? `3px solid ${theme.colors.success}` : `1px solid ${theme.colors.border}`,
+                    boxShadow: cell.bonusActive ? `0 0 8px ${theme.colors.success}99` : "none",
                     cursor: "pointer",
                   }}
                   onClick={() => handleCellClick(x, y)}
                   title={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
                 >
-                  {meta.emoji}
+                  {meta.emoji.startsWith('/') ? <img src={meta.emoji} alt={meta.name} style={{width: '32px', height: '32px'}} /> : meta.emoji}
                 </GridCell>
             );
           } else {
             return (
                 <GridCell
                   key={idx}
-                  $color={"#fff"}
-                  style={{ border: "1px solid #eee", color: "#bbb", cursor: "pointer" }}
+                  $color={theme.colors.text}
+                  style={{ border: `1px solid ${theme.colors.text}`, color: theme.colors.border, cursor: "pointer" }}
                   onClick={() => handleCellClick(x, y)}
                   title="Empty slot - Click to move units here"
                 />
@@ -113,11 +114,11 @@ function UnitPanel() {
                 key={type}
                 style={{ width: 320, maxWidth: '100%', display: 'flex', gap: '8px', alignItems: 'center' }}
               >
-                <span title={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}>{meta.emoji}</span>
+                <span title={`${meta.bonusDescription} - Bonus activates when 3+ units are placed together`}>{meta.emoji.startsWith('/') ? <img src={meta.emoji} alt={meta.name} style={{width: '20px', height: '20px'}} /> : meta.emoji}</span>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, color: meta.color }}>{meta.name}</div>
                   {/* <div style={{ fontSize: 13, color: '#666' }}>{meta.description}</div> */}
-                  <div style={{ fontSize: 10, color: '#888' }}>{meta.bonusDescription}</div>
+                  <div style={{ fontSize: 10, color: theme.colors.border }}>{meta.bonusDescription}</div>
                   <div style={{ fontSize: 10, marginTop: 4 }}>
                     <b>Owned:</b> {count} &nbsp;|&nbsp; <b>Level:</b> {level} (cap: {maxCapacity}) &nbsp;|&nbsp; <b>production:</b> {meta.value}/s &nbsp;|&nbsp; <b>bonuses active:</b> {bonusCount}
                   </div>

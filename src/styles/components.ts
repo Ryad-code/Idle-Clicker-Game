@@ -16,7 +16,7 @@ export const LayoutContainer = styled.div`
 
 export const HeaderContainer = styled.header`
   padding: ${theme.spacing.md};
-  background-color: #111111;
+  background-color: ${theme.colors.panel};
   border-bottom: 4px solid ${theme.colors.primary};
   display: flex;
   align-items: center;
@@ -41,7 +41,7 @@ export const BodyContainer = styled.main`
 
 export const FooterContainer = styled.footer<{ $isVisible: boolean }>`
   padding: ${theme.spacing.md};
-  background-color: #111111;
+  background-color: ${theme.colors.panel};
   border-top: 4px solid ${theme.colors.primary};
   display: ${({ $isVisible }) => ($isVisible ? "flex" : "none")};
   justify-content: center;
@@ -59,21 +59,21 @@ export const Button = styled.button<{
   padding: ${theme.spacing.sm} ${theme.spacing.md};
   border: none;
   background: ${props => {
-    if (props.$disabled) return '#f0f0f0';
-    if (props.$variant === 'success') return '#00aa00';
-    if (props.$variant === 'danger') return '#cc0000';
+    if (props.$disabled) return theme.colors.text;
+    if (props.$variant === 'success') return theme.colors.success;
+    if (props.$variant === 'danger') return theme.colors.danger;
     return theme.colors.primary;
   }};
-  color: ${props => props.$disabled ? '#999' : 'white'};
+  color: ${props => props.$disabled ? theme.colors.text : theme.colors.text};
   cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.$disabled ? 0.5 : 1};
   width: ${props => props.$fullWidth ? '100%' : 'auto'};
 
   &:hover {
     background: ${props => {
-      if (props.$disabled) return '#f0f0f0';
-      if (props.$variant === 'success') return '#008800';
-      if (props.$variant === 'danger') return '#aa0000';
+      if (props.$disabled) return theme.colors.text;
+      if (props.$variant === 'success') return theme.colors.success;
+      if (props.$variant === 'danger') return theme.colors.danger;
       return theme.colors.primary;
     }};
     opacity: ${props => props.$disabled ? 0.5 : 0.8};
@@ -89,14 +89,14 @@ export const ClickerContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #0a0a0a;
+  background-color: ${theme.colors.background};
   padding: ${theme.spacing.md};
   align-items: center;
 `;
 
 export const PointsDisplay = styled.div`
   padding: ${theme.spacing.md};
-  background-color: #2d3e50;
+  background-color: ${theme.colors.panel};
   text-align: center;
 `;
 
@@ -109,7 +109,7 @@ export const PointsValue = styled.div`
 
 export const StatsContainer = styled.div`
   padding: ${theme.spacing.md};
-  background-color: #252d3a;
+  background-color: ${theme.colors.panel};
 `;
 
 export const StatRow = styled.div`
@@ -136,7 +136,7 @@ export const ClickButton = styled.button`
 
 export const ActiveUpgradesContainer = styled.div`
   width: 100%;
-  background-color: #2a1f1f;
+  background-color: ${theme.colors.panel};
   padding: ${theme.spacing.md};
   display: flex;
   flex-direction: column;
@@ -148,7 +148,7 @@ export const ActiveUpgradeBadge = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${theme.spacing.sm};
-  background: #222222;
+  background: ${theme.colors.panel};
   border: 2px solid ${theme.colors.secondary};
   color: ${theme.colors.text};
   padding: ${theme.spacing.sm};
@@ -162,7 +162,7 @@ export const ActiveUpgradeBadge = styled.div`
 export const ShopContainer = styled.div`
   height: 100%;
   width: 100%;
-  background-color: #0a0a0a;
+  background-color: ${theme.colors.background};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -171,7 +171,7 @@ export const ShopContainer = styled.div`
 export const ShopSection = styled.div`
   flex: 1;
   min-height: 0;
-  background-color: #111111;
+  background-color: ${theme.colors.panel};
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -189,8 +189,8 @@ export const UnitRow = styled.div`
   display: flex;
   width: 100%;
   height: 60px;
-  background-color: #1a1a1a;
-  border: 2px solid #333333;
+  //background-color: ${theme.colors.panel};
+  //border: 2px solid ${theme.colors.border};
   margin-bottom: 4px;
 `;
 
@@ -201,10 +201,10 @@ export const UnitRowButton = styled.button<{
   padding: ${theme.spacing.sm};
   border: 2px solid transparent;
   background: ${props => {
-    if (props.$disabled) return '#222222';
-    return props.$variant === 'sell' ? '#cc0000' : '#00aa00';
+    if (props.$disabled) return theme.colors.panel;
+    return props.$variant === 'sell' ? theme.colors.danger : theme.colors.success;
   }};
-  color: ${props => props.$disabled ? '#666' : '#ffffff'};
+  color: ${props => props.$disabled ? theme.colors.border : theme.colors.text};
   cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
   opacity: ${props => props.$disabled ? 0.5 : 1};
   width: ${props => props.$variant === 'sell' ? '33.33%' : '100%'};
@@ -217,10 +217,10 @@ export const UnitRowButton = styled.button<{
 
   &:hover {
     background: ${props => {
-      if (props.$disabled) return '#222222';
-      return props.$variant === 'sell' ? '#aa0000' : '#008800';
+      if (props.$disabled) return theme.colors.panel;
+      return props.$variant === 'sell' ? theme.colors.danger : theme.colors.success;
     }};
-    border-color: ${props => props.$disabled ? 'transparent' : '#ffffff'};
+    border-color: ${props => props.$disabled ? 'transparent' : theme.colors.text};
   }
 `;
 
@@ -246,14 +246,18 @@ export const UnitContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: ${theme.spacing.md};
-  background-color: #1e2f3d;
+  background-color: ${theme.colors.panel};
+  background-image: url('/Gemini_Generated_Image_6tbrs96tbrs96tbr.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   margin-bottom: ${theme.spacing.md};
 `;
 
 export const StatBox = styled.div`
   padding: ${theme.spacing.sm};
   margin: ${theme.spacing.sm} 0;
-  background-color: #1e2f3d;
+  background-color: ${theme.colors.panel};
 `;
 
 // ============================================================================
@@ -263,7 +267,7 @@ export const StatBox = styled.div`
 export const UpgradeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: ${theme.spacing.md};
+  gap: ${theme.spacing.sm};
 `;
 
 export const UpgradeCard = styled.div`

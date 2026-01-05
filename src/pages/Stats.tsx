@@ -3,13 +3,14 @@ import { formatDecimal } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { Unit } from '../game/core/types';
 import { Card } from 'pixel-retroui';
+import { theme } from '../styles/theme';
 
 const containerStyle: React.CSSProperties = {
   width: '100%',
   height: '100%',
   overflowY: 'auto',
   overflowX: 'hidden',
-  backgroundColor: '#0a0a0a',
+  backgroundColor: theme.colors.background,
 };
 
 const statsContainerStyle: React.CSSProperties = {
@@ -21,9 +22,9 @@ const statsContainerStyle: React.CSSProperties = {
 const titleStyle: React.CSSProperties = {
   fontSize: '20px',
   fontWeight: 'bold',
-  color: '#00ff00',
+  color: theme.colors.success,
   marginBottom: '24px',
-  textShadow: '2px 2px 0px rgba(0, 255, 0, 0.3)',
+  textShadow: `2px 2px 0px ${theme.colors.success}4c`,
 };
 
 const statsGridStyle: React.CSSProperties = {

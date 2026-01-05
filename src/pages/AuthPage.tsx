@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../supabaseClient';
 import { AuthContainer, FormCard, AuthInput, AuthButton } from '../styles/components';
+import { theme } from '../styles/theme';
 
 export default function AuthPage() {
   const [email, setEmail] = useState('');
@@ -28,7 +29,7 @@ export default function AuthPage() {
       <FormCard>
         <h2 style={{ margin: '0 0 4px', fontSize: '24px', fontWeight: 700 }}>Login / Signup</h2>
 
-        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: '#d0d0d0' }}>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: theme.colors.text }}>
           Email
           <AuthInput
             type="email"
@@ -39,7 +40,7 @@ export default function AuthPage() {
           />
         </label>
 
-        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: '#d0d0d0' }}>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px', color: theme.colors.text }}>
           Password
           <AuthInput
             type="password"
@@ -61,7 +62,7 @@ export default function AuthPage() {
 
         <div style={{ 
           fontSize: '14px', 
-          color: message.toLowerCase().includes('error') ? '#ff8a8a' : '#7ee0a3',
+          color: message.toLowerCase().includes('error') ? theme.colors.danger : theme.colors.success,
           minHeight: '18px'
         }}>
           {message}

@@ -3,6 +3,7 @@ import { gameEngine } from "../game/gameEngine";
 import { UPGRADES } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
 import { Button, Card, Input } from 'pixel-retroui';
+import { theme } from "../styles/theme";
 import { 
   ClickerContainer, 
   PointsValue,
@@ -69,7 +70,7 @@ function ClickerPanel() {
           />
           <Button
             onClick={handleReset}
-            style={{ backgroundColor: '#cc0000', color: 'white' }}
+            style={{ backgroundColor: theme.colors.danger, color: theme.colors.text }}
           >
             Reset
           </Button>
@@ -106,7 +107,7 @@ function ClickerPanel() {
                     <span>{item?.icon}</span>
                     <span>{item?.upgradeId}</span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#666' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: theme.colors.border }}>
                     <span>{item?.remainingSeconds}s</span>
                   </div>
                 </ActiveUpgradeBadge>
@@ -115,7 +116,7 @@ function ClickerPanel() {
         </Card>
       )}
 
-      <Button onClick={handleClick} style={{ padding: '24px 48px', fontSize: '20px', backgroundColor: '#00ff00', color: '#000' }}>
+      <Button onClick={handleClick} style={{ padding: '24px 48px', fontSize: '20px', backgroundColor: theme.colors.success, color: theme.colors.background }}>
         CLICK
       </Button>
     </ClickerContainer>
