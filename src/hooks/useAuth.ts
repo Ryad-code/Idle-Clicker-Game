@@ -1,30 +1,53 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
-import type { User } from '@supabase/supabase-js';
+import { loadFromLocalStorage, saveToLocalStorage } from '../localStorage/localStorage';
+
+interface User {
+  id: string;
+  email: string;
+}
+
+const AUTH_KEY = 'current_user';
 
 export function useAuth() {
   // undefined → still loading, null → not logged in, User → logged in
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => {
-    // Step 1: fetch current user
-    async function fetchUser() {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user ?? null);
-    }
-
-    fetchUser();
-
-    // Step 2: listen for auth state changes
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    // Step 3: cleanup
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    // Load current user from localStorage
+    const savedUser = loadFromLocalStorage<User>(AUTH_KEY);
+    setUser(savedUser);
   }, []);
 
   return user;
+}
+
+export function login(email: string, password: string): boolean {
+  // Simple localStorage-based auth (no real authentication)
+  // In production, you'd validate credentials against a backend
+  if (email && password) {
+    const user: User = {
+      id: email, // Use email as unique ID
+      email: email,
+    };
+    saveToLocalStorage(AUTH_KEY, user);
+    return true;
+  }
+  return false;
+}
+
+export function signup(email: string, password: string): boolean {
+  // Simple localStorage-based signup
+  if (email && password) {
+    const user: User = {
+      id: email,
+      email: email,
+    };
+    saveToLocalStorage(AUTH_KEY, user);
+    return true;
+  }
+  return false;
+}
+
+export function logout(): void {
+  saveToLocalStorage(AUTH_KEY, null);
 }

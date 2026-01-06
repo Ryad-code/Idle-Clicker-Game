@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../UI/Button';
-import { supabase } from '../../supabaseClient';
+import { logout } from '../../hooks/useAuth';
 import { useGameStore } from '../../game/gameStore';
 import { gameEngine } from '../../game/gameEngine';
 import { HeaderContainer, NavBar, HomeBar } from '../../styles/components';
@@ -28,9 +28,10 @@ function Header() {
   const navigate = useNavigate();
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
 
-  async function handleLogout() {
-    await supabase.auth.signOut();
+  function handleLogout() {
+    logout();
     navigate('/auth');
+    window.location.reload();
   }
 
   const handleManualSave = async () => {

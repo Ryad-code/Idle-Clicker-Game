@@ -1,11 +1,11 @@
 # Idle Clicker Game
 
 ## Overview
-This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, authentication, and persistent state via Supabase. Players can sign up, log in, and track their progress across sessions.
+This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, simple authentication, and persistent state via localStorage. Players can sign up, log in, and track their progress across sessions.
 
 ## Architecture
 - **Frontend**: React with TypeScript, using Zustand for state management and React Router for navigation.
-- **Backend**: Supabase for authentication and database persistence.
+- **Storage**: localStorage for client-side data persistence and simple authentication.
 - **Build Tool**: Vite for development and building.
 - **Styling**: Styled-components with a custom theme.
 
@@ -21,10 +21,10 @@ This is a React-based idle clicker game where players place units on a grid to g
 │   │   ├── gameStore.ts     # Zustand state management store
 │   │   └── tick.ts          # Game loop and auto-save system
 │   ├── hooks/               # Custom hooks (useAuth)
+│   ├── localStorage/        # localStorage utility functions
 │   ├── pages/               # Page components (AuthPage, HomePage, Stats)
 │   ├── styles/              # Theme and component-specific styles
 │   ├── utils/               # Utility functions (errorUtils, formatters, colorUtils)
-│   ├── supabaseClient.ts    # Supabase client configuration
 │   └── main.tsx             # App entry point
 ├── public/                  # Static assets
 ├── package.json             # Dependencies and scripts
@@ -33,7 +33,7 @@ This is a React-based idle clicker game where players place units on a grid to g
 ```
 
 ## Key Features
-- **Authentication**: User signup and login with Supabase Auth.
+- **Authentication**: Simple user signup and login with localStorage.
 - **Grid-Based Gameplay**: Place units on an 11x11 grid to earn production points.
 - **Unit Bonuses**: Each unit has unique grid-based bonuses (e.g., adjacency, clusters, symmetry).
 - **Unit Stacking System**: 
@@ -47,7 +47,7 @@ This is a React-based idle clicker game where players place units on a grid to g
   - Requires all units of that type to be fully stacked and an even number of units
   - Purchasing units buys a full stack at current capacity level
 - **Temporary Upgrades**: Purchase time-limited multipliers for production or click value.
-- **Persistence**: Auto-save every 30 seconds to Supabase database.
+- **Persistence**: Auto-save every 30 seconds to localStorage.
 - **Real-Time Updates**: Production updates every second; bonuses recalculate on grid changes.
 - **Statistics**: View detailed game progress and stats on the Stats page.
 - **Reset Functionality**: Clear the grid and unit levels to start fresh while keeping points.
@@ -59,12 +59,8 @@ This is a React-based idle clicker game where players place units on a grid to g
 
 ## How to Run
 1. Install dependencies: `npm install`
-2. Set up Supabase:
-   - Create a new Supabase project
-   - Copy `.env.example` to `.env`
-   - Add your Supabase URL and anon key to `.env`
-3. Start dev server: `npm run dev`
-4. Build for production: `npm run build`
+2. Start dev server: `npm run dev`
+3. Build for production: `npm run build`
 
 ## Core Mechanics
 
@@ -137,7 +133,6 @@ This is a React-based idle clicker game where players place units on a grid to g
 - **React Router DOM 7.9.5**: Client-side routing
 - **TypeScript 5.9.3**: Type safety and developer experience
 - **Zustand 5.0.0**: Lightweight state management
-- **Supabase 2.78.0**: Authentication and database
 - **Styled-components 6.1.19**: CSS-in-JS styling
 - **break_infinity.js 2.2.0**: Large number handling (for idle game scaling)
 - **Vite 7.1.7**: Build tool and dev server

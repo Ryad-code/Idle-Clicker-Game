@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { supabase } from '../supabaseClient';
+import { login, signup } from '../hooks/useAuth';
 import { AuthContainer, FormCard, AuthInput, AuthButton } from '../styles/components';
 import { theme } from '../styles/theme';
 
@@ -8,19 +8,23 @@ export default function AuthPage() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
 
-  async function handleSignup() {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) setMessage(error.message);
-    else{
-      setMessage('Signup successful! Check your email.');
+  function handleSignup() {
+    const success = signup(email, password);
+    if (success) {
+      setMessage('Signup successful! Refreshing...');
+      setTimeout(() => window.location.reload(), 500);
+    } else {
+      setMessage('Please enter valid email and password');
     }
   }
 
-  async function handleLogin() {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setMessage(error.message);
-    else {
+  function handleLogin() {
+    const success = login(email, password);
+    if (success) {
       setMessage('Login successful!');
+      setTimeout(() => window.location.reload(), 500);
+    } else {
+      setMessage('Please enter valid email and password');
     }
   }
 

@@ -1,41 +1,119 @@
-import { supabase } from '../../supabaseClient';
-import type { GameState } from '../core/types';
-import { dbToStateFormat, stateToDBFormat, createDefaultState } from '../core/state';
+import type { GameState, UnitType, UnitLevels } from '../core/types';
+import { Unit } from '../core/types';
+import { createDefaultState } from '../core/state';
 import { logError } from '../../utils/errorUtils';
+import { saveToLocalStorage, loadFromLocalStorage } from '../../localStorage/localStorage';
+import Decimal from 'break_infinity.js';
+
+const STORAGE_KEY_PREFIX = 'game_state_';
+
+interface SerializedUnit {
+  id: string;
+  type: string;
+  value: number;
+  bonusActive: boolean;
+  stackedCount: number;
+}
+
+interface SerializedUpgrade {
+  upgradeId: string;
+  purchasedAt: string;
+}
+
+interface SerializedGameState {
+  points: string;
+  totalClicks: number;
+  pointsPerSecond: string;
+  clickValue: string;
+  activeUpgrades: SerializedUpgrade[];
+  createdAt: string;
+  isLoading: boolean;
+  isSaving: boolean;
+  error: string | null;
+  grid: (SerializedUnit | null)[][];
+  unitLevels: UnitLevels;
+}
 
 /**
- * Load player data from Supabase and convert to GameState
+ * Convert GameState to a serializable format for localStorage
+ */
+function serializeGameState(state: GameState): SerializedGameState {
+  return {
+    points: state.points.toString(),
+    totalClicks: state.totalClicks,
+    pointsPerSecond: state.pointsPerSecond.toString(),
+    clickValue: state.clickValue.toString(),
+    activeUpgrades: state.activeUpgrades.map(u => ({
+      upgradeId: u.upgradeId,
+      purchasedAt: u.purchasedAt.toISOString(),
+    })),
+    createdAt: state.createdAt.toISOString(),
+    isLoading: state.isLoading,
+    isSaving: state.isSaving,
+    error: state.error,
+    grid: state.grid.map(row => 
+      row.map(unit => unit ? {
+        id: unit.id,
+        type: unit.type,
+        value: unit.value,
+        bonusActive: unit.bonusActive,
+        stackedCount: unit.stackedCount,
+      } : null)
+    ),
+    unitLevels: state.unitLevels,
+  };
+}
+
+/**
+ * Convert serialized data back to GameState
+ */
+function deserializeGameState(data: SerializedGameState): GameState {
+  // Reconstruct grid with proper Unit instances
+  const grid = data.grid.map((row: (SerializedUnit | null)[], y: number) => 
+    row.map((unitData: SerializedUnit | null, x: number) => 
+      unitData ? new Unit(
+        unitData.id,
+        unitData.type as UnitType,
+        x,
+        y,
+        unitData.value,
+        unitData.bonusActive,
+        unitData.stackedCount
+      ) : null
+    )
+  );
+
+  return {
+    points: new Decimal(data.points),
+    totalClicks: data.totalClicks,
+    pointsPerSecond: new Decimal(data.pointsPerSecond),
+    clickValue: new Decimal(data.clickValue),
+    activeUpgrades: data.activeUpgrades.map((u: SerializedUpgrade) => ({
+      upgradeId: u.upgradeId,
+      purchasedAt: new Date(u.purchasedAt),
+    })),
+    createdAt: new Date(data.createdAt),
+    isLoading: data.isLoading,
+    isSaving: data.isSaving,
+    error: data.error,
+    grid,
+    unitLevels: data.unitLevels,
+  };
+}
+
+/**
+ * Load player data from localStorage and convert to GameState
  */
 export async function loadPlayerFromDB(userId: string): Promise<GameState> {
   try {
-    // Load player record
-    const { data: playerData, error: playerError } = await supabase
-      .from('players')
-      .select('*')
-      .eq('user_id', userId)
-      .single();
+    const storageKey = STORAGE_KEY_PREFIX + userId;
+    const savedData = loadFromLocalStorage<SerializedGameState>(storageKey);
+    
+    if (!savedData) {
+      return createDefaultState();
+    }
 
-    if (playerError) throw playerError;
-    if (!playerData) return createDefaultState();
-
-    // Load units
-    const { data: unitsData, error: unitsError } = await supabase
-      .from('units')
-      .select('*')
-      .eq('player_id', userId);
-
-    if (unitsError) throw unitsError;
-
-    // Load active upgrades
-    const { data: upgradesData, error: upgradesError } = await supabase
-      .from('active_upgrades')
-      .select('*')
-      .eq('player_id', userId);
-
-    if (upgradesError) throw upgradesError;
-
-    // Convert to GameState
-    return dbToStateFormat(playerData, unitsData || [], upgradesData || []);
+    return deserializeGameState(savedData);
   } catch (error) {
     logError('loadPlayerFromDB', error);
     return createDefaultState();
@@ -43,63 +121,18 @@ export async function loadPlayerFromDB(userId: string): Promise<GameState> {
 }
 
 /**
- * Save GameState to Supabase
+ * Save GameState to localStorage
  */
 export async function savePlayerToDB(userId: string, state: GameState): Promise<void> {
-  console.log("saving to DB...");
+  console.log("saving to localStorage...");
   try {
-    const { player, units, upgrades } = stateToDBFormat(state, userId);
-
-    // Upsert player record (creates if doesn't exist, updates if it does)
-    const { error: playerError } = await supabase
-      .from('players')
-      .upsert(player, { onConflict: 'user_id' });
-
-    if (playerError) throw playerError;
-
-    // Sync units: delete sold units, upsert current ones
-    const { data: existingUnits } = await supabase
-      .from('units')
-      .select('id')
-      .eq('player_id', userId);
-
-    const existingIds = new Set((existingUnits || []).map(u => u.id));
-    const currentIds = new Set(units.map(u => u.id));
-
-    // Delete sold units
-    const toDelete = [...existingIds].filter(id => !currentIds.has(id));
-    if (toDelete.length > 0) {
-      const { error: deleteError } = await supabase
-        .from('units')
-        .delete()
-        .in('id', toDelete);
-
-      if (deleteError) throw deleteError;
-    }
-
-    // Upsert current units
-    if (units.length > 0) {
-      const { error: upsertError } = await supabase
-        .from('units')
-        .upsert(units);
-
-      if (upsertError) throw upsertError;
-    }
-
-    // Sync active upgrades: delete all and insert current
-    const { error: deleteUpgradesError } = await supabase
-      .from('active_upgrades')
-      .delete()
-      .eq('player_id', userId);
-
-    if (deleteUpgradesError) throw deleteUpgradesError;
-
-    if (upgrades.length > 0) {
-      const { error: insertUpgradesError } = await supabase
-        .from('active_upgrades')
-        .insert(upgrades);
-
-      if (insertUpgradesError) throw insertUpgradesError;
+    const storageKey = STORAGE_KEY_PREFIX + userId;
+    const serializedState = serializeGameState(state);
+    
+    const success = saveToLocalStorage(storageKey, serializedState);
+    
+    if (!success) {
+      throw new Error('Failed to save to localStorage');
     }
   } catch (error) {
     logError('savePlayerToDB', error);
