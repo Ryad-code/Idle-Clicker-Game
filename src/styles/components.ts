@@ -89,7 +89,6 @@ export const ClickerContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: ${theme.colors.background};
   padding: ${theme.spacing.md};
   align-items: center;
 `;
@@ -101,9 +100,9 @@ export const PointsDisplay = styled.div`
 `;
 
 export const PointsValue = styled.div`
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
-  color: ${theme.colors.primary};
+  color: ${theme.colors.success};
   text-shadow: 2px 2px 0px rgba(0, 255, 0, 0.3);
 `;
 
@@ -162,7 +161,6 @@ export const ActiveUpgradeBadge = styled.div`
 export const ShopContainer = styled.div`
   height: 100%;
   width: 100%;
-  background-color: ${theme.colors.background};
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -171,7 +169,6 @@ export const ShopContainer = styled.div`
 export const ShopSection = styled.div`
   flex: 1;
   min-height: 0;
-  background-color: ${theme.colors.panel};
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -188,10 +185,8 @@ export const SectionTitle = styled.h3`
 export const UnitRow = styled.div`
   display: flex;
   width: 100%;
-  height: 60px;
-  //background-color: ${theme.colors.panel};
-  //border: 2px solid ${theme.colors.border};
-  margin-bottom: 4px;
+  height: 80px;
+  margin-bottom: 8px;
 `;
 
 export const UnitRowButton = styled.button<{ 
@@ -226,19 +221,20 @@ export const UnitRowButton = styled.button<{
 
 export const GridContainer = styled.div<{ size: number }>`
   display: grid;
-  grid-template-columns: repeat(${props => props.size}, 32px);
-  grid-template-rows: repeat(${props => props.size}, 32px);
-  gap: 2px;
+  grid-template-columns: repeat(${props => props.size}, 48px);
+  grid-template-rows: repeat(${props => props.size}, 48px);
+  gap: 3px;
   margin: ${theme.spacing.md} 0;
 `;
 
 export const GridCell = styled.div<{ $color: string }>`
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   background-color: ${props => props.$color};
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 36px;
 `;
 
 export const UnitContainer = styled.div`
@@ -246,11 +242,6 @@ export const UnitContainer = styled.div`
   flex-direction: column;
   align-items: center;
   padding: ${theme.spacing.md};
-  background-color: ${theme.colors.panel};
-  background-image: url('/Gemini_Generated_Image_6tbrs96tbrs96tbr.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
   margin-bottom: ${theme.spacing.md};
 `;
 
@@ -267,7 +258,7 @@ export const StatBox = styled.div`
 export const UpgradeGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: ${theme.spacing.sm};
+  gap: ${theme.spacing.md};
 `;
 
 export const UpgradeCard = styled.div`

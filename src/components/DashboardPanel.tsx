@@ -4,7 +4,7 @@ import UpgradeShop from "./UpgradeShop";
 import UnitShop from "./UnitShop";
 import { ShopContainer, ShopSection } from "../styles/components";
 
-function ShopPanel() {
+function DashboardPanel() {
   const error = useGameStore(state => state.error);
 
   return (
@@ -18,4 +18,4 @@ function ShopPanel() {
   );
 }
 
-export default ShopPanel;
+export default DashboardPanel;

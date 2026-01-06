@@ -1,13 +1,16 @@
 import styled from 'styled-components';
 import ClickerPanel from '../components/ClickerPanel';
 import UnitPanel from '../components/UnitPanel';
-import ShopPanel from '../components/ShopPanel';
+import DashboardPanel from '../components/DashboardPanel';
 
 const Container = styled.div`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: #0d1117;
+  background-image: url('/Gemini_Generated_Image_6tbrs96tbrs96tbr.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 const Grid = styled.div`
@@ -34,7 +37,7 @@ function HomePage() {
       <Grid>
         <ClickerPanel />
         <UnitPanel />
-        <ShopPanel />
+        <DashboardPanel />
       </Grid>
     </Container>
   );

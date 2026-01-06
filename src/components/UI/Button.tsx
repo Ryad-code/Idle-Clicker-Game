@@ -11,13 +11,12 @@ interface ButtonProps {
 /**
  * Pixel art styled button using pixel-retroui.
  */
-function Button({ label, onClick, tooltip, disabled, variant = 'primary' }: ButtonProps) {
+function Button({ label, onClick, tooltip, disabled }: ButtonProps) {
   return (
     <PixelButton 
       onClick={onClick} 
       title={tooltip}
       disabled={disabled}
-      variant={variant}
     >
       {label}
     </PixelButton>
