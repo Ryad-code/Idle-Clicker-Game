@@ -40,7 +40,7 @@ export class GameEngine {
   clickValue: Decimal = new Decimal(1);        // Points gained per click
 
   // Game world state
-  gameGrid: Grid = Array.from({ length: GRID_COLS }, () => Array(GRID_COLS).fill(null));
+  gameGrid: Grid = Array.from({ length: GRID_COLS }, () => Array(GRID_ROWS).fill(null));
   activeUpgrades: ActiveUpgrade[] = [];
   
   // Unit upgrade levels - determines maxCapacity (2^level) for each unit type
@@ -55,7 +55,6 @@ export class GameEngine {
   isLoading: boolean = false;       // Loading state for UI
   isSaving: boolean = false;        // Saving state for UI
   error: string | null = null;      // Error message for UI
-  userId: string | null = null;     // Current user ID for saving
 
   // Public methods for game interactions
 
@@ -111,19 +110,16 @@ export class GameEngine {
   }
 
   /**
-   * Initializes the game engine with user data.
-   * Loads saved state if userId is provided.
+   * Initializes the game engine.
+   * Loads saved state from local storage.
    */
-  async initialize(userId: string | null): Promise<void> {
-    this.userId = userId;
-    if (userId) {
-      try {
-        const savedState = await loadPlayerFromDB(userId);
-        this.loadState(savedState);
-      } catch (error) {
-        console.warn('Failed to load game state:', error);
-        // Continue with default state
-      }
+  async initialize(): Promise<void> {
+    try {
+      const savedState = await loadPlayerFromDB();
+      this.loadState(savedState);
+    } catch (error) {
+      console.warn('Failed to load game state:', error);
+      // Continue with default state
     }
   }
 
@@ -352,20 +348,9 @@ export class GameEngine {
   get grid() { return this.gameGrid; }
 
   /**
-   * Sets the current user ID for saving/loading operations.
-   */
-  setUserId(userId: string | null): void {
-    this.userId = userId;
-  }
-
-  /**
-   * Saves the current game state to the database for the current user.
+   * Saves the current game state to local storage.
    */
   async save(): Promise<void> {
-    if (!this.userId) {
-      throw new Error('No user ID set for saving');
-    }
-    
     this.isSaving = true;
     this.error = null;
     
@@ -384,7 +369,7 @@ export class GameEngine {
         unitLevels: this.unitLevels,
       };
       
-      await savePlayerToDB(this.userId, state);
+      await savePlayerToDB(state);
     } catch (error) {
       this.error = error instanceof Error ? error.message : 'Save failed';
       throw error;

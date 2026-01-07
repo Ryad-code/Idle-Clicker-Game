@@ -9,25 +9,14 @@ import { useGameStore } from './gameStore';
  *
  * This module manages two critical background processes:
  * 1. Game tick interval (1000ms) - Updates game state and production
- * 2. Auto-save interval (30000ms) - Persists game state to database
+ * 2. Auto-save interval (30000ms) - Persists game state to local storage
  *
  * Intervals are started automatically on module load and can be cleaned up
  * when the application shuts down to prevent memory leaks.
  */
 
-// Global userId for auto-save
-let currentUserId: string | undefined;
-let lastTickTime = 0;
 let tickIntervalId: NodeJS.Timeout | null = null;
 let autoSaveIntervalId: NodeJS.Timeout | null = null;
-
-/**
- * Set the current user ID for auto-save functionality
- */
-export function setUserId(userId: string | undefined) {
-  currentUserId = userId;
-  gameEngine.setUserId(userId || null);
-}
 
 /**
  * Starts the game tick interval if not already running.
@@ -37,12 +26,8 @@ export function startTickInterval(): void {
   if (tickIntervalId !== null) return; // Already running
 
   tickIntervalId = setInterval(() => {
-    const now = Date.now();
-    const delta = now - lastTickTime;
-    lastTickTime = now;
     gameEngine.tick();
     useGameStore.getState().syncWithEngine();
-    console.log(`tick - delta: ${delta}ms`)
   }, 1000);
 }
 
@@ -54,11 +39,9 @@ export function startAutoSaveInterval(): void {
   if (autoSaveIntervalId !== null) return; // Already running
 
   autoSaveIntervalId = setInterval(() => {
-    if (currentUserId) {
-      gameEngine.save().catch(err => {
-        console.error('Auto-save failed:', err);
-      });
-    }
+    gameEngine.save().catch(err => {
+      console.error('Auto-save failed:', err);
+    });
   }, 30000);
 }
 
@@ -94,5 +77,4 @@ function stopAutoSaveInterval(): void {
 export function cleanupTickSystem(): void {
   stopTickInterval();
   stopAutoSaveInterval();
-  console.log('Tick system cleanup completed');
 }

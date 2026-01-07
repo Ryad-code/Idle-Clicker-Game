@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '../UI/Button';
-import { logout } from '../../hooks/useAuth';
 import { useGameStore } from '../../game/gameStore';
 import { gameEngine } from '../../game/gameEngine';
 import { HeaderContainer, NavBar, HomeBar } from '../../styles/components';
@@ -28,12 +27,6 @@ function Header() {
   const navigate = useNavigate();
   const syncWithEngine = useGameStore(state => state.syncWithEngine);
 
-  function handleLogout() {
-    logout();
-    navigate('/auth');
-    window.location.reload();
-  }
-
   const handleManualSave = async () => {
     await gameEngine.save();
     syncWithEngine();
@@ -49,7 +42,6 @@ function Header() {
           💾
         </SaveIconButton>
         <Button label="Stats" onClick={() => navigate('/stats')} />
-        <Button label="Logout" onClick={handleLogout} />
       </NavBar>
     </HeaderContainer>
   );

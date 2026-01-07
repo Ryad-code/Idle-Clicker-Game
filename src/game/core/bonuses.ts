@@ -3,6 +3,7 @@
 
 import { Unit } from './types';
 import { UNIT_CONFIG } from '../config/units';
+import { GRID_COLS, GRID_ROWS } from '../config/grid';
 
 // BONUS 1: Cursor Chain
 // +10% Cursor value if 3 Cursors in a row or column
@@ -29,7 +30,7 @@ export function unit2Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   const unit = grid[y][x];
   if (!unit || unit.type !== 'unit2') return 0;
   // Corner: in corner with adjacent Grandma
-  const isCorner = (x === 0 || x === 10) && (y === 0 || y === 10);
+  const isCorner = (x === 0 || x === (GRID_COLS -1)) && (y === 0 || y === (GRID_ROWS -1));
   if (isCorner) {
     const neighbors = [
       [x-1, y], [x+1, y], [x, y-1], [x, y+1]
@@ -89,7 +90,7 @@ export function unit5Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   const unit = grid[y][x];
   if (!unit || unit.type !== 'unit5') return 0;
   // Center: in center
-  if (x === 2 && y === 2) {
+  if (x === Math.floor(GRID_COLS / 2) && y === Math.floor(GRID_ROWS / 2)) {
     return UNIT_CONFIG.unit5.bonus;
   }
   return 0;
@@ -102,8 +103,8 @@ export function unit6Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   const unit = grid[y][x];
   if (!unit || unit.type !== 'unit6') return 0;
   // Symmetry: symmetric with another Bank
-  const symmetricX = 4 - x;
-  const symmetricY = 4 - y;
+  const symmetricX = Math.floor(GRID_COLS / 2) - x;
+  const symmetricY = Math.floor(GRID_ROWS / 2) - y;
   if (grid[symmetricY]?.[symmetricX]?.type === 'unit6') {
     return UNIT_CONFIG.unit6.bonus;
   }
@@ -151,7 +152,7 @@ export function unit9Bonus(grid: (Unit | null)[][], x: number, y: number): numbe
   if (!unit || unit.type !== 'unit9') return 0;
   // Route: horizontal line with at least 2 others
   let count = 0;
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < GRID_COLS; i++) {
     if (grid[y]?.[i]?.type === 'unit9') count++;
   }
   if (count >= 3) return UNIT_CONFIG.unit9.bonus;
@@ -333,7 +334,7 @@ export function unit18Bonus(grid: (Unit | null)[][], x: number, y: number): numb
 }
 
 // AGGREGATE FUNCTION
-// Returns the total bonus multiplier for a unit at (x, y)
+// Returns bonus multiplier for a unit at (x, y)
 export function getUnitBonusMultiplier(grid: (Unit | null)[][], x: number, y: number): number {
   const unit = grid[y]?.[x];
   if (!unit) return 1;

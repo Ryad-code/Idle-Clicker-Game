@@ -1,11 +1,11 @@
 # Idle Clicker Game
 
 ## Overview
-This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, simple authentication, and persistent state via localStorage. Players can sign up, log in, and track their progress across sessions.
+This is a React-based idle clicker game where players place units on a grid to generate production points. The game features grid-based bonuses, upgrades, and persistent state via localStorage. Players can track their progress across sessions.
 
 ## Architecture
 - **Frontend**: React with TypeScript, using Zustand for state management and React Router for navigation.
-- **Storage**: localStorage for client-side data persistence and simple authentication.
+- **Storage**: localStorage for client-side data persistence.
 - **Build Tool**: Vite for development and building.
 - **Styling**: Styled-components with a custom theme.
 
@@ -20,9 +20,8 @@ This is a React-based idle clicker game where players place units on a grid to g
 │   │   ├── gameEngine.ts    # Core game engine (framework-agnostic)
 │   │   ├── gameStore.ts     # Zustand state management store
 │   │   └── tick.ts          # Game loop and auto-save system
-│   ├── hooks/               # Custom hooks (useAuth)
 │   ├── localStorage/        # localStorage utility functions
-│   ├── pages/               # Page components (AuthPage, HomePage, Stats)
+│   ├── pages/               # Page components (HomePage, Stats)
 │   ├── styles/              # Theme and component-specific styles
 │   ├── utils/               # Utility functions (errorUtils, formatters, colorUtils)
 │   └── main.tsx             # App entry point
@@ -33,7 +32,6 @@ This is a React-based idle clicker game where players place units on a grid to g
 ```
 
 ## Key Features
-- **Authentication**: Simple user signup and login with localStorage.
 - **Grid-Based Gameplay**: Place units on an 11x11 grid to earn production points.
 - **Unit Bonuses**: Each unit has unique grid-based bonuses (e.g., adjacency, clusters, symmetry).
 - **Unit Stacking System**: 
@@ -53,7 +51,6 @@ This is a React-based idle clicker game where players place units on a grid to g
 - **Reset Functionality**: Clear the grid and unit levels to start fresh while keeping points.
 
 ## Pages
-- **AuthPage**: Handles user login and signup.
 - **HomePage**: Main game interface with clicker, unit placement, and shop panels.
 - **Stats**: Displays game statistics and progress.
 

@@ -26,3 +26,9 @@ export const MIN_CLICK_VALUE = 1;
  */
 export const GAME_TICK_INTERVAL_MS = 1000;
 
+/**
+ * Upgrade cost multiplier
+ * Cost of an upgrade = (net benefit over duration) * UPGRADE_COST_MULTIPLIER
+ */
+export const UPGRADE_COST_MULTIPLIER = 0.4;
+

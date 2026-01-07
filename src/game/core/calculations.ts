@@ -1,7 +1,7 @@
 import Decimal from 'break_infinity.js';
 import type { Unit, ActiveUpgrade, UnitType } from './types';
 import { UPGRADES, getUpgradeKind } from '../config/upgrades';
-import { UNIT_COST_MULTIPLIER, CLICK_VALUE_RATIO, MIN_CLICK_VALUE } from '../config/constants';
+import { UNIT_COST_MULTIPLIER, CLICK_VALUE_RATIO, MIN_CLICK_VALUE, UPGRADE_COST_MULTIPLIER } from '../config/constants';
 import { getUnitBonusMultiplier } from './bonuses';
 
 /**
@@ -86,7 +86,7 @@ export function calculateUpgradeCost(
   const netBenefit = currentValue.times(upgrade.multiplier - 1).times(upgrade.durationSeconds);
   
   // Cost is 40% of net benefit
-  const cost = netBenefit.times(0.4);
+  const cost = netBenefit.times(UPGRADE_COST_MULTIPLIER);
   
   return Decimal.max(cost, 0); // Ensure non-negative
 }

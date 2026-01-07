@@ -5,7 +5,7 @@ import { logError } from '../../utils/errorUtils';
 import { saveToLocalStorage, loadFromLocalStorage } from '../../localStorage/localStorage';
 import Decimal from 'break_infinity.js';
 
-const STORAGE_KEY_PREFIX = 'game_state_';
+const STORAGE_KEY = 'game_state';
 
 interface SerializedUnit {
   id: string;
@@ -104,10 +104,9 @@ function deserializeGameState(data: SerializedGameState): GameState {
 /**
  * Load player data from localStorage and convert to GameState
  */
-export async function loadPlayerFromDB(userId: string): Promise<GameState> {
+export async function loadPlayerFromDB(): Promise<GameState> {
   try {
-    const storageKey = STORAGE_KEY_PREFIX + userId;
-    const savedData = loadFromLocalStorage<SerializedGameState>(storageKey);
+    const savedData = loadFromLocalStorage<SerializedGameState>(STORAGE_KEY);
     
     if (!savedData) {
       return createDefaultState();
@@ -123,13 +122,11 @@ export async function loadPlayerFromDB(userId: string): Promise<GameState> {
 /**
  * Save GameState to localStorage
  */
-export async function savePlayerToDB(userId: string, state: GameState): Promise<void> {
-  console.log("saving to localStorage...");
+export async function savePlayerToDB(state: GameState): Promise<void> {
   try {
-    const storageKey = STORAGE_KEY_PREFIX + userId;
     const serializedState = serializeGameState(state);
     
-    const success = saveToLocalStorage(storageKey, serializedState);
+    const success = saveToLocalStorage(STORAGE_KEY, serializedState);
     
     if (!success) {
       throw new Error('Failed to save to localStorage');
