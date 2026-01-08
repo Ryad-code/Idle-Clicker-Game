@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { FooterContainer } from "../../styles/components";
 
 function Footer() {
   const [visible, setVisible] = useState(false);
@@ -19,13 +18,13 @@ function Footer() {
   return (
     <>
       <div onMouseEnter={showFooter} />
-      <FooterContainer
-        $isVisible={visible}
+      <footer
+        className={`p-4 border-t-4 border-primary justify-center ${visible ? 'flex' : 'hidden'}`}
         onMouseEnter={showFooter}
         onMouseLeave={hideFooter}
       >
         Footer content here
-      </FooterContainer>
+      </footer>
     </>
   );
 }

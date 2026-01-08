@@ -1,13 +1,12 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-import { LayoutContainer } from "../../styles/components";
 
 function Layout() {
   return (
-    <LayoutContainer>
+    <div className="h-screen w-screen flex flex-col text-foreground">
       <Header />
       <Outlet />
-    </LayoutContainer>
+    </div>
   );
 }
 

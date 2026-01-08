@@ -2,48 +2,7 @@ import { useGameStore } from '../game/gameStore';
 import { formatDecimal } from '../utils/formatters';
 import { useEffect, useState } from 'react';
 import { Unit } from '../game/core/types';
-import { Card } from 'pixel-retroui';
-import { theme } from '../styles/theme';
-
-const containerStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  overflowY: 'auto',
-  overflowX: 'hidden',
-  backgroundColor: theme.colors.background,
-};
-
-const statsContainerStyle: React.CSSProperties = {
-  maxWidth: '800px',
-  margin: '0 auto',
-  padding: '24px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '20px',
-  fontWeight: 'bold',
-  color: theme.colors.success,
-  marginBottom: '24px',
-  textShadow: `2px 2px 0px ${theme.colors.success}4c`,
-};
-
-const statsGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gap: '16px',
-  gridTemplateColumns: 'repeat(2, 1fr)',
-};
-
-const statLabelStyle: React.CSSProperties = {
-  fontSize: '10px',
-  color: '#888',
-  marginBottom: '8px',
-};
-
-const statValueStyle: React.CSSProperties = {
-  fontSize: '16px',
-  fontWeight: 'bold',
-  color: '#00ff00',
-};
+import { Card, CardContent } from '@/components/ui/pixelact-ui/card';
 
 function Stats() {
   const points = useGameStore(state => state.points);
@@ -79,38 +38,50 @@ function Stats() {
   }, [createdAt]);
 
   return (
-    <div style={containerStyle}>
-      <div style={statsContainerStyle}>
-        <h1 style={titleStyle}>Game Statistics</h1>
-        <div style={statsGridStyle}>
-          <Card>
-            <div style={statLabelStyle}>Game Duration</div>
-            <div style={statValueStyle}>{duration}</div>
+    <div className="w-full h-full overflow-y-auto overflow-x-hidden">
+      <div className="max-w-3xl mx-auto p-6">
+        <h1 className="text-xl font-bold mb-6 uppercase">Game Statistics</h1>
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Game Duration</div>
+              <div className="text-sm font-bold">{duration}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <div style={statLabelStyle}>Total Points Earned</div>
-            <div style={statValueStyle}>{formatDecimal(points)}</div>
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Total Points Earned</div>
+              <div className="text-sm font-bold">{formatDecimal(points)}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <div style={statLabelStyle}>Total Clicks</div>
-            <div style={statValueStyle}>{totalClicks.toLocaleString()}</div>
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Total Clicks</div>
+              <div className="text-sm font-bold">{totalClicks.toLocaleString()}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <div style={statLabelStyle}>Points Per Second</div>
-            <div style={statValueStyle}>{formatDecimal(pointsPerSecond)}</div>
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Points Per Second</div>
+              <div className="text-sm font-bold">{formatDecimal(pointsPerSecond)}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <div style={statLabelStyle}>Click Value</div>
-            <div style={statValueStyle}>{formatDecimal(clickValue)}</div>
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Click Value</div>
+              <div className="text-sm font-bold">{formatDecimal(clickValue)}</div>
+            </CardContent>
           </Card>
 
-          <Card>
-            <div style={statLabelStyle}>Total Units Owned</div>
-            <div style={statValueStyle}>{grid.flat().filter((u): u is Unit => u !== null).length.toLocaleString()}</div>
+          <Card className="box-shadow-margin">
+            <CardContent className="py-4">
+              <div className="text-[10px] text-muted-foreground mb-2 uppercase">Total Units Owned</div>
+              <div className="text-sm font-bold">{grid.flat().filter((u): u is Unit => u !== null).length.toLocaleString()}</div>
+            </CardContent>
           </Card>
         </div>
       </div>

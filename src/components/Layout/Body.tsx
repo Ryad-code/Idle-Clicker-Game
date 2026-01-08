@@ -1,12 +1,11 @@
 import type { ReactNode } from "react";
-import { BodyContainer } from "../../styles/components";
 
 interface BodyProps {
   children?: ReactNode;
 }
 
 function Body({ children }: BodyProps) {
-  return <BodyContainer>{children}</BodyContainer>;
+  return <main className="flex-1 overflow-auto">{children}</main>;
 }
 
 export default Body;

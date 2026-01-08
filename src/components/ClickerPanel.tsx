@@ -1,20 +1,14 @@
-import { useGameStore } from "../game/gameStore";
 import PointsDisplay from "./PointsDisplay";
 import ActiveUpgrades from "./ActiveUpgrades";
 import ClickButton from "./ClickButton";
-import { ClickerContainer } from "../styles/components";
-import ErrorMessage from "./UI/ErrorMessage";
 
 function ClickerPanel() {
-  const error = useGameStore(state => state.error);
-
   return (
-    <ClickerContainer>
-      {error && <ErrorMessage message={error} />}
+    <div className="flex flex-col items-center p-4">
       <PointsDisplay />
       <ActiveUpgrades />
       <ClickButton />
-    </ClickerContainer>
+    </div>
   );
 }
 

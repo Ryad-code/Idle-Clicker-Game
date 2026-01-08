@@ -15,8 +15,8 @@ import { useGameStore } from './gameStore';
  * when the application shuts down to prevent memory leaks.
  */
 
-let tickIntervalId: NodeJS.Timeout | null = null;
-let autoSaveIntervalId: NodeJS.Timeout | null = null;
+let tickIntervalId: ReturnType<typeof setInterval> | null = null;
+let autoSaveIntervalId: ReturnType<typeof setInterval> | null = null;
 
 /**
  * Starts the game tick interval if not already running.

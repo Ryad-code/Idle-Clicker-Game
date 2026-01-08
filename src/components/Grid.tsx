@@ -5,8 +5,6 @@ import { Unit } from "../game/core/types";
 import { getMaxCapacity } from "../game/core/types";
 import { UNIT_CONFIG } from "../game/config/units";
 import { adjustColorByStack } from "../utils/colorUtils";
-import { theme } from "../styles/theme";
-import { GridCell, GridContainer } from "../styles/components";
 
 function Grid() {
   const grid = useGameStore(state => state.grid);
@@ -33,7 +31,7 @@ function Grid() {
   const size = grid.length;
 
   return (
-    <GridContainer size={size}>
+    <div className="grid gap-1 my-4" style={{ gridTemplateColumns: `repeat(${size}, 48px)`, gridTemplateRows: `repeat(${size}, 48px)` }}>
       {grid.flat().map((cell: Unit | null, idx: number) => {
         const x = idx % size;
         const y = Math.floor(idx / size);
@@ -46,43 +44,38 @@ function Grid() {
           const adjustedColor = adjustColorByStack(meta.color, cell.stackedCount, maxCapacity);
 
           return (
-            <GridCell
+            <div
               key={idx}
-              $color={adjustedColor}
+              className="w-12 h-12 flex items-center justify-center text-4xl cursor-pointer"
               style={{
+                backgroundColor: adjustedColor,
                 border: isSelected 
-                  ? `2px solid ${theme.colors.primary}` 
+                  ? '2px solid hsl(var(--primary))' 
                   : cell.bonusActive 
-                  ? `3px solid ${theme.colors.success}` 
-                  : `1px solid ${theme.colors.border}`,
-                boxShadow: cell.bonusActive ? `0 0 8px ${theme.colors.success}99` : "none",
-                cursor: "pointer",
+                  ? '3px solid hsl(var(--success))' 
+                  : '1px solid hsl(var(--border))',
+                boxShadow: cell.bonusActive ? '0 0 8px hsl(var(--success) / 0.6)' : 'none',
               }}
               onClick={() => handleCellClick(x, y)}
               title={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
             >
               {meta.emoji.startsWith('/') 
-                ? <img src={meta.emoji} alt={meta.name} style={{width: '38px', height: '38px'}} /> 
+                ? <img src={meta.emoji} alt={meta.name} className="w-[38px] h-[38px]" /> 
                 : meta.emoji}
-            </GridCell>
+            </div>
           );
         } else {
           return (
-            <GridCell
+            <div
               key={idx}
-              $color={theme.colors.text}
-              style={{ 
-                border: `1px solid ${theme.colors.text}`, 
-                color: theme.colors.border, 
-                cursor: "pointer" 
-              }}
+              className="w-12 h-12 flex items-center justify-center border border-foreground text-border cursor-pointer"
               onClick={() => handleCellClick(x, y)}
               title="Empty slot - Click to move units here"
             />
           );
         }
       })}
-    </GridContainer>
+    </div>
   );
 }
 

@@ -1,8 +1,6 @@
 import { useGameStore } from "../game/gameStore";
 import { UPGRADES } from "../game/config/upgrades";
-import { Card } from 'pixel-retroui';
-import { theme } from "../styles/theme";
-import { ActiveUpgradeBadge } from "../styles/components";
+import { Card } from "./ui/pixelact-ui/card";
 
 function ActiveUpgrades() {
   const activeUpgrades = useGameStore(state => state.activeUpgrades);
@@ -27,26 +25,29 @@ function ActiveUpgrades() {
   }
 
   return (
-    <Card style={{ margin: '0 0 16px' }}>
-      <div style={{ fontSize: '14px', fontWeight: 'bold', marginBottom: '8px' }}>Active Upgrades</div>
-      {activeUpgradeDisplays.map((item) => {
-        const upgrade = upgradeMap.get(item?.upgradeId || '');
-        if (!upgrade) return null;
-        return (
-          <ActiveUpgradeBadge
-            key={item?.upgradeId}
-            title={`${upgrade.description} - ${item?.remainingSeconds}s remaining`}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 'bold' }}>
-              <span>{item?.icon}</span>
-              <span>{item?.upgradeId}</span>
+    <Card className="box-shadow-margin mb-4">
+      <div className="text-xs font-bold mb-2">ACTIVE UPGRADES</div>
+      <div className="space-y-2">
+        {activeUpgradeDisplays.map((item) => {
+          const upgrade = upgradeMap.get(item?.upgradeId || '');
+          if (!upgrade) return null;
+          return (
+            <div
+              key={item?.upgradeId}
+              className="flex items-center justify-between p-2 bg-secondary text-secondary-foreground"
+              title={`${upgrade.description} - ${item?.remainingSeconds}s remaining`}
+            >
+              <div className="flex items-center gap-2 text-xs">
+                <span>{item?.icon}</span>
+                <span>{item?.upgradeId}</span>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                <span>{item?.remainingSeconds}s</span>
+              </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: theme.colors.border }}>
-              <span>{item?.remainingSeconds}s</span>
-            </div>
-          </ActiveUpgradeBadge>
-        );
-      })}
+          );
+        })}
+      </div>
     </Card>
   );
 }

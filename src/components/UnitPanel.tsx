@@ -1,14 +1,10 @@
 import Grid from "./Grid";
-import {
-  UnitContainer
-} from "../styles/components";
-
 
 function UnitPanel() {
   return (
-      <UnitContainer>
-        <Grid />
-      </UnitContainer>
+    <div className="p-4 overflow-auto">
+      <Grid />
+    </div>
   );
 }
 

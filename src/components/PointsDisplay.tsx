@@ -1,9 +1,9 @@
 import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { formatDecimal } from "../utils/formatters";
-import { Button, Card, Input } from 'pixel-retroui';
-import { theme } from "../styles/theme";
-import { PointsValue } from "../styles/components";
+import { Button } from './ui/pixelact-ui/button';
+import { Card } from './ui/pixelact-ui/card';
+import { Input } from './ui/pixelact-ui/input';
 import StatsDisplay from "./StatsDisplay";
 
 function PointsDisplay() {
@@ -24,24 +24,26 @@ function PointsDisplay() {
   };
 
   return (
-    <Card style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', margin: '0 0 16px' }}>
-      <h2 style={{ margin: '0 0 8px' }}>Points</h2>
-      <PointsValue>{formatDecimal(points)}</PointsValue>
-      <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+    <Card className="box-shadow-margin mb-4">
+      <div className="text-center">
+        <h2 className="text-xs mb-2">POINTS</h2>
+        <div className="text-2xl font-bold mb-4">{formatDecimal(points)}</div>
+      </div>
+      <div className="flex gap-2 mb-4">
         <Input 
           type="number" 
           placeholder="Set points" 
           onChange={handlePointsChange}
-          style={{ flex: 1 }}
+          className="flex-1"
         />
         <Button
           onClick={handleReset}
-          style={{ backgroundColor: theme.colors.danger, color: theme.colors.text }}
+          variant="destructive"
         >
           Reset
         </Button>
       </div>
-        <StatsDisplay />
+      <StatsDisplay />
     </Card>
   );
 }
