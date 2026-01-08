@@ -23,7 +23,7 @@ function UnitShop() {
   const availableUnits = UNIT_TYPES.filter(isUnlocked);
 
   return (
-    <Card className="box-shadow-margin m-4">
+    <Card className="box-shadow-margin m-4 p-4">
       <h3 className="text-xs font-bold mb-4">UNITS</h3>
       <div className="space-y-2">
         {availableUnits.map((unitType: UnitType) => (

@@ -14,7 +14,7 @@ import {
 
 import "@/components/ui/pixelact-ui/styles/styles.css";
 
-const cardVariants = cva("rounded-none border-2 border-foreground bg-card shadow-(--pixel-box-shadow) box-shadow-margin", {
+const cardVariants = cva("rounded-none border-2 border-foreground bg-card box-shadow-margin", {
   variants: {
     font: {
       normal: "",
@@ -33,15 +33,18 @@ export interface CardProps
 }
 
 function Card({ ...props }: CardProps) {
-  const { className, font } = props;
+  const { className, font, ...rest } = props;
 
   return (
     <ShadcnCard
-      {...props}
+      {...rest}
       className={cn(
         cardVariants({ font }),
         className
       )}
+      style={{
+        boxShadow: 'var(--pixel-box-shadow)',
+      }}
     />
   );
 }

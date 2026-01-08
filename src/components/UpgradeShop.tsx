@@ -28,7 +28,7 @@ function UpgradeShop() {
   };
 
   return (
-    <Card className="box-shadow-margin m-4">
+    <Card>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xs font-bold">UPGRADES</h3>
         <Button onClick={handleReloadUpgrades} variant="secondary" size="sm">
@@ -43,7 +43,7 @@ function UpgradeShop() {
           const canBuy = canAfford && !isActive;
           
           return (
-            <button
+            <Button
             key={upgrade.id}
               onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
               disabled={!canBuy}
@@ -59,10 +59,10 @@ function UpgradeShop() {
                 <div>{formatDecimal(cost)}</div>
                 <div>{upgrade.durationSeconds}s</div>
               </div>
-            </button>
+            </Button>
           );
         })}
-              </div>
+      </div>
     </Card>
   );
 }

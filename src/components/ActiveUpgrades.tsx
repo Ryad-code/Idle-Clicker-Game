@@ -25,7 +25,7 @@ function ActiveUpgrades() {
   }
 
   return (
-    <Card className="box-shadow-margin mb-4">
+    <Card className="box-shadow-margin mb-4 p-4">
       <div className="text-xs font-bold mb-2">ACTIVE UPGRADES</div>
       <div className="space-y-2">
         {activeUpgradeDisplays.map((item) => {

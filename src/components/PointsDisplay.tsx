@@ -24,7 +24,7 @@ function PointsDisplay() {
   };
 
   return (
-    <Card className="box-shadow-margin mb-4">
+    <Card className="box-shadow-margin mb-4 p-4">
       <div className="text-center">
         <h2 className="text-xs mb-2">POINTS</h2>
         <div className="text-2xl font-bold mb-4">{formatDecimal(points)}</div>

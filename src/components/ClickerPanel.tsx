@@ -1,14 +1,15 @@
 import PointsDisplay from "./PointsDisplay";
 import ActiveUpgrades from "./ActiveUpgrades";
 import ClickButton from "./ClickButton";
+import { Card } from "./ui/pixelact-ui/card";
 
 function ClickerPanel() {
   return (
-    <div className="flex flex-col items-center p-4">
+    <Card className="box-shadow-margin flex flex-col items-center p-6">
       <PointsDisplay />
       <ActiveUpgrades />
       <ClickButton />
-    </div>
+    </Card>
   );
 }
 
