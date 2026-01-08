@@ -5,7 +5,7 @@ import { Card } from "./ui/pixelact-ui/card";
 
 function ClickerPanel() {
   return (
-    <Card className="box-shadow-margin flex flex-col items-center p-6">
+    <Card className="box-shadow-margin m-2 p-6 flex flex-col items-center overflow-y-auto overflow-x-hidden">
       <PointsDisplay />
       <ActiveUpgrades />
       <ClickButton />

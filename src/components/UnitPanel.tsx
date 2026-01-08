@@ -1,10 +1,11 @@
 import Grid from "./Grid";
+import { Card } from "./ui/pixelact-ui/card";
 
 function UnitPanel() {
   return (
-    <div className="p-4 overflow-auto">
+    <Card className="box-shadow-margin m-2 p-6 overflow-y-auto overflow-x-hidden flex justify-center">
       <Grid />
-    </div>
+    </Card>
   );
 }
 

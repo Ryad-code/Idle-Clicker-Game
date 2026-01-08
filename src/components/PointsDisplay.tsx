@@ -2,7 +2,6 @@ import { useGameStore } from "../game/gameStore";
 import { gameEngine } from "../game/gameEngine";
 import { formatDecimal } from "../utils/formatters";
 import { Button } from './ui/pixelact-ui/button';
-import { Card } from './ui/pixelact-ui/card';
 import { Input } from './ui/pixelact-ui/input';
 import StatsDisplay from "./StatsDisplay";
 
@@ -24,7 +23,7 @@ function PointsDisplay() {
   };
 
   return (
-    <Card className="box-shadow-margin mb-4 p-4">
+    <div className="w-full max-w-sm mb-4">
       <div className="text-center">
         <h2 className="text-xs mb-2">POINTS</h2>
         <div className="text-2xl font-bold mb-4">{formatDecimal(points)}</div>
@@ -44,7 +43,7 @@ function PointsDisplay() {
         </Button>
       </div>
       <StatsDisplay />
-    </Card>
+    </div>
   );
 }
 

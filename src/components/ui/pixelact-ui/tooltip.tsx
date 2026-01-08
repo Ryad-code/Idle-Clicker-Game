@@ -11,7 +11,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import "@/components/ui/pixelact-ui/styles/styles.css";
 
 export const tooltipVariants = cva(
-  "bg-background text-foreground shadow-(--pixel-box-shadow) box-shadow-margin rounded-none",
+  "bg-background text-foreground box-shadow-margin rounded-none border-2 border-foreground",
   {
     variants: {
       font: {
@@ -48,6 +48,9 @@ function TooltipContent({
           tooltipVariants({ font }),
           className
         )}
+        style={{
+          boxShadow: 'var(--pixel-box-shadow)',
+        }}
         {...props}
       >
         {children}

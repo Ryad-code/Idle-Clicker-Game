@@ -1,6 +1,6 @@
 import { useGameStore } from "../game/gameStore";
 import { UPGRADES } from "../game/config/upgrades";
-import { Card } from "./ui/pixelact-ui/card";
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/pixelact-ui/tooltip';
 
 function ActiveUpgrades() {
   const activeUpgrades = useGameStore(state => state.activeUpgrades);
@@ -25,30 +25,35 @@ function ActiveUpgrades() {
   }
 
   return (
-    <Card className="box-shadow-margin mb-4 p-4">
+    <div className="w-full max-w-sm mb-4">
       <div className="text-xs font-bold mb-2">ACTIVE UPGRADES</div>
       <div className="space-y-2">
         {activeUpgradeDisplays.map((item) => {
           const upgrade = upgradeMap.get(item?.upgradeId || '');
           if (!upgrade) return null;
           return (
-            <div
-              key={item?.upgradeId}
-              className="flex items-center justify-between p-2 bg-secondary text-secondary-foreground"
-              title={`${upgrade.description} - ${item?.remainingSeconds}s remaining`}
-            >
-              <div className="flex items-center gap-2 text-xs">
-                <span>{item?.icon}</span>
-                <span>{item?.upgradeId}</span>
-              </div>
-              <div className="text-xs text-muted-foreground">
-                <span>{item?.remainingSeconds}s</span>
-              </div>
-            </div>
+            <Tooltip key={item?.upgradeId}>
+              <TooltipTrigger asChild>
+                <div
+                  className="flex items-center justify-between p-2 bg-secondary text-secondary-foreground cursor-help"
+                >
+                  <div className="flex items-center gap-2 text-xs">
+                    <span>{item?.icon}</span>
+                    <span>{item?.upgradeId}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    <span>{item?.remainingSeconds}s</span>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-[10px]">{upgrade.description} - {item?.remainingSeconds}s remaining</div>
+              </TooltipContent>
+            </Tooltip>
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 }
 

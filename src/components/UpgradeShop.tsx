@@ -6,7 +6,7 @@ import { calculateUpgradeCost } from "../game/core/calculations";
 import { UPGRADES, type Upgrade } from "../game/config/upgrades";
 import { formatDecimal } from "../utils/formatters";
 import { Button } from "./ui/pixelact-ui/button";
-import { Card } from "./ui/pixelact-ui/card";
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/pixelact-ui/tooltip';
 
 function UpgradeShop() {
   const points = useGameStore(state => state.points);
@@ -28,7 +28,7 @@ function UpgradeShop() {
   };
 
   return (
-    <Card>
+    <div>
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xs font-bold">UPGRADES</h3>
         <Button onClick={handleReloadUpgrades} variant="secondary" size="sm">
@@ -43,27 +43,35 @@ function UpgradeShop() {
           const canBuy = canAfford && !isActive;
           
           return (
-            <Button
-            key={upgrade.id}
-              onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
-              disabled={!canBuy}
-              className={`text-center p-2 border-2 border-foreground transition-all ${
-                canBuy ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
-              }`}
-              title={`${upgrade.description} (Duration: ${upgrade.durationSeconds}s)`}
-            >
-              <div className="text-2xl mb-1">{upgrade.icon}</div>
-              <div className="text-[8px] mb-1">{upgrade.id}</div>
-              <div className="text-[8px] space-y-0.5">
-                <div>×{upgrade.multiplier}</div>
-                <div>{formatDecimal(cost)}</div>
-                <div>{upgrade.durationSeconds}s</div>
-              </div>
-            </Button>
+            <Tooltip key={upgrade.id}>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={() => canBuy && handleBuyUpgrade(upgrade.id)}
+                  disabled={!canBuy}
+                  className={`text-center p-2 border-2 border-foreground transition-all ${
+                    canBuy ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
+                  }`}
+                >
+                  <div className="text-2xl mb-1">{upgrade.icon}</div>
+                  <div className="text-[8px] mb-1">{upgrade.id}</div>
+                  <div className="text-[8px] space-y-0.5">
+                    <div>×{upgrade.multiplier}</div>
+                    <div>{formatDecimal(cost)}</div>
+                    <div>{upgrade.durationSeconds}s</div>
+                  </div>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-[10px]">
+                  {upgrade.description}
+                  <div className="mt-1">Duration: {upgrade.durationSeconds}s</div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 }
 

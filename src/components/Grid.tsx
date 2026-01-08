@@ -5,6 +5,7 @@ import { Unit } from "../game/core/types";
 import { getMaxCapacity } from "../game/core/types";
 import { UNIT_CONFIG } from "../game/config/units";
 import { adjustColorByStack } from "../utils/colorUtils";
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/pixelact-ui/tooltip';
 
 function Grid() {
   const grid = useGameStore(state => state.grid);
@@ -31,7 +32,7 @@ function Grid() {
   const size = grid.length;
 
   return (
-    <div className="grid gap-1 my-4" style={{ gridTemplateColumns: `repeat(${size}, 48px)`, gridTemplateRows: `repeat(${size}, 48px)` }}>
+    <div className="grid gap-1 my-4 mx-auto" style={{ gridTemplateColumns: `repeat(${size}, 48px)`, gridTemplateRows: `repeat(${size}, 48px)`, maxWidth: 'fit-content' }}>
       {grid.flat().map((cell: Unit | null, idx: number) => {
         const x = idx % size;
         const y = Math.floor(idx / size);
@@ -44,34 +45,48 @@ function Grid() {
           const adjustedColor = adjustColorByStack(meta.color, cell.stackedCount, maxCapacity);
 
           return (
-            <div
-              key={idx}
-              className="w-12 h-12 flex items-center justify-center text-4xl cursor-pointer"
-              style={{
-                backgroundColor: adjustedColor,
-                border: isSelected 
-                  ? '2px solid hsl(var(--primary))' 
-                  : cell.bonusActive 
-                  ? '3px solid hsl(var(--success))' 
-                  : '1px solid hsl(var(--border))',
-                boxShadow: cell.bonusActive ? '0 0 8px hsl(var(--success) / 0.6)' : 'none',
-              }}
-              onClick={() => handleCellClick(x, y)}
-              title={`Production: ${actualProduction}/s | Stacked: ${cell.stackedCount}/${maxCapacity} | Bonus: ${cell.bonusActive ? 'Active' : 'Inactive'}`}
-            >
-              {meta.emoji.startsWith('/') 
-                ? <img src={meta.emoji} alt={meta.name} className="w-[38px] h-[38px]" /> 
-                : meta.emoji}
-            </div>
+            <Tooltip key={idx}>
+              <TooltipTrigger asChild>
+                <div
+                  className="w-12 h-12 flex items-center justify-center text-4xl cursor-pointer"
+                  style={{
+                    backgroundColor: adjustedColor,
+                    border: isSelected 
+                      ? '2px solid hsl(var(--primary))' 
+                      : cell.bonusActive 
+                      ? '3px solid hsl(var(--success))' 
+                      : '1px solid hsl(var(--border))',
+                    boxShadow: cell.bonusActive ? '0 0 8px hsl(var(--success) / 0.6)' : 'none',
+                  }}
+                  onClick={() => handleCellClick(x, y)}
+                >
+                  {meta.emoji.startsWith('/') 
+                    ? <img src={meta.emoji} alt={meta.name} className="w-[38px] h-[38px]" /> 
+                    : meta.emoji}
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-[10px]">
+                  <div>Production: {actualProduction}/s</div>
+                  <div>Stacked: {cell.stackedCount}/{maxCapacity}</div>
+                  <div>Bonus: {cell.bonusActive ? 'Active' : 'Inactive'}</div>
+                </div>
+              </TooltipContent>
+            </Tooltip>
           );
         } else {
           return (
-            <div
-              key={idx}
-              className="w-12 h-12 flex items-center justify-center border border-foreground text-border cursor-pointer"
-              onClick={() => handleCellClick(x, y)}
-              title="Empty slot - Click to move units here"
-            />
+            <Tooltip key={idx}>
+              <TooltipTrigger asChild>
+                <div
+                  className="w-12 h-12 flex items-center justify-center border border-foreground text-border cursor-pointer"
+                  onClick={() => handleCellClick(x, y)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <div className="text-[10px]">Empty slot - Click to move units here</div>
+              </TooltipContent>
+            </Tooltip>
           );
         }
       })}

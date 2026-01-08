@@ -5,6 +5,7 @@ import Stats from './pages/Stats';
 import Page2 from './pages/Page2';
 import Footer from './components/Layout/Footer';
 import { useEffect } from 'react';
+import { TooltipProvider } from './components/ui/pixelact-ui/tooltip';
 
 import './game/gameEngine';
 import './game/tick';
@@ -43,21 +44,23 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        {/* Main app layout */}
-        <Route element={<Layout />}>
-          <Route index element={<HomePage />} />
-          <Route path="stats" element={<Stats />} />
-          <Route path="page2" element={<Page2 />} />
-        </Route>
+    <TooltipProvider delayDuration={200}>
+      <Router>
+        <Routes>
+          {/* Main app layout */}
+          <Route element={<Layout />}>
+            <Route index element={<HomePage />} />
+            <Route path="stats" element={<Stats />} />
+            <Route path="page2" element={<Page2 />} />
+          </Route>
 
-        {/* Redirect unknown routes to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          {/* Redirect unknown routes to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
 
-      <Footer />
-    </Router>
+        <Footer />
+      </Router>
+    </TooltipProvider>
   );
 }
 

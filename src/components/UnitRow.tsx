@@ -6,6 +6,7 @@ import { gameEngine } from "../game/gameEngine";
 import { calculateUnitCost } from "../game/core/calculations";
 import { formatDecimal } from "../utils/formatters";
 import { Button } from './ui/pixelact-ui/button';
+import { Tooltip, TooltipTrigger, TooltipContent } from './ui/pixelact-ui/tooltip';
 
 interface UnitRowProps {
   unitType: UnitType;
@@ -51,12 +52,13 @@ function UnitRow({ unitType }: UnitRowProps) {
 
   return (
     <div className="flex gap-1 h-20">
-      <Button
-        onClick={handleBuyUnit}
-        disabled={!canAfford}
-        className="flex-[2] flex items-center justify-start gap-2 p-2 text-left"
-        title={`${meta.description}\n${meta.bonusDescription}\nProduces ${meta.value} points/s per unit\nBonus multiplier: x${meta.bonus}`}
-      >
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleBuyUnit}
+            disabled={!canAfford}
+            className="flex-[2] flex items-center justify-start gap-2 p-2 text-left"
+          >
         {meta.emoji.startsWith('/') ? (
           <img src={meta.emoji} alt={meta.name} className="h-full w-auto max-w-[48px] object-contain flex-shrink-0" />
         ) : (
@@ -74,27 +76,49 @@ function UnitRow({ unitType }: UnitRowProps) {
             </span>
           </div>
         </div>
-      </Button>
-      <Button
-        onClick={handleSellUnit}
-        disabled={!canSell}
-        variant="secondary"
-        size="sm"
-        className="flex-1 text-[10px]"
-        title={`Sell one ${meta.name} for ${meta.refund} points`}
-      >
-        Sell
-      </Button>
-      <Button
-        onClick={handleUpgradeUnitType}
-        disabled={!canLevelUp}
-        variant="success"
-        size="sm"
-        className="flex-1 text-[10px]"
-        title={`Double the stacking capacity of all ${meta.name} units (requires even number of units and all fully stacked)`}
-      >
-        Lvl+
-      </Button>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-[10px] max-w-xs">
+            <div>{meta.description}</div>
+            <div>{meta.bonusDescription}</div>
+            <div>Produces {meta.value} points/s per unit</div>
+            <div>Bonus multiplier: x{meta.bonus}</div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleSellUnit}
+            disabled={!canSell}
+            variant="secondary"
+            size="sm"
+            className="flex-1 text-[10px]"
+          >
+            Sell
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-[10px]">Sell one {meta.name} for {meta.refund} points</div>
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleUpgradeUnitType}
+            disabled={!canLevelUp}
+            variant="success"
+            size="sm"
+            className="flex-1 text-[10px]"
+          >
+            Lvl+
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <div className="text-[10px] max-w-xs">Double the stacking capacity of all {meta.name} units (requires even number of units and all fully stacked)</div>
+        </TooltipContent>
+      </Tooltip>
     </div>
   );
 }

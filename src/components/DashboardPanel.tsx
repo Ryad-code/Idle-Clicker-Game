@@ -1,12 +1,13 @@
 import UpgradeShop from "./UpgradeShop";
 import UnitShop from "./UnitShop";
+import { Card } from "./ui/pixelact-ui/card";
 
 function DashboardPanel() {
   return (
-    <div className="overflow-auto">
+    <Card className="box-shadow-margin m-2 p-6 overflow-y-auto flex flex-col gap-4">
       <UpgradeShop />
       <UnitShop />
-    </div>
+    </Card>
   );
 }
 
